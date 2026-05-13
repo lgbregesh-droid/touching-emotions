@@ -31,6 +31,6 @@ export const translations = {
     contact_page: { heading: "Contact Us", field_name: "Full Name", field_phone: "Phone", field_email: "Email", field_subject: "Subject", field_message: "Message", btn: "Send Message", success: "Thank you! We received your message and will get back to you soon", sending: "Sending...", info_heading: "Contact Info", email: "Email", facebook: "Facebook" },
     footer: { tagline: "Empowerment & Emotional Resilience", rights: "Registered Nonprofit No. 580795755 © 2025 Touching Emotion", contact: "Contact" },
   },
-} as const;
+};
 
 export type Lang = keyof typeof translations;

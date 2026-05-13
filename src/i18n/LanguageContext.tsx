@@ -4,7 +4,7 @@ import { translations, type Lang } from "./translations";
 type Ctx = {
   lang: Lang;
   setLang: (l: Lang) => void;
-  t: typeof translations.he | typeof translations.en;
+  t: typeof translations.he;
   dir: "rtl" | "ltr";
 };
 
