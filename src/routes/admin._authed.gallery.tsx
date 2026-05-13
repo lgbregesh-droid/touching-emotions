@@ -37,8 +37,12 @@ function GalleryAdmin() {
       if (f.size > 5 * 1024 * 1024) { toast.error(`${f.name}: גדול מ-5MB`); continue; }
       setBusy((n) => n + 1);
       try {
-        const buf = await f.arrayBuffer();
-        const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+        const b64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(f);
+        });
         await upFn({ data: { token: getAdminToken()!, filename: f.name, contentType: f.type, base64: b64 } });
       } catch (e) { toast.error(`${f.name}: ${(e as Error).message}`); }
       finally { setBusy((n) => n - 1); }
