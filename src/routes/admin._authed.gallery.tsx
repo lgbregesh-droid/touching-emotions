@@ -178,6 +178,7 @@ function GalleryAdmin() {
                 <button onClick={() => move(img, "up")} disabled={i === 0} className="p-2 rounded bg-white/90 disabled:opacity-30"><ChevronUp className="w-4 h-4" /></button>
                 <button onClick={() => move(img, "down")} disabled={i === rows.length - 1} className="p-2 rounded bg-white/90 disabled:opacity-30"><ChevronDown className="w-4 h-4" /></button>
                 <button onClick={() => remove(img)} className="p-2 rounded bg-red-500 text-white"><Trash2 className="w-4 h-4" /></button>
+                </div>
               </div>
             </div>
             <select
