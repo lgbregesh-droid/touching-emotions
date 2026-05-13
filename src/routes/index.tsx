@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { Gallery } from "@/components/Gallery";
+import { EventsHomeSection } from "@/components/EventsHomeSection";
 import { Users, Sparkles, Heart, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -96,6 +97,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* UPCOMING EVENTS */}
+      <EventsHomeSection />
 
       {/* QUOTE */}
       <section className="relative bg-[#2D1B3D] py-24 md:py-32 px-6">

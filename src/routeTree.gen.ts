@@ -13,6 +13,7 @@ import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as VolunteersRouteImport } from './routes/volunteers'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as DonationsRouteImport } from './routes/donations'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -46,6 +47,11 @@ const ShopRoute = ShopRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonationsRoute = DonationsRouteImport.update({
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminAuthedRouteWithChildren
   '/contact': typeof ContactRoute
   '/donations': typeof DonationsRoute
+  '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
   '/volunteers': typeof VolunteersRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminAuthedIndexRoute
   '/contact': typeof ContactRoute
   '/donations': typeof DonationsRoute
+  '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
   '/volunteers': typeof VolunteersRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/donations': typeof DonationsRoute
+  '/events': typeof EventsRoute
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
   '/volunteers': typeof VolunteersRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/donations'
+    | '/events'
     | '/gallery'
     | '/shop'
     | '/volunteers'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/donations'
+    | '/events'
     | '/gallery'
     | '/shop'
     | '/volunteers'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/donations'
+    | '/events'
     | '/gallery'
     | '/shop'
     | '/volunteers'
@@ -242,6 +254,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   DonationsRoute: typeof DonationsRoute
+  EventsRoute: typeof EventsRoute
   GalleryRoute: typeof GalleryRoute
   ShopRoute: typeof ShopRoute
   VolunteersRoute: typeof VolunteersRoute
@@ -276,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donations': {
@@ -421,6 +441,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   DonationsRoute: DonationsRoute,
+  EventsRoute: EventsRoute,
   GalleryRoute: GalleryRoute,
   ShopRoute: ShopRoute,
   VolunteersRoute: VolunteersRoute,

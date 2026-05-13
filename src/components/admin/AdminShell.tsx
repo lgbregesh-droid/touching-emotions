@@ -6,6 +6,7 @@ import { clearAdminToken } from "@/lib/admin/session";
 const items = [
   { to: "/admin", label: "לוח בקרה", icon: LayoutDashboard, exact: true },
   { to: "/admin/inquiries", label: "פניות וטפסים", icon: Mail },
+  { to: "/admin/events", label: "אירועים", icon: Calendar },
   { to: "/admin/workshops", label: "סדנאות", icon: Calendar },
   { to: "/admin/shop", label: "חנות", icon: ShoppingBag },
   { to: "/admin/donations", label: "תרומות", icon: Heart },
