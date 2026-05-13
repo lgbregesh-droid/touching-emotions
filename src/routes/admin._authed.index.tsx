@@ -93,5 +93,3 @@ function SummaryCard({ icon: Icon, label, value, to }: { icon: typeof Mail; labe
     </Link>
   );
 }
-
-void ShoppingBag;
