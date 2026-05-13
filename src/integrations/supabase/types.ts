@@ -77,6 +77,107 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          confirmation_sent: boolean
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+        }
+        Insert: {
+          confirmation_sent?: boolean
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+        }
+        Update: {
+          confirmation_sent?: boolean
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string
+          date: string
+          description_en: string | null
+          description_he: string | null
+          id: string
+          image_url: string | null
+          location_en: string | null
+          location_he: string | null
+          max_spots: number
+          price: number
+          spots_remaining: number
+          status: string
+          time: string
+          title_en: string | null
+          title_he: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description_en?: string | null
+          description_he?: string | null
+          id?: string
+          image_url?: string | null
+          location_en?: string | null
+          location_he?: string | null
+          max_spots?: number
+          price?: number
+          spots_remaining?: number
+          status?: string
+          time: string
+          title_en?: string | null
+          title_he: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description_en?: string | null
+          description_he?: string | null
+          id?: string
+          image_url?: string | null
+          location_en?: string | null
+          location_he?: string | null
+          max_spots?: number
+          price?: number
+          spots_remaining?: number
+          status?: string
+          time?: string
+          title_en?: string | null
+          title_he?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery: {
         Row: {
           created_at: string
