@@ -26,6 +26,7 @@ export function Navbar() {
     { to: "/", label: t.nav.home },
     { to: "/about", label: t.nav.about },
     { to: "/workshops", label: t.nav.workshops },
+    { to: "/events", label: t.nav.events },
     { to: "/shop", label: t.nav.shop },
     { to: "/donations", label: t.nav.donations },
     { to: "/volunteers", label: t.nav.volunteers },

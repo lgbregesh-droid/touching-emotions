@@ -329,5 +329,65 @@ export const reorderGallery = createServerFn({ method: "POST" })
     const a = all[idx], b = all[swapIdx];
     await supabaseAdmin.from("gallery").update({ order_index: b.order_index }).eq("id", a.id);
     await supabaseAdmin.from("gallery").update({ order_index: a.order_index }).eq("id", b.id);
+  });
+
+// ---------- Events ----------
+const EventSchema = z.object({
+  title_he: z.string().min(1).max(200),
+  title_en: z.string().max(200).optional().nullable(),
+  description_he: z.string().max(3000).optional().nullable(),
+  description_en: z.string().max(3000).optional().nullable(),
+  type: z.enum(["lecture", "workshop", "meetup", "evening"]),
+  date: z.string().min(1),
+  time: z.string().min(1),
+  location_he: z.string().max(300).optional().nullable(),
+  location_en: z.string().max(300).optional().nullable(),
+  price: z.number().int().min(0),
+  max_spots: z.number().int().min(0),
+  spots_remaining: z.number().int().min(0).optional(),
+  image_url: z.string().max(1000).optional().nullable(),
+  status: z.enum(["active", "cancelled", "completed"]),
+});
+
+export const listEvents = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object(tokenField).parse(i))
+  .handler(async () => {
+    const { data, error } = await supabaseAdmin.from("events").select("*").order("date", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { rows: data };
+  });
+
+export const upsertEvent = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, id: z.string().uuid().optional(), values: EventSchema }).parse(i))
+  .handler(async ({ data }) => {
+    if (data.id) {
+      const { error } = await supabaseAdmin.from("events").update(data.values).eq("id", data.id);
+      if (error) throw new Error(error.message);
+    } else {
+      const values = { ...data.values, spots_remaining: data.values.max_spots };
+      const { error } = await supabaseAdmin.from("events").insert(values);
+      if (error) throw new Error(error.message);
+    }
     return { ok: true };
   });
+
+export const deleteEvent = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("events").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const listEventRegistrants = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, event_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { data: rows, error } = await supabaseAdmin.from("event_registrations").select("*").eq("event_id", data.event_id).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return { rows };
+  });
+
