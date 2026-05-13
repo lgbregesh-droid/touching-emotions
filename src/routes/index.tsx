@@ -141,7 +141,12 @@ function Home() {
               <p className="text-xs tracking-[0.25em] uppercase text-[#F5F0E8]/45">{t.gallery.sub}</p>
             </Reveal>
           </div>
-          <Gallery count={8} />
+          <div className="mt-8 flex justify-end">
+            <RLink to="/gallery" className="text-xs tracking-[0.2em] uppercase text-[#F5F0E8]/70 hover:text-[#BA9B78] transition">
+              {t.gallery.btn} →
+            </RLink>
+          </div>
+          <HomeGallery count={8} />
         </div>
       </section>
     </>
