@@ -89,7 +89,7 @@ function EventsAdmin() {
 
   const showRegs = async (ev: EV) => {
     const r = await regsFn({ data: { token: getAdminToken()!, event_id: ev.id! } });
-    setRegs({ ev, rows: r.rows as typeof regs.rows });
+    setRegs({ ev, rows: r.rows as { name: string; phone: string; email: string; notes: string | null; created_at: string }[] });
   };
 
   const exportCsv = () => {

@@ -26,6 +26,7 @@ import { Route as AdminAuthedWorkshopsRouteImport } from './routes/admin._authed
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
 import { Route as AdminAuthedInquiriesRouteImport } from './routes/admin._authed.inquiries'
 import { Route as AdminAuthedGalleryRouteImport } from './routes/admin._authed.gallery'
+import { Route as AdminAuthedEventsRouteImport } from './routes/admin._authed.events'
 import { Route as AdminAuthedDonationsRouteImport } from './routes/admin._authed.donations'
 import { Route as AdminAuthedContentRouteImport } from './routes/admin._authed.content'
 
@@ -113,6 +114,11 @@ const AdminAuthedGalleryRoute = AdminAuthedGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedEventsRoute = AdminAuthedEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedDonationsRoute = AdminAuthedDonationsRouteImport.update({
   id: '/donations',
   path: '/donations',
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
+  '/admin/events': typeof AdminAuthedEventsRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
   '/admin/shop': typeof AdminAuthedShopRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
+  '/admin/events': typeof AdminAuthedEventsRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
   '/admin/shop': typeof AdminAuthedShopRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/_authed/content': typeof AdminAuthedContentRoute
   '/admin/_authed/donations': typeof AdminAuthedDonationsRoute
+  '/admin/_authed/events': typeof AdminAuthedEventsRoute
   '/admin/_authed/gallery': typeof AdminAuthedGalleryRoute
   '/admin/_authed/inquiries': typeof AdminAuthedInquiriesRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/content'
     | '/admin/donations'
+    | '/admin/events'
     | '/admin/gallery'
     | '/admin/inquiries'
     | '/admin/shop'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/content'
     | '/admin/donations'
+    | '/admin/events'
     | '/admin/gallery'
     | '/admin/inquiries'
     | '/admin/shop'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/_authed/content'
     | '/admin/_authed/donations'
+    | '/admin/_authed/events'
     | '/admin/_authed/gallery'
     | '/admin/_authed/inquiries'
     | '/admin/_authed/shop'
@@ -382,6 +394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedGalleryRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/events': {
+      id: '/admin/_authed/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminAuthedEventsRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/donations': {
       id: '/admin/_authed/donations'
       path: '/donations'
@@ -402,6 +421,7 @@ declare module '@tanstack/react-router' {
 interface AdminAuthedRouteChildren {
   AdminAuthedContentRoute: typeof AdminAuthedContentRoute
   AdminAuthedDonationsRoute: typeof AdminAuthedDonationsRoute
+  AdminAuthedEventsRoute: typeof AdminAuthedEventsRoute
   AdminAuthedGalleryRoute: typeof AdminAuthedGalleryRoute
   AdminAuthedInquiriesRoute: typeof AdminAuthedInquiriesRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
@@ -412,6 +432,7 @@ interface AdminAuthedRouteChildren {
 const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedContentRoute: AdminAuthedContentRoute,
   AdminAuthedDonationsRoute: AdminAuthedDonationsRoute,
+  AdminAuthedEventsRoute: AdminAuthedEventsRoute,
   AdminAuthedGalleryRoute: AdminAuthedGalleryRoute,
   AdminAuthedInquiriesRoute: AdminAuthedInquiriesRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
