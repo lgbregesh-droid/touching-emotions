@@ -35,27 +35,33 @@ export default function ImageGallery({ title, description, images, className }: 
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-        {images.map((img, idx) => (
-          <div
-            key={idx}
-            className={cn(
-              "relative overflow-hidden rounded-2xl aspect-square cursor-pointer transition-all duration-500",
-              hovered !== null && hovered !== idx && "opacity-50 scale-[0.98]"
-            )}
-            onMouseEnter={() => setHovered(idx)}
-            onMouseLeave={() => setHovered(null)}
-            style={{ border: "2px solid rgba(186,155,120,0.25)" }}
-          >
-            <img
-              src={img.src}
-              alt={img.alt || ""}
-              loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B3D]/40 via-transparent to-transparent pointer-events-none" />
-          </div>
-        ))}
+      <div
+        className="flex w-full gap-2 md:gap-3 h-[280px] md:h-[440px]"
+        onMouseLeave={() => setHovered(null)}
+      >
+        {images.map((img, idx) => {
+          const isHovered = hovered === idx;
+          const anyHovered = hovered !== null;
+          return (
+            <div
+              key={idx}
+              onMouseEnter={() => setHovered(idx)}
+              className={cn(
+                "relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isHovered ? "flex-[4]" : anyHovered ? "flex-[0.7]" : "flex-1"
+              )}
+              style={{ border: "2px solid rgba(186,155,120,0.25)" }}
+            >
+              <img
+                src={img.src}
+                alt={img.alt || ""}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B3D]/50 via-transparent to-transparent pointer-events-none" />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
