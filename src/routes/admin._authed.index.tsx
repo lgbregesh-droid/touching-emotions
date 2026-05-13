@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { getDashboard } from "@/lib/admin/data.functions";
 import { getAdminToken } from "@/lib/admin/session";
-import { Mail, Heart, Calendar, Users, ShoppingBag } from "lucide-react";
+import { Mail, Heart, Calendar, Users } from "lucide-react";
 
 export const Route = createFileRoute("/admin/_authed/")({
   head: () => ({ meta: [{ title: "לוח בקרה | ניהול" }] }),
