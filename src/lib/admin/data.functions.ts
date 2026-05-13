@@ -280,14 +280,14 @@ export const uploadGalleryImage = createServerFn({ method: "POST" })
     if (upErr) throw new Error(upErr.message);
     const { data: pub } = supabaseAdmin.storage.from("gallery").getPublicUrl(path);
     const { count } = await supabaseAdmin.from("gallery").select("id", { count: "exact", head: true });
-    const { error: insErr } = await supabaseAdmin.from("gallery").insert({
+    const { data: ins, error: insErr } = await supabaseAdmin.from("gallery").insert({
       url: pub.publicUrl,
       storage_path: path,
       order_index: (count || 0) + 1,
       featured: false,
-    });
+    }).select("id").single();
     if (insErr) throw new Error(insErr.message);
-    return { ok: true, url: pub.publicUrl };
+    return { ok: true, url: pub.publicUrl, id: ins.id as string };
   });
 
 export const toggleGalleryFeatured = createServerFn({ method: "POST" })
@@ -329,6 +329,31 @@ export const reorderGallery = createServerFn({ method: "POST" })
     const a = all[idx], b = all[swapIdx];
     await supabaseAdmin.from("gallery").update({ order_index: b.order_index }).eq("id", a.id);
     await supabaseAdmin.from("gallery").update({ order_index: a.order_index }).eq("id", b.id);
+  });
+
+const GALLERY_CATEGORIES = ["סדנה", "הכשרה", "הרצאה", "מפגש קהילתי", "ערב עיון", "כללי"] as const;
+
+export const setGalleryCategory = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, id: z.string().uuid(), category: z.enum(GALLERY_CATEGORIES) }).parse(i))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("gallery").update({ category: data.category }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const setGalleryCategoriesBulk = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({
+    ...tokenField,
+    items: z.array(z.object({ id: z.string().uuid(), category: z.enum(GALLERY_CATEGORIES) })).min(1).max(50),
+  }).parse(i))
+  .handler(async ({ data }) => {
+    for (const it of data.items) {
+      const { error } = await supabaseAdmin.from("gallery").update({ category: it.category }).eq("id", it.id);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
   });
 
 // ---------- Events ----------
