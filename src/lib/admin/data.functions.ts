@@ -280,14 +280,14 @@ export const uploadGalleryImage = createServerFn({ method: "POST" })
     if (upErr) throw new Error(upErr.message);
     const { data: pub } = supabaseAdmin.storage.from("gallery").getPublicUrl(path);
     const { count } = await supabaseAdmin.from("gallery").select("id", { count: "exact", head: true });
-    const { error: insErr } = await supabaseAdmin.from("gallery").insert({
+    const { data: ins, error: insErr } = await supabaseAdmin.from("gallery").insert({
       url: pub.publicUrl,
       storage_path: path,
       order_index: (count || 0) + 1,
       featured: false,
-    });
+    }).select("id").single();
     if (insErr) throw new Error(insErr.message);
-    return { ok: true, url: pub.publicUrl };
+    return { ok: true, url: pub.publicUrl, id: ins.id as string };
   });
 
 export const toggleGalleryFeatured = createServerFn({ method: "POST" })
