@@ -6,7 +6,7 @@ import { AdminShell, AdminCard } from "@/components/admin/AdminShell";
 import { listGallery, uploadGalleryImage, toggleGalleryFeatured, deleteGalleryImage, reorderGallery } from "@/lib/admin/data.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Star, Trash2, ChevronUp, ChevronDown, Upload, Info } from "lucide-react";
+import { Star, Trash2, ChevronUp, ChevronDown, Upload, Info, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/admin/_authed/gallery")({
   head: () => ({ meta: [{ title: "גלריה | ניהול" }] }),
@@ -55,6 +55,15 @@ function GalleryAdmin() {
     try {
       await togFn({ data: { token: getAdminToken()!, id: img.id, featured: !img.featured } });
       qc.invalidateQueries({ queryKey: ["admin-gallery"] });
+      toast.success(!img.featured ? "התמונה סומנה לדף הבית" : "התמונה הוסרה מדף הבית");
+    } catch (e) { toast.error((e as Error).message); }
+  };
+  const remove = async (img: Img) => {
+    if (!confirm("למחוק את התמונה?")) return;
+    try {
+      await delFn({ data: { token: getAdminToken()!, id: img.id } });
+      qc.invalidateQueries({ queryKey: ["admin-gallery"] });
+      toast.success("התמונה נמחקה");
     } catch (e) { toast.error((e as Error).message); }
   };
   const remove = async (img: Img) => {
