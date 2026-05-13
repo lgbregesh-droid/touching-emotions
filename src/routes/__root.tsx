@@ -89,7 +89,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
+  const isAdmin = loc.pathname.startsWith("/admin");
   const isHome = loc.pathname === "/";
+  if (isAdmin) {
+    return (
+      <>
+        {children}
+        <Toaster richColors position="top-center" />
+      </>
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F0E8]">
       <Navbar />
