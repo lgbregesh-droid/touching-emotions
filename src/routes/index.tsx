@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { Gallery } from "@/components/Gallery";
+import { HomeGallery } from "@/components/HomeGallery";
+import { Link as RLink } from "@tanstack/react-router";
 import { EventsHomeSection } from "@/components/EventsHomeSection";
 import { Users, Sparkles, Heart, MessageCircle } from "lucide-react";
 
