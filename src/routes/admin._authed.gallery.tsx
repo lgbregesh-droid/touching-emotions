@@ -73,9 +73,16 @@ function GalleryAdmin() {
 
   return (
     <AdminShell title="גלריה">
-      <div className="bg-[#BA9B78]/10 border border-[#BA9B78]/35 rounded-lg p-4 mb-4 flex items-start gap-3 text-sm text-[#2D1B3D]">
-        <Info className="w-5 h-5 text-[#BA9B78] flex-shrink-0 mt-0.5" />
-        <div>תמונות מסומנות בכוכב ⭐ יוצגו גם בדף הבית. שאר התמונות יוצגו בדף הגלריה בלבד. מקסימום 8 תמונות לדף הבית. ({featuredCount}/8 מסומנות)</div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="bg-[#BA9B78]/10 border border-[#BA9B78]/35 rounded-lg p-4 flex items-start gap-3 text-sm text-[#2D1B3D] flex-1 min-w-[260px]">
+          <Info className="w-5 h-5 text-[#BA9B78] flex-shrink-0 mt-0.5" />
+          <div>תמונות מסומנות בכוכב ⭐ יוצגו בדף הבית. השאר יוצגו בדף הגלריה בלבד. מקסימום 8 תמונות לדף הבית. ({featuredCount}/8 מסומנות)</div>
+        </div>
+        <a href="/gallery" target="_blank" rel="noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2D1B3D] text-white rounded-lg text-sm hover:bg-[#3d2851] transition">
+          <ExternalLink className="w-4 h-4" />
+          צפי באתר
+        </a>
       </div>
 
       <AdminCard className="mb-6">
