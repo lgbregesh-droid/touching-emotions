@@ -66,11 +66,6 @@ function GalleryAdmin() {
       toast.success("התמונה נמחקה");
     } catch (e) { toast.error((e as Error).message); }
   };
-  const remove = async (img: Img) => {
-    if (!confirm("למחוק את התמונה?")) return;
-    await delFn({ data: { token: getAdminToken()!, id: img.id } });
-    qc.invalidateQueries({ queryKey: ["admin-gallery"] });
-  };
   const move = async (img: Img, dir: "up" | "down") => {
     await reFn({ data: { token: getAdminToken()!, id: img.id, direction: dir } });
     qc.invalidateQueries({ queryKey: ["admin-gallery"] });
