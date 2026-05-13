@@ -180,6 +180,7 @@ export type Database = {
       }
       gallery: {
         Row: {
+          category: string
           created_at: string
           featured: boolean
           id: string
@@ -188,6 +189,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          category?: string
           created_at?: string
           featured?: boolean
           id?: string
@@ -196,6 +198,7 @@ export type Database = {
           url: string
         }
         Update: {
+          category?: string
           created_at?: string
           featured?: boolean
           id?: string
