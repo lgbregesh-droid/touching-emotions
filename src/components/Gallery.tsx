@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const palette = [
@@ -15,20 +17,48 @@ const palette = [
   "from-[#BA9B78]/55 to-[#4E8C85]/55",
 ];
 
-function Card({ idx, label }: { idx: number; label: string }) {
+type GalleryImage = { id: string; url: string };
+
+function Placeholder({ idx, label }: { idx: number; label: string }) {
   return (
-    <div className={`relative w-full h-full rounded-xl overflow-hidden bg-gradient-to-br ${palette[idx % palette.length]} flex items-end p-4`}>
+    <div className={`relative w-full h-full bg-gradient-to-br ${palette[idx % palette.length]} flex items-end p-4`}>
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       <span className="relative text-[#F5F0E8]/70 text-xs tracking-widest uppercase">{label} {idx + 1}</span>
     </div>
   );
 }
 
-export function Gallery({ count = 8 }: { count?: number }) {
+function Tile({ img, idx, label }: { img?: GalleryImage; idx: number; label: string }) {
+  return (
+    <div className="relative w-full h-full rounded-xl overflow-hidden">
+      {img ? (
+        <img src={img.url} alt="" className="w-full h-full object-cover" loading="lazy" />
+      ) : (
+        <Placeholder idx={idx} label={label} />
+      )}
+    </div>
+  );
+}
+
+export function Gallery({ count = 8, featuredOnly = true }: { count?: number; featuredOnly?: boolean }) {
   const { t } = useLanguage();
-  const items = Array.from({ length: count });
-  // Stagger heights: peak in middle
-  const center = (count - 1) / 2;
+  const [images, setImages] = useState<GalleryImage[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      let q = supabase.from("gallery").select("id,url,featured,order_index").order("order_index", { ascending: true });
+      if (featuredOnly) q = q.eq("featured", true);
+      const { data } = await q;
+      if (!active) return;
+      setImages(((data || []) as GalleryImage[]).slice(0, featuredOnly ? count : 100));
+    })();
+    return () => { active = false; };
+  }, [count, featuredOnly]);
+
+  const itemsCount = featuredOnly ? count : Math.max(images.length, count);
+  const items = Array.from({ length: itemsCount });
+  const center = (itemsCount - 1) / 2;
   const offset = (i: number) => Math.abs(i - center) * 22;
 
   return (
@@ -46,7 +76,7 @@ export function Gallery({ count = 8 }: { count?: number }) {
                 boxShadow: "0 12px 30px rgba(0,0,0,0.3)",
               }}
             >
-              <Card idx={i} label={t.gallery.placeholder} />
+              <Tile img={images[i]} idx={i} label={t.gallery.placeholder} />
             </div>
           ))}
         </div>
@@ -55,11 +85,14 @@ export function Gallery({ count = 8 }: { count?: number }) {
       {/* Mobile marquee */}
       <div className="md:hidden mt-6 overflow-hidden">
         <div className="marquee-track flex gap-3 w-max">
-          {[...items, ...items].map((_, i) => (
-            <div key={i} className="w-[220px] aspect-[4/3] shrink-0 rounded-[10px] overflow-hidden">
-              <Card idx={i % count} label={t.gallery.placeholder} />
-            </div>
-          ))}
+          {[...items, ...items].map((_, i) => {
+            const idx = i % itemsCount;
+            return (
+              <div key={i} className="w-[220px] aspect-[4/3] shrink-0 rounded-[10px] overflow-hidden">
+                <Tile img={images[idx]} idx={idx} label={t.gallery.placeholder} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

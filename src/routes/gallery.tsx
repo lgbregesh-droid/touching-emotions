@@ -19,7 +19,7 @@ function GalleryPage() {
           <div className="flex justify-center my-5"><span className="w-[26px] h-px bg-[#BA9B78] opacity-55" /></div>
           <p className="text-xs tracking-[0.25em] uppercase text-[#F5F0E8]/45 text-center">{t.gallery.sub}</p>
         </Reveal>
-        <Gallery count={10} />
+        <Gallery count={10} featuredOnly={false} />
       </div>
     </section>
   );
