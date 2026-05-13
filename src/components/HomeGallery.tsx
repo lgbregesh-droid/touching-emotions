@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { PortfolioGallery, PortfolioImage } from "@/components/ui/portfolio-gallery";
+import ImageGallery, { GalleryImage } from "@/components/ui/image-gallery";
 
-export function HomeGallery({ count = 8 }: { count?: number }) {
+export function HomeGallery({ count = 6 }: { count?: number }) {
   const { t } = useLanguage();
-  const [images, setImages] = useState<PortfolioImage[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
 
   useEffect(() => {
     let active = true;
@@ -16,20 +16,16 @@ export function HomeGallery({ count = 8 }: { count?: number }) {
         .eq("featured", true)
         .order("order_index", { ascending: true });
       if (!active) return;
-      const rows = (data || []).slice(0, count).map((r: { id: string; url: string }) => ({
+      const rows = (data || []).slice(0, count).map((r: { url: string }) => ({
         src: r.url,
         alt: t.gallery.placeholder,
       }));
       setImages(rows);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [count, t.gallery.placeholder]);
 
-  return (
-    <PortfolioGallery
-      images={images}
-      showHeader={false}
-      archiveButton={{ text: t.gallery.btn, href: "/gallery" }}
-    />
-  );
+  return <ImageGallery images={images} />;
 }
