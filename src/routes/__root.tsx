@@ -52,10 +52,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "לגעת ברגש — העצמה ובניית חוסן רגשי" },
       { name: "description", content: "עמותת לגעת ברגש — סדנאות חוסן רגשי, העצמה אישית ותוכניות מותאמות לבתי ספר וארגונים." },
-      { property: "og:title", content: "לגעת ברגש" },
-      { property: "og:description", content: "העצמה ובניית חוסן רגשי לילדים — סדנאות שנבנות יחד איתכם." },
+      { property: "og:title", content: "לגעת ברגש — העצמה ובניית חוסן רגשי" },
+      { property: "og:description", content: "עמותת לגעת ברגש — סדנאות חוסן רגשי, העצמה אישית ותוכניות מותאמות לבתי ספר וארגונים." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "לגעת ברגש — העצמה ובניית חוסן רגשי" },
+      { name: "twitter:description", content: "עמותת לגעת ברגש — סדנאות חוסן רגשי, העצמה אישית ותוכניות מותאמות לבתי ספר וארגונים." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7903fd3b-85d9-4bdd-89bc-6593347961f8/id-preview-89809bd3--f7711bbd-022a-43aa-a568-629def9c2967.lovable.app-1778670080392.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7903fd3b-85d9-4bdd-89bc-6593347961f8/id-preview-89809bd3--f7711bbd-022a-43aa-a568-629def9c2967.lovable.app-1778670080392.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -89,16 +93,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
-  const isAdmin = loc.pathname.startsWith("/admin");
   const isHome = loc.pathname === "/";
-  if (isAdmin) {
-    return (
-      <>
-        {children}
-        <Toaster richColors position="top-center" />
-      </>
-    );
-  }
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F0E8]">
       <Navbar />
