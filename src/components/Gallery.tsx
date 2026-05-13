@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, KeyboardEvent } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -9,8 +11,6 @@ const palette = [
   "from-[#BA9B78]/45 to-[#4E8C85]/60",
   "from-[#4E8C85]/55 to-[#BA9B78]/45",
   "from-[#2D1B3D]/80 to-[#BA9B78]/40",
-  "from-[#4E8C85]/65 to-[#2D1B3D]/70",
-  "from-[#BA9B78]/55 to-[#2D1B3D]/80",
 ];
 
 type GalleryImage = { id: string; url: string; category: string };
@@ -34,6 +34,7 @@ function Placeholder({ idx, label }: { idx: number; label: string }) {
   );
 }
 
+/* ---------- Featured fan (home page) ---------- */
 function Tile({ img, idx, label }: { img?: GalleryImage; idx: number; label: string }) {
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden">
@@ -86,11 +87,181 @@ function FanRow({ images, count, label }: { images: GalleryImage[]; count: numbe
   );
 }
 
+/* ---------- Grid + lightbox (gallery page) ---------- */
+function GridGallery({ images, label }: { images: GalleryImage[]; label: string }) {
+  const { t } = useLanguage();
+  const [filter, setFilter] = useState<string>("__all__");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const availableCats = useMemo(() => {
+    const set = new Set(images.map((i) => i.category || "כללי"));
+    return CATEGORY_ORDER.filter((c) => set.has(c));
+  }, [images]);
+
+  const filtered = filter === "__all__" ? images : images.filter((i) => (i.category || "כללי") === filter);
+
+  const handleNext = () => {
+    if (!selectedId) return;
+    const i = filtered.findIndex((x) => x.id === selectedId);
+    setSelectedId(filtered[(i + 1) % filtered.length].id);
+  };
+  const handlePrev = () => {
+    if (!selectedId) return;
+    const i = filtered.findIndex((x) => x.id === selectedId);
+    setSelectedId(filtered[(i - 1 + filtered.length) % filtered.length].id);
+  };
+  const selected = filtered.find((i) => i.id === selectedId);
+
+  const handleCardKeyDown = (event: KeyboardEvent, id: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setSelectedId(id);
+    }
+  };
+
+  const catLabel = (c: string) => t.gallery_page.categories[CAT_KEY[c]] || c;
+
+  return (
+    <div>
+      {/* Filter pills */}
+      <div className="mt-8 -mx-2 px-2 overflow-x-auto">
+        <div className="flex gap-2 justify-start md:justify-center min-w-max">
+          {[{ key: "__all__", label: t.gallery_page.filter_all }, ...availableCats.map((c) => ({ key: c, label: catLabel(c) }))].map((p) => {
+            const active = filter === p.key;
+            return (
+              <button
+                key={p.key}
+                onClick={() => setFilter(p.key)}
+                aria-pressed={active}
+                className={`px-4 py-1.5 text-xs tracking-wider transition whitespace-nowrap ${
+                  active ? "bg-[#BA9B78] text-white" : "text-[#F5F0E8]/60 hover:text-[#F5F0E8]/90"
+                }`}
+                style={{
+                  borderRadius: 20,
+                  border: active ? "0.5px solid transparent" : "0.5px solid rgba(186,155,120,0.35)",
+                }}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Grid */}
+      <motion.div
+        layout
+        className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+      >
+        <AnimatePresence mode="popLayout">
+          {filtered.map((image, index) => (
+            <motion.div
+              key={image.id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35, delay: index * 0.04 }}
+            >
+              <div
+                onClick={() => setSelectedId(image.id)}
+                onKeyDown={(e) => handleCardKeyDown(e, image.id)}
+                role="button"
+                tabIndex={0}
+                aria-label={`${label} ${index + 1}`}
+                className="group relative overflow-hidden rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#BA9B78]"
+                style={{ background: "rgba(245,240,232,0.04)", border: "0.5px solid rgba(186,155,120,0.2)" }}
+              >
+                <div className="aspect-[4/3] w-full overflow-hidden">
+                  <img
+                    src={image.url}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
+                {/* Overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#2D1B3D] via-[#2D1B3D]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-[#F5F0E8]/80 text-[10px] tracking-[0.18em] uppercase">
+                    <ZoomIn className="h-3 w-3" />
+                    {catLabel(image.category || "כללי")}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {filtered.length === 0 && (
+        <div className="text-center text-[#F5F0E8]/50 py-16 text-sm">—</div>
+      )}
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setSelectedId(null)}
+            role="dialog"
+            aria-modal="true"
+          >
+            <motion.div
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              className="relative max-h-[90vh] max-w-5xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedId(null)}
+                aria-label="Close"
+                className="absolute -top-12 right-0 rtl:right-auto rtl:left-0 text-[#F5F0E8] hover:text-[#BA9B78] transition"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                aria-label="Previous"
+                className="absolute top-1/2 -translate-y-1/2 left-2 md:-left-14 rtl:left-auto rtl:right-2 rtl:md:right-auto rtl:md:-right-14 text-[#F5F0E8] hover:text-[#BA9B78] transition bg-black/30 rounded-full p-2"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                aria-label="Next"
+                className="absolute top-1/2 -translate-y-1/2 right-2 md:-right-14 rtl:right-auto rtl:left-2 rtl:md:left-auto rtl:md:-left-14 text-[#F5F0E8] hover:text-[#BA9B78] transition bg-black/30 rounded-full p-2"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+              <img
+                src={selected.url}
+                alt=""
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+              <div className="mt-3 text-center">
+                <span className="inline-block px-3 py-1 text-[10px] tracking-[0.2em] uppercase text-[#F5F0E8]/80 border border-[#BA9B78]/40 rounded-full">
+                  {catLabel(selected.category || "כללי")}
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ---------- Public API ---------- */
 export function Gallery({ count = 8, featuredOnly = true }: { count?: number; featuredOnly?: boolean }) {
   const { t } = useLanguage();
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [filter, setFilter] = useState<string>("__all__");
-  const [fadeKey, setFadeKey] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -105,76 +276,8 @@ export function Gallery({ count = 8, featuredOnly = true }: { count?: number; fe
     return () => { active = false; };
   }, [count, featuredOnly]);
 
-  const availableCats = useMemo(() => {
-    const set = new Set(images.map((i) => i.category || "כללי"));
-    return CATEGORY_ORDER.filter((c) => set.has(c));
-  }, [images]);
-
-  // Featured/home mode — original single fan
   if (featuredOnly) {
     return <FanRow images={images} count={count} label={t.gallery.placeholder} />;
   }
-
-  const filtered = filter === "__all__" ? images : images.filter((i) => (i.category || "כללי") === filter);
-  const grouped = filter === "__all__"
-    ? CATEGORY_ORDER.map((cat) => ({ cat, items: images.filter((i) => (i.category || "כללי") === cat) })).filter((g) => g.items.length > 0)
-    : [{ cat: filter, items: filtered }];
-
-  const handleSelect = (val: string) => {
-    if (val === filter) return;
-    setFadeKey((k) => k + 1);
-    setFilter(val);
-  };
-
-  return (
-    <div>
-      {/* Filter pills */}
-      <div className="mt-8 -mx-2 px-2 overflow-x-auto">
-        <div className="flex gap-2 justify-start md:justify-center min-w-max">
-          {[{ key: "__all__", label: t.gallery_page.filter_all }, ...availableCats.map((c) => ({ key: c, label: t.gallery_page.categories[CAT_KEY[c]] }))].map((p) => {
-            const active = filter === p.key;
-            return (
-              <button
-                key={p.key}
-                onClick={() => handleSelect(p.key)}
-                className={`px-4 py-1.5 text-xs tracking-wider transition whitespace-nowrap ${
-                  active
-                    ? "bg-[#BA9B78] text-white"
-                    : "text-[#F5F0E8]/60 hover:text-[#F5F0E8]/90"
-                }`}
-                style={{
-                  borderRadius: 20,
-                  border: active ? "0.5px solid transparent" : "0.5px solid rgba(186,155,120,0.35)",
-                }}
-              >
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div key={fadeKey} style={{ animation: "fadeInUp 0.35s ease-out both" }}>
-        {grouped.map((g) => (
-          <div key={g.cat} className="mt-10">
-            {filter === "__all__" && (
-              <div className="text-center">
-                <div
-                  className="text-[#F5F0E8]/50 uppercase"
-                  style={{ fontSize: 11, letterSpacing: "0.08em" }}
-                >
-                  {t.gallery_page.categories[CAT_KEY[g.cat]] || g.cat}
-                </div>
-                <div className="mx-auto mt-2 h-px" style={{ width: 20, background: "#BA9B78", opacity: 0.4 }} />
-              </div>
-            )}
-            <FanRow images={g.items} count={Math.max(g.items.length, 4)} label={t.gallery.placeholder} />
-          </div>
-        ))}
-        {grouped.length === 0 && (
-          <div className="text-center text-[#F5F0E8]/50 py-16 text-sm">—</div>
-        )}
-      </div>
-    </div>
-  );
+  return <GridGallery images={images} label={t.gallery.placeholder} />;
 }
