@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminAuthedRouteImport } from './routes/admin._authed'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin._authed.index'
@@ -78,6 +79,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/volunteers': typeof VolunteersRoute
   '/workshops': typeof WorkshopsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/api/chat': typeof ApiChatRoute
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/volunteers': typeof VolunteersRoute
   '/workshops': typeof WorkshopsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/api/chat': typeof ApiChatRoute
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/workshops': typeof WorkshopsRoute
   '/admin/_authed': typeof AdminAuthedRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/api/chat': typeof ApiChatRoute
   '/admin/_authed/content': typeof AdminAuthedContentRoute
   '/admin/_authed/donations': typeof AdminAuthedDonationsRoute
   '/admin/_authed/events': typeof AdminAuthedEventsRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/volunteers'
     | '/workshops'
     | '/admin/login'
+    | '/api/chat'
     | '/admin/content'
     | '/admin/donations'
     | '/admin/events'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/volunteers'
     | '/workshops'
     | '/admin/login'
+    | '/api/chat'
     | '/admin/content'
     | '/admin/donations'
     | '/admin/events'
@@ -250,6 +261,7 @@ export interface FileRouteTypes {
     | '/workshops'
     | '/admin/_authed'
     | '/admin/login'
+    | '/api/chat'
     | '/admin/_authed/content'
     | '/admin/_authed/donations'
     | '/admin/_authed/events'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   VolunteersRoute: typeof VolunteersRoute
   WorkshopsRoute: typeof WorkshopsRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -467,6 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   VolunteersRoute: VolunteersRoute,
   WorkshopsRoute: WorkshopsRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
