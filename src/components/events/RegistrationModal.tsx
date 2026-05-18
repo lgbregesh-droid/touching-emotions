@@ -6,6 +6,7 @@ import { registerForEvent } from "@/lib/events.functions";
 import { useQueryClient } from "@tanstack/react-query";
 import type { EventRow } from "./EventCard";
 import { formatDateParts } from "./EventCard";
+import { PrivacyConsent } from "@/components/PrivacyConsent";
 
 export function RegistrationModal({ event, onClose }: { event: EventRow; onClose: () => void }) {
   const { lang, t } = useLanguage();
@@ -16,11 +17,13 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
   const time = event.time?.slice(0, 5);
 
   const [form, setForm] = useState({ name: "", phone: "", email: "", notes: "" });
+  const [agreed, setAgreed] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errMsg, setErrMsg] = useState("");
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreed) { setErrMsg("יש לאשר את מדיניות הפרטיות"); setStatus("error"); return; }
     setStatus("sending");
     setErrMsg("");
     try {
@@ -70,6 +73,7 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
                 <textarea rows={2} className="w-full px-3 py-2 border border-[#E0D8CC] rounded-md bg-white"
                   value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
               </label>
+              <PrivacyConsent checked={agreed} onChange={setAgreed} />
               {errMsg && <div className="text-sm text-red-600">{errMsg}</div>}
               <button type="submit" disabled={status === "sending"}
                 className="w-full py-3 rounded-full bg-[#BA9B78] text-white text-sm hover:bg-[#a78865] disabled:opacity-50 transition">
