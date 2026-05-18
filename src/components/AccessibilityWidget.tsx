@@ -137,7 +137,7 @@ export function AccessibilityWidget() {
           dir="rtl"
           role="dialog"
           aria-label="הגדרות נגישות"
-          className="fixed bottom-20 left-4 z-[95] w-[300px] max-h-[75vh] overflow-y-auto rounded-xl bg-white border border-[#E0D8CC] shadow-xl p-4 text-right"
+          className="fixed bottom-20 left-4 z-[95] w-[330px] max-h-[75vh] overflow-y-auto rounded-2xl bg-white border border-[#E0D8CC] shadow-2xl p-4 text-right"
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-medium text-[#2D1B3D]">נגישות</h2>
@@ -152,27 +152,27 @@ export function AccessibilityWidget() {
 
           <div className="space-y-3 text-[13px] text-[#4A3D30]">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>גודל טקסט</span>
-                <span className="text-[#A0907A]">{Math.round(settings.fontScale * 100)}%</span>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[12px] text-[#A0907A] uppercase tracking-wider">גודל טקסט</span>
+                <span className="text-[#A0907A] text-[12px]">{Math.round(settings.fontScale * 100)}%</span>
               </div>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => update({ fontScale: Math.max(0.85, +(settings.fontScale - 0.1).toFixed(2)) })}
-                  className="flex-1 px-2 py-1 border border-[#E0D8CC] rounded hover:bg-[#F5F0E8]"
+                  className="py-2 border border-[#E0D8CC] rounded-lg hover:bg-[#F5F0E8] text-lg font-light"
                   aria-label="הקטנת טקסט"
                 >
                   −
                 </button>
                 <button
                   onClick={() => update({ fontScale: 1 })}
-                  className="flex-1 px-2 py-1 border border-[#E0D8CC] rounded hover:bg-[#F5F0E8]"
+                  className="py-2 border border-[#E0D8CC] rounded-lg hover:bg-[#F5F0E8] text-[12px]"
                 >
                   רגיל
                 </button>
                 <button
                   onClick={() => update({ fontScale: Math.min(1.6, +(settings.fontScale + 0.1).toFixed(2)) })}
-                  className="flex-1 px-2 py-1 border border-[#E0D8CC] rounded hover:bg-[#F5F0E8]"
+                  className="py-2 border border-[#E0D8CC] rounded-lg hover:bg-[#F5F0E8] text-lg font-light"
                   aria-label="הגדלת טקסט"
                 >
                   +
@@ -180,14 +180,19 @@ export function AccessibilityWidget() {
               </div>
             </div>
 
-            <Toggle label="ניגודיות גבוהה" checked={settings.highContrast} onChange={(v) => update({ highContrast: v })} />
-            <Toggle label="היפוך צבעים" checked={settings.invertColors} onChange={(v) => update({ invertColors: v })} />
-            <Toggle label="גווני אפור" checked={settings.grayscale} onChange={(v) => update({ grayscale: v })} />
-            <Toggle label="הדגשת קישורים" checked={settings.underlineLinks} onChange={(v) => update({ underlineLinks: v })} />
-            <Toggle label="גופן קריא" checked={settings.readableFont} onChange={(v) => update({ readableFont: v })} />
-            <Toggle label="הדגשת מיקוד מקלדת" checked={settings.highlightFocus} onChange={(v) => update({ highlightFocus: v })} />
-            <Toggle label="עצירת אנימציות" checked={settings.pauseAnimations} onChange={(v) => update({ pauseAnimations: v })} />
-            <Toggle label="סמן מוגדל" checked={settings.largeCursor} onChange={(v) => update({ largeCursor: v })} />
+            <div>
+              <div className="text-[12px] text-[#A0907A] uppercase tracking-wider mb-1.5">תצוגה</div>
+              <div className="grid grid-cols-2 gap-2">
+                <OptionTile label="ניגודיות גבוהה" icon="◐" active={settings.highContrast} onClick={() => update({ highContrast: !settings.highContrast })} />
+                <OptionTile label="היפוך צבעים" icon="◑" active={settings.invertColors} onClick={() => update({ invertColors: !settings.invertColors })} />
+                <OptionTile label="גווני אפור" icon="◍" active={settings.grayscale} onClick={() => update({ grayscale: !settings.grayscale })} />
+                <OptionTile label="הדגשת קישורים" icon="A̲" active={settings.underlineLinks} onClick={() => update({ underlineLinks: !settings.underlineLinks })} />
+                <OptionTile label="גופן קריא" icon="Aa" active={settings.readableFont} onClick={() => update({ readableFont: !settings.readableFont })} />
+                <OptionTile label="הדגשת מיקוד" icon="⊡" active={settings.highlightFocus} onClick={() => update({ highlightFocus: !settings.highlightFocus })} />
+                <OptionTile label="עצירת אנימציות" icon="⏸" active={settings.pauseAnimations} onClick={() => update({ pauseAnimations: !settings.pauseAnimations })} />
+                <OptionTile label="סמן מוגדל" icon="➤" active={settings.largeCursor} onClick={() => update({ largeCursor: !settings.largeCursor })} />
+              </div>
+            </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-[#E0D8CC]">
               <Link to="/accessibility" className="text-[#BA9B78] text-[12px]" onClick={() => setOpen(false)}>
@@ -207,24 +212,30 @@ export function AccessibilityWidget() {
   );
 }
 
-function Toggle({
+function OptionTile({
   label,
-  checked,
-  onChange,
+  icon,
+  active,
+  onClick,
 }: {
   label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
+  icon: string;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-2 cursor-pointer">
-      <span>{label}</span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 accent-[#BA9B78]"
-      />
-    </label>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg border transition-all text-center ${
+        active
+          ? "bg-[#2D1B3D] border-[#2D1B3D] text-white shadow-sm"
+          : "bg-white border-[#E0D8CC] text-[#4A3D30] hover:bg-[#F5F0E8] hover:border-[#BA9B78]"
+      }`}
+    >
+      <span className="text-base leading-none" aria-hidden="true">{icon}</span>
+      <span className="text-[11px] leading-tight">{label}</span>
+    </button>
   );
 }
