@@ -13,6 +13,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FloatingWidgets } from "@/components/FloatingWidgets";
+import { CookieBanner } from "@/components/CookieBanner";
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -101,6 +102,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <main className={`flex-1 ${isHome ? "" : "pt-16 md:pt-20"}`}>{children}</main>
       <Footer />
       <FloatingWidgets />
+      <CookieBanner />
       <Toaster richColors position="top-center" />
     </div>
   );

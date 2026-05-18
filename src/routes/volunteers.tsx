@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { submitVolunteer } from "@/lib/forms.functions";
+import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 
 export const Route = createFileRoute("/volunteers")({
   head: () => ({ meta: [{ title: "מתנדבים | לגעת ברגש" }] }),
@@ -15,6 +16,8 @@ function Volunteers() {
   const { t } = useLanguage();
   const submit = useServerFn(submitVolunteer);
   const [form, setForm] = useState({ name: "", phone: "", profession: "", interest: "" });
+  const [agreed, setAgreed] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -23,6 +26,7 @@ function Volunteers() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
+    if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
     setLoading(true);
     try {
       await submit({ data: form });
@@ -56,6 +60,10 @@ function Volunteers() {
               <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
               <Field label={t.volunteers_page.field_role} value={form.profession} onChange={upd("profession")} />
               <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
+              <div className="space-y-2 pt-1">
+                <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                <MarketingConsent checked={marketing} onChange={setMarketing} />
+              </div>
               <button disabled={loading} className="w-full py-3.5 bg-[#BA9B78] hover:bg-[#a98968] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
                 {loading ? t.volunteers_page.sending : t.volunteers_page.btn}
               </button>

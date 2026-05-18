@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { submitContact } from "@/lib/forms.functions";
+import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
+import { EmergencyBox } from "@/routes/disclaimer";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [{ title: "צור קשר | לגעת ברגש" }] }),
@@ -15,6 +17,8 @@ function Contact() {
   const { t } = useLanguage();
   const submit = useServerFn(submitContact);
   const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
+  const [agreed, setAgreed] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -23,6 +27,7 @@ function Contact() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.message.trim()) return;
+    if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
     setLoading(true);
     try {
       await submit({ data: form });
@@ -62,6 +67,10 @@ function Contact() {
                     <Field label={t.contact_page.field_subject} value={form.subject} onChange={upd("subject")} />
                   </div>
                   <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
+                  <div className="space-y-2 pt-1">
+                    <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                    <MarketingConsent checked={marketing} onChange={setMarketing} />
+                  </div>
                   <button disabled={loading} className="w-full py-3.5 bg-[#BA9B78] hover:bg-[#a98968] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
                     {loading ? t.contact_page.sending : t.contact_page.btn}
                   </button>
@@ -82,6 +91,9 @@ function Contact() {
               </div>
             </div>
           </Reveal>
+        </div>
+        <div className="mt-10">
+          <EmergencyBox />
         </div>
       </div>
     </section>
