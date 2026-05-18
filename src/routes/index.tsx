@@ -138,9 +138,14 @@ function Home() {
           <Reveal delay={0.1}>
             <div className="relative bg-white rounded-2xl p-6 md:p-7 border border-[#E0D8CC] shadow-sm h-full flex items-center" style={{ borderRight: "4px solid #BA9B78" }}>
               <div className="absolute -top-3 right-5 text-6xl text-[#BA9B78] font-serif leading-none">"</div>
-              <p className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed">
+              <TextEffect
+                per="word"
+                preset="blur"
+                as="p"
+                className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed"
+              >
                 {t.about_teaser.quote}
-              </p>
+              </TextEffect>
             </div>
           </Reveal>
         </div>
