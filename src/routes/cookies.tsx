@@ -13,7 +13,7 @@ export const Route = createFileRoute("/cookies")({
 function CookiesPage() {
   return (
     <article className="py-10 md:py-14 px-6 bg-[#F5F0E8]" dir="rtl">
-      <div className="max-w-2xl mx-auto bg-white rounded-xl border border-[#E0D8CC] p-6 md:p-8 space-y-4 text-[#4A3D30] leading-relaxed">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl border border-[#E0D8CC] p-6 md:p-8 space-y-4 text-[13px] text-[#4A3D30] leading-relaxed">
         <header>
           <h1 className="text-2xl md:text-3xl font-light text-[#2D1B3D] mb-3">מדיניות עוגיות</h1>
           <p className="text-xs text-[#A0907A]">עודכן לאחרונה: מאי 2026</p>
