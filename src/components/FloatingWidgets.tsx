@@ -4,6 +4,9 @@ import { MessageCircle, X, Send } from "lucide-react";
 const WHATSAPP_URL =
   "https://wa.me/972528040787?text=" +
   encodeURIComponent("שלום, אני רוצה לדעת עוד על עמותת לגעת ברגש");
+const CONTACT_URL = "/contact";
+const ERROR_MESSAGE =
+  "כרגע יש תקלה בצ׳אט. אפשר לפנות אלינו ישירות בוואטסאפ או להשאיר פרטים בעמוד צור קשר ונחזור אליכם 💙";
 
 const OPENING = "שלום! אני הבוט של לגעת ברגש 💙 מה מביא אותך אלינו היום?";
 
@@ -38,14 +41,14 @@ export function FloatingWidgets() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
-      if (!res.ok) throw new Error(await res.text());
-      const data = (await res.json()) as { reply: string };
-      setMessages((m) => [...m, { role: "assistant", content: data.reply || "..." }]);
+      const data = (await res.json().catch(() => ({ reply: "" }))) as { reply?: string };
+      if (!res.ok) throw new Error(data.reply || (await res.text().catch(() => "Chat error")));
+      setMessages((m) => [...m, { role: "assistant", content: data.reply || ERROR_MESSAGE }]);
     } catch (err) {
       console.error(err);
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: "מצטער, הייתה תקלה. נסו שוב בעוד רגע 💙" },
+        { role: "assistant", content: ERROR_MESSAGE },
       ]);
     } finally {
       setLoading(false);
@@ -104,6 +107,24 @@ export function FloatingWidgets() {
                   }`}
                 >
                   {m.content}
+                  {m.role === "assistant" && m.content === ERROR_MESSAGE && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <a
+                        href={WHATSAPP_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-full bg-[#4E8C85] px-3 py-1 text-xs text-white transition hover:opacity-90"
+                      >
+                        וואטסאפ
+                      </a>
+                      <a
+                        href={CONTACT_URL}
+                        className="rounded-full border border-[#BA9B78] px-3 py-1 text-xs text-[#2D1B3D] transition hover:bg-[#F5F0E8]"
+                      >
+                        צור קשר
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
