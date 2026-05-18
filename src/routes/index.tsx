@@ -71,7 +71,7 @@ function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden -mt-16 md:-mt-20 pt-16 md:pt-20">
+      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-20 md:pt-24 pb-12">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src="/hero.mp4"
