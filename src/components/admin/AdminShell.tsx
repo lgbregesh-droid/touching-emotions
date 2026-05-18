@@ -8,7 +8,7 @@ const items = [
   { to: "/admin/inquiries", label: "פניות וטפסים", icon: Mail },
   { to: "/admin/events", label: "אירועים", icon: Calendar },
   { to: "/admin/workshops", label: "סדנאות", icon: Calendar },
-  { to: "/admin/shop", label: "חנות", icon: ShoppingBag },
+  { to: "/admin/shop", label: "מוצרים", icon: ShoppingBag },
   { to: "/admin/donations", label: "תרומות", icon: Heart },
   { to: "/admin/content", label: "תוכן האתר", icon: FileText },
   { to: "/admin/gallery", label: "גלריה", icon: Image },

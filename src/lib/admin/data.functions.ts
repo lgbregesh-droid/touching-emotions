@@ -142,6 +142,54 @@ export const listWorkshopRegistrants = createServerFn({ method: "POST" })
   });
 
 // ---------- Shop ----------
+const ProductValues = z.object({
+  name_he: z.string().min(1).max(200),
+  name_en: z.string().max(200).optional().nullable(),
+  desc_he: z.string().max(2000).optional().nullable(),
+  desc_en: z.string().max(2000).optional().nullable(),
+  price: z.number().min(0),
+  image_url: z.string().max(1000).optional().nullable(),
+  in_stock: z.boolean(),
+});
+
+export const listProducts = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object(tokenField).parse(i))
+  .handler(async () => {
+    const { data, error } = await supabaseAdmin.from("products").select("*").order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return { rows: data };
+  });
+
+export const createProduct = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, values: ProductValues }).parse(i))
+  .handler(async ({ data }) => {
+    const slug = `p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    const { error } = await supabaseAdmin.from("products").insert({ ...data.values, slug });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const updateProductById = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, id: z.string().uuid(), values: ProductValues }).parse(i))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("products").update(data.values).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteProductById = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) => z.object({ ...tokenField, id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("products").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// Legacy single-product fns (kept for compatibility — unused by new UI)
 export const getProduct = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object(tokenField).parse(i))
@@ -153,20 +201,7 @@ export const getProduct = createServerFn({ method: "POST" })
 
 export const updateProduct = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
-  .inputValidator((i: unknown) =>
-    z.object({
-      ...tokenField,
-      values: z.object({
-        name_he: z.string().min(1).max(200),
-        name_en: z.string().max(200).optional().nullable(),
-        desc_he: z.string().max(2000).optional().nullable(),
-        desc_en: z.string().max(2000).optional().nullable(),
-        price: z.number().min(0),
-        image_url: z.string().max(1000).optional().nullable(),
-        in_stock: z.boolean(),
-      }),
-    }).parse(i),
-  )
+  .inputValidator((i: unknown) => z.object({ ...tokenField, values: ProductValues }).parse(i))
   .handler(async ({ data }) => {
     const { error } = await supabaseAdmin.from("products").update(data.values).eq("slug", "cards");
     if (error) throw new Error(error.message);
