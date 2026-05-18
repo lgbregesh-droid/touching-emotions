@@ -12,7 +12,6 @@ import appCss from "../styles.css?url";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ChatWidget } from "@/components/ChatWidget";
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -100,7 +99,6 @@ function Layout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main className={`flex-1 ${isHome ? "" : "pt-16 md:pt-20"}`}>{children}</main>
       <Footer />
-      <ChatWidget />
       <Toaster richColors position="top-center" />
     </div>
   );
