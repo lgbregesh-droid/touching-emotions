@@ -74,6 +74,10 @@ OUTPUT STYLE
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
+const GEMINI_MODEL = "gemini-2.5-flash";
+const FALLBACK_REPLY =
+  "כרגע יש תקלה בצ׳אט. אפשר לפנות אלינו ישירות בוואטסאפ או להשאיר פרטים בעמוד צור קשר ונחזור אליכם 💙";
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
@@ -92,13 +96,17 @@ export const Route = createFileRoute("/api/chat")({
           }));
 
           const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 contents,
                 systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                generationConfig: {
+                  temperature: 0.45,
+                  maxOutputTokens: 1024,
+                },
               }),
             },
           );
@@ -106,17 +114,29 @@ export const Route = createFileRoute("/api/chat")({
           if (!res.ok) {
             const text = await res.text();
             console.error("Gemini error", res.status, text);
-            return new Response(text || "AI error", { status: res.status });
+            return Response.json({ reply: FALLBACK_REPLY }, { status: 502 });
           }
           const data = (await res.json()) as {
-            candidates?: { content?: { parts?: { text?: string }[] } }[];
+            candidates?: {
+              finishReason?: string;
+              content?: { parts?: { text?: string }[] };
+            }[];
           };
+          const finishReason = data.candidates?.[0]?.finishReason;
+          if (finishReason && !["STOP", "MAX_TOKENS"].includes(finishReason)) {
+            console.error("Gemini finish reason", finishReason);
+            return Response.json({ reply: FALLBACK_REPLY }, { status: 502 });
+          }
           const reply =
             data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+          if (!reply.trim()) {
+            console.error("Gemini empty response", data);
+            return Response.json({ reply: FALLBACK_REPLY }, { status: 502 });
+          }
           return Response.json({ reply });
         } catch (err) {
           console.error("chat error", err);
-          return new Response("Server error", { status: 500 });
+          return Response.json({ reply: FALLBACK_REPLY }, { status: 500 });
         }
       },
     },
