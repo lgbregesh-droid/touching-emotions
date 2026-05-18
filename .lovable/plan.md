@@ -1,104 +1,62 @@
-# תוכנית: דאשבורד ניהול לאתר לגעת ברגש
+## Redesign: עיצוב עשיר יותר לאתר "לגעת ברגש" — שמירה על פלטת הצבעים הקיימת
 
-מערכת ניהול מלאה ב-`/admin/*`, מוגנת בסיסמה, באותה שפת עיצוב של האתר הציבורי. ההיקף גדול — אבנה אותו במשלוח אחד מקצה לקצה, עם כל הטבלאות, ההעלאות והעדכונים.
+נשמור על הפלטה הקיימת (סגול עמוק `#2D1B3D`, זהב/חרדל `#BA9B78`, קרם `#F5F0E8`, מרווה `#4E8C85`, בז' חמים `#EDE6DC`). המטרה: למלא את האתר בתוכן, תמונות, וריאציה ויזואלית — בלי לשנות צבעים או טוקנים.
 
-## 1. סכימת מסד הנתונים (מיגרציה אחת)
+### שינוי מרכזי
 
-טבלאות חדשות / שינויים:
-- `contact_messages`: הוספת `status` (`new` / `handled`, ברירת מחדל `new`).
-- `volunteers`: הוספת `status` זהה.
-- `workshops`: he/en שם+תיאור, date, time, location, audience, price, max_participants, image_url, status (`open`/`closed`/`ended`), order_index.
-- `workshop_registrants`: workshop_id (FK), name, phone, email.
-- `products`: מוצר יחיד (קלפים) — שם he/en, תיאור he/en, price, image_url, in_stock.
-- `orders`: buyer_name, email, phone, quantity, amount, shipping_status (`pending`/`shipped`/`delivered`).
-- `donations` (read-only mirror): name, email, amount, type (`one_time`/`recurring`), status, created_at. נשלוף מ-Stripe מאוחר יותר; כרגע ריק עם UI מוכן.
-- `site_content`: key (unique), value_he, value_en, updated_at — לכל שדות ה-CMS של דף הבית/אודות/סדנאות.
-- `gallery`: url, storage_path, order_index, featured (bool), created_at. אילוץ: לא יותר מ-8 featured (אכיפה ב-trigger).
-- Storage buckets: `gallery` (public read), `workshops` (public read), `products` (public read).
+הדף הבית מורחב ל-10 סקציות עשירות במקום הלייאאוט המינימליסטי הנוכחי. ההירו נשאר על וידאו/רקע סגול עמוק (אהוב על המשתמש), אבל נוסיף תחתיו רצועת badges ברורה ובהמשך הדף נשבור את הריקנות עם הרבה כרטיסים, תמונות וסקציות חמות בבז'/קרם.
 
-RLS:
-- כל הטבלאות: קריאה ציבורית רק היכן שהאתר הציבורי צריך (workshops עם status≠draft, products, gallery, site_content). Insert ציבורי רק ל-`contact_messages`, `volunteers`, `workshop_registrants`.
-- כל יתר הפעולות (update/delete/admin reads) עוברות דרך **server functions** עם `supabaseAdmin` אחרי אימות סיסמת אדמין — אין אדמין בצד הלקוח שעוקף RLS.
+### דף הבית — 10 סקציות (`src/routes/index.tsx`)
 
-## 2. אימות אדמין
+1. **Hero** — נשאר עם הוידאו הקיים, אבל:
+   - כותרת חדשה: "לגעת ברגש. לבנות חוסן מבפנים."
+   - תת-כותרת חדשה (סדנאות, הרצאות ומפגשים חווייתיים לילדים, נוער וקהילות)
+   - 2 CTAs: "לתיאום סדנה או הרצאה" / "לצפייה בפעילויות"
+   - 3 badges זוהרים מתחת ל-CTA: לילדים ונוער / למוסדות חינוך וקהילות / סדנאות והרצאות מותאמות
+2. **מי אנחנו** — סקציית בז' חמה עם הסבר קצר + כרטיס ציטוט עם accent חרדל: "התחלה של דרך חדשה היא קשה, אבל לא כמו להישאר במצב שלא מתאים לך."
+3. **למי זה מיועד** — 5 כרטיסים עשירים עם אייקון lucide ו-2-3 שורות תיאור: ילדים / בני נוער / מוסדות חינוך / רכזי נוער ומדריכים / הורים וקהילות. רקע קרם, מסגרות בז'.
+4. **מה אנחנו מציעים** — 6 כרטיסי שירות (תמונה למעלה, כותרת, תיאור, "מתאים ל…", כפתור CTA): סדנאות חוסן רגשי / סדנאות לילדים ונוער / הרצאות למוסדות חינוך / מפגשים קבוצתיים / הכשרות מקצועיות / פעילויות חווייתיות.
+5. **איך סדנה עובדת** — timeline בן 4 שלבים על רקע סגול עמוק (שיחת היכרות → הבנת הצורך → התאמת הסדנה → מפגש חווייתי ומעצים).
+6. **השפעה** — 6 כרטיסים על בז' (ביטחון עצמי, תקשורת, ביטוי רגשות, שייכות, כלים להתמודדות, חיבור קבוצתי) עם אייקונים.
+7. **גלריה** — נשאר `HomeGallery` הקיים אבל עם 6 תמונות במבנה מאסונרי, על רקע סגול עמוק (כמו עכשיו).
+8. **המלצות** — 4 כרטיסי המלצה (מנהלת בית ספר, רכזת נוער, הורה, משתתפת) עם מירכאות חרדל גדולות.
+9. **תמיכה בעשייה** — סקציה שמסבירה ש"המוצרים הנלווים" הם פריטים סמליים שתומכים בעמותה, לא חנות מסחרית. CTA לדף `/shop`.
+10. **CTA סופי** — באנר חמים סוגר עם כפתור "לתיאום סדנה" + כפתור וואטסאפ.
 
-- סוד חדש: `ADMIN_PASSWORD` (אבקש מהמשתמש להזין).
-- Server function `adminLogin({ password })` משווה ל-`process.env.ADMIN_PASSWORD`, ובהצלחה מחזיר טוקן חתום (HMAC עם `ADMIN_SESSION_SECRET` שייווצר אוטומטית או יתבקש) שתוקפו 24 שעות.
-- הטוקן נשמר ב-`localStorage` ונשלח כ-`data.token` בכל קריאה לפעולת אדמין; middleware משותף `requireAdmin` מאמת אותו.
-- `/admin/login` ציבורי. שאר `/admin/*` תחת layout שמוודא טוקן תקף ב-`beforeLoad`, אחרת `redirect` ל-login.
+### שינויי ניווט וקופי (`src/i18n/translations.ts`)
 
-## 3. מבנה קוד
+- `nav.shop`: "מוצרים נלווים" → "תמיכה בעשייה"
+- `nav.workshops`: "סדנאות" → "סדנאות ופעילויות"
+- `nav.events`: "אירועים קרובים" → "הרצאות ומפגשים"
+- בלוק `home` חדש עם כל הקופי לסקציות החדשות (קהלי יעד, שירותים, תהליך, השפעה, המלצות, תמיכה, CTA סופי)
+- עדכון `hero` עם הכותרת/תת-הכותרת/CTAs החדשים
+- שמירה על שפה כללית (לא רק נשית) — קהלים מנוסחים בלשון כוללת
 
-```
-src/routes/admin/
-  login.tsx
-  _layout.tsx           // sidebar + header + auth guard
-  index.tsx             // Dashboard
-  inquiries.tsx
-  workshops.tsx
-  shop.tsx
-  donations.tsx
-  content.tsx
-  gallery.tsx
-src/components/admin/
-  AdminSidebar.tsx, AdminHeader.tsx, StatusBadge.tsx,
-  ConfirmDialog.tsx, DataTable.tsx, ImageDropzone.tsx, BilingualField.tsx
-src/lib/admin/
-  auth.functions.ts     // adminLogin, verifySession
-  inquiries.functions.ts
-  workshops.functions.ts
-  shop.functions.ts
-  donations.functions.ts
-  content.functions.ts
-  gallery.functions.ts  // upload, toggle featured, reorder, delete
-src/lib/admin/session.ts // localStorage helpers (client-safe)
-```
+### תמונות
 
-כל ה-`*.functions.ts` יהיו דקים: רק `createServerFn` + middleware `requireAdmin` שמייבא `supabaseAdmin` מ-`client.server`.
+ייצור 6 תמונות חמות (fast, .jpg) ל-`src/assets/home/`: סדנת ילדים, מעגל נוער, מנחה עם קבוצה, מסגרת בית ספרית, חיבור הורה-ילד, התכנסות קהילתית. ישומשו בכרטיסי "מה אנחנו מציעים" וכ-fallback לגלריה.
 
-## 4. מסכים (סיכום קצר)
+### קבצים
 
-1. **לוח בקרה** — 4 כרטיסי סיכום (פניות חדשות, מתנדבים השבוע, תרומות החודש, סדנה קרובה) + 10 פעילויות אחרונות (UNION ALL מהטבלאות).
-2. **פניות וטפסים** — שני טאבים (פניות / מתנדבים), טבלה עם חיפוש/פילטר/תאריך, toggle סטטוס, modal לפרטים, מחיקה, ייצוא CSV בצד לקוח.
-3. **סדנאות** — רשת כרטיסים, modal הוספה/עריכה דו-לשוני, שכפול, מודל נרשמים, toggle סטטוס.
-4. **חנות** — טופס עריכת מוצר יחיד עם העלאת תמונה, מתחת טבלת הזמנות עם שינוי סטטוס משלוח + CSV.
-5. **תרומות** — כרטיסי סיכום + טבלה (read-only), פילטר חודש/סוג, באנר Stripe, קישור חיצוני. אם אין נתונים עדיין → empty state עם הסבר.
-6. **תוכן האתר** — 3 טאבים, שדות דו-לשוניים (RTL ימין, LTR שמאל), שמירה/ביטול לכל טאב. seed ראשוני יזין את הטקסטים הקיימים מ-`translations.ts` כדי שהאתר ימשיך לעבוד.
-7. **גלריה** — Dropzone (jpg/png/webp, 5MB, multi), העלאה ל-Storage עם progress, רשת תמונות עם כוכב featured (אכיפת מקסימום 8 + toast), מחיקה (Storage + DB), גרירה לסידור מחדש (`@dnd-kit/sortable`).
+**עריכה:**
+- `src/routes/index.tsx` — שכתוב מלא ל-10 סקציות
+- `src/i18n/translations.ts` — תוספת `home` + שינוי תוויות nav + עדכון hero
+- `src/components/Navbar.tsx` — אם צריך לסדר תוויות חדשות (ללא שינוי מבני)
 
-## 5. אינטגרציה עם האתר הציבורי
+**יצירה:**
+- `src/components/home/AudienceCard.tsx`
+- `src/components/home/ServiceCard.tsx`
+- `src/components/home/ProcessTimeline.tsx`
+- `src/components/home/ImpactGrid.tsx`
+- `src/components/home/TestimonialsRow.tsx`
+- `src/components/home/SupportTeaser.tsx`
+- 6 תמונות ב-`src/assets/home/`
 
-- `index.tsx` → קורא `gallery` עם `featured=true` (במקום הפלייסהולדרים), `site_content` לטקסטים.
-- `workshops.tsx` הציבורי → רשימת סדנאות אמיתית מה-DB + טופס הרשמה שנכתב ל-`workshop_registrants`.
-- `shop.tsx` → קורא `products` (פריט אחד) + מציג "אזל המלאי" כשצריך.
-- `gallery.tsx` הציבורי → כל הגלריה לפי `order_index`.
-- `LanguageContext` ימשיך לעבוד; שדות שלא נמצאים ב-`site_content` ייפלו חזרה ל-translations.ts.
+**ללא שינוי:** פלטת הצבעים ב-`src/styles.css`, כל דפי הניהול, פונקציות השרת, סכמת DB, אימות, וכל שאר הדפים הציבוריים.
 
-## 6. התראות מייל לפניות
+### מחוץ לסקופ
 
-- Server route `src/routes/api/public/notify-inquiry.ts` שמופעל מיד אחרי insert מוצלח של פנייה/מתנדב (נקרא בתוך אותה server function כדי לא לחשוף webhook).
-- שולח דרך **Resend connector** ל-`l.g.bregesh@gmail.com`.
-- צריך `RESEND_API_KEY` (אבקש דרך connectors).
+- אין שינויים ב-DB (המלצות יישבו בקוד; אפשר בעתיד להעביר ל-CMS)
+- שאר הדפים הפנימיים נשארים כמו שהם
 
-## 7. סודות שאבקש מהמשתמש
-
-- `ADMIN_PASSWORD` (חובה לפני שהאדמין יעבוד).
-- `RESEND_API_KEY` (אופציונלי — בלעדיו האדמין יעבוד אבל בלי מיילים).
-- אינטגרציית Stripe להצגת תרומות אמיתיות תיעשה בסבב נפרד כשהמשתמש יחבר Stripe.
-
-## 8. סדר ביצוע במשלוח אחד
-
-1. הרצת מיגרציה אחת (כל הטבלאות + RLS + triggers + buckets + seed `site_content`).
-2. בקשת `ADMIN_PASSWORD` (חוסם המשך עד שהמשתמש מזין).
-3. כתיבת auth + layout + sidebar.
-4. כתיבת 7 המסכים + server functions.
-5. חיווט האתר הציבורי לקרוא מה-DB.
-6. בדיקה: build + לוגין + יצירת סדנה + העלאת תמונה.
-
-## פרטים טכניים
-- חבילות חדשות: `@dnd-kit/core`, `@dnd-kit/sortable`, `react-dropzone`.
-- אין שימוש ב-Supabase Auth — אימות בסיסמה אחת בלבד כפי שהוגדר.
-- כל הטבלאות נטולות `auth.users` FK.
-- הסיכון העיקרי: היקף גדול → ייתכן שיידרש סבב תיקונים אחרי בנייה ראשונה. אעבוד מהר ואצמצם בלוט.
-
-מאשר/ת? אם תרצי שינוי כלשהו (למשל: לדחות את הגלריה/חנות לסבב הבא, או לוותר על מיילים) — תגידי לפני שאני מתחיל.
+מאשרת? אבנה.
