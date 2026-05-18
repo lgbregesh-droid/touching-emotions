@@ -40,27 +40,29 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
 
   if (compact) {
     return (
-      <div className="bg-white border border-[#E0D8CC] rounded-xl p-5 hover:-translate-y-1 hover:shadow-md transition flex flex-col h-full">
-        <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg text-[#BA9B78] text-sm font-medium mb-3 w-fit"
-          style={{ background: "rgba(186,155,120,0.08)" }}>
-          {day} {month}
+      <div className="bg-white border border-[#E0D8CC] rounded-xl p-4 hover:-translate-y-1 hover:shadow-md transition flex flex-col h-full">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="inline-flex items-center justify-center px-2 py-0.5 rounded-md text-[#BA9B78] text-xs font-medium"
+            style={{ background: "rgba(186,155,120,0.08)" }}>
+            {day} {month}
+          </div>
+          <span className="inline-block px-2 py-0.5 text-[10px] rounded-full border"
+            style={{ borderColor: "rgba(78,140,133,0.4)", color: "#2D1B3D" }}>{typeLabel}</span>
         </div>
-        <span className="inline-block px-2.5 py-0.5 text-xs rounded-full border w-fit mb-2"
-          style={{ borderColor: "rgba(78,140,133,0.4)", color: "#2D1B3D" }}>{typeLabel}</span>
-        <h3 className="text-base font-medium text-[#2D1B3D] mb-1">{title}</h3>
-        <div className="flex items-center gap-3 text-xs text-[#A0907A] mb-2 flex-wrap">
-          {time && <span className="flex items-center gap-1"><Clock size={12} />{time}</span>}
-          {loc && <span className="flex items-center gap-1"><MapPin size={12} />{loc}</span>}
+        <h3 className="text-sm font-medium text-[#2D1B3D] mb-1 line-clamp-1">{title}</h3>
+        <div className="flex items-center gap-3 text-[11px] text-[#A0907A] mb-1.5 flex-wrap">
+          {time && <span className="flex items-center gap-1"><Clock size={11} />{time}</span>}
+          {loc && <span className="flex items-center gap-1"><MapPin size={11} />{loc}</span>}
         </div>
-        {desc && <p className="text-xs text-[#4A3D30] leading-relaxed mb-3 line-clamp-2">{desc}</p>}
-        <div className="mt-auto flex items-center justify-between pt-3">
-          <span className={`text-xs ${lowSpots ? "text-[#BA9B78] font-medium" : "text-[#A0907A]"}`}>
+        {desc && <p className="text-[11px] text-[#4A3D30] leading-relaxed mb-2 line-clamp-2">{desc}</p>}
+        <div className="mt-auto flex items-center justify-between pt-2">
+          <span className={`text-[11px] ${lowSpots ? "text-[#BA9B78] font-medium" : "text-[#A0907A]"}`}>
             {isFull ? t.events_home.full : `${event.spots_remaining} ${t.events_page.spots_left}`}
           </span>
           <button
             onClick={() => onRegister(event)}
             disabled={isFull}
-            className="text-xs px-4 py-1.5 rounded-full border border-[#BA9B78] text-[#BA9B78] hover:bg-[#BA9B78] hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-[11px] px-3 py-1 rounded-full border border-[#BA9B78] text-[#BA9B78] hover:bg-[#BA9B78] hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t.events_home.register}
           </button>
