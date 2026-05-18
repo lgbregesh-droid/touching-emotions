@@ -14,6 +14,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FloatingWidgets } from "@/components/FloatingWidgets";
 import { CookieBanner } from "@/components/CookieBanner";
+import { AccessibilityWidget } from "@/components/AccessibilityWidget";
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
@@ -103,6 +104,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <Footer />
       <FloatingWidgets />
       <CookieBanner />
+      <AccessibilityWidget />
       <Toaster richColors position="top-center" />
     </div>
   );

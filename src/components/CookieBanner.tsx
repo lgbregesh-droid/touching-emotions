@@ -45,10 +45,6 @@ export function CookieBanner() {
     writeConsent({ essential: true, analytics: true, marketing: true });
     setShow(false);
   };
-  const rejectAll = () => {
-    writeConsent({ essential: true, analytics: false, marketing: false });
-    setShow(false);
-  };
   const savePrefs = () => {
     writeConsent({ essential: true, analytics, marketing });
     setShow(false);
@@ -60,62 +56,49 @@ export function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="הודעת עוגיות"
-      className="fixed bottom-4 inset-x-4 md:inset-x-auto md:right-6 md:left-6 z-[90] mx-auto max-w-3xl rounded-2xl bg-white border border-[#E0D8CC] shadow-xl p-5 md:p-6"
+      className="fixed bottom-3 right-3 left-3 md:left-auto md:right-4 z-[90] w-auto md:w-[320px] rounded-xl bg-white border border-[#E0D8CC] shadow-lg p-3 md:p-4 text-right"
     >
-      <h2 className="text-base md:text-lg font-medium text-[#2D1B3D] mb-1">
-        אנחנו משתמשים בעוגיות 🍪
-      </h2>
-      <p className="text-sm text-[#4A3D30] leading-relaxed">
-        האתר משתמש בעוגיות חיוניות לתפקודו, ובאישורך גם בעוגיות אנליטיקה כדי
-        לשפר את החוויה. ניתן לקרוא עוד ב
-        <Link to="/cookies" className="text-[#BA9B78] mx-1">מדיניות עוגיות</Link>
-        וב
-        <Link to="/privacy" className="text-[#BA9B78] mx-1">מדיניות פרטיות</Link>.
+      <p className="text-[13px] text-[#4A3D30] leading-relaxed">
+        אנו משתמשים בעוגיות לשיפור החוויה. פרטים ב
+        <Link to="/cookies" className="text-[#BA9B78] mx-1">מדיניות עוגיות</Link>.
       </p>
 
       {manage && (
-        <div className="mt-4 space-y-2 text-sm text-[#4A3D30] border-t border-[#E0D8CC] pt-4">
+        <div className="mt-3 space-y-1.5 text-[12px] text-[#4A3D30] border-t border-[#E0D8CC] pt-3">
           <label className="flex items-center gap-2 opacity-70">
             <input type="checkbox" checked readOnly />
-            עוגיות חיוניות (תמיד פעילות)
+            עוגיות חיוניות
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} />
-            עוגיות אנליטיקה
+            אנליטיקה
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
-            עוגיות שיווק
+            שיווק
           </label>
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2 justify-end">
-        {!manage && (
+      <div className="mt-3 flex flex-wrap gap-2 justify-end">
+        {!manage ? (
           <button
             onClick={() => setManage(true)}
-            className="px-4 py-2 rounded-full border border-[#E0D8CC] text-sm text-[#4A3D30] hover:bg-[#F5F0E8]"
+            className="px-3 py-1.5 rounded-full border border-[#E0D8CC] text-[12px] text-[#4A3D30] hover:bg-[#F5F0E8]"
           >
-            ניהול העדפות
+            בחירה ידנית
           </button>
-        )}
-        {manage && (
+        ) : (
           <button
             onClick={savePrefs}
-            className="px-4 py-2 rounded-full border border-[#E0D8CC] text-sm text-[#4A3D30] hover:bg-[#F5F0E8]"
+            className="px-3 py-1.5 rounded-full border border-[#E0D8CC] text-[12px] text-[#4A3D30] hover:bg-[#F5F0E8]"
           >
-            שמירת העדפות
+            שמירה
           </button>
         )}
         <button
-          onClick={rejectAll}
-          className="px-4 py-2 rounded-full border border-[#E0D8CC] text-sm text-[#4A3D30] hover:bg-[#F5F0E8]"
-        >
-          דחייה
-        </button>
-        <button
           onClick={acceptAll}
-          className="px-5 py-2 rounded-full bg-[#BA9B78] hover:bg-[#a98968] text-white text-sm"
+          className="px-4 py-1.5 rounded-full bg-[#BA9B78] hover:bg-[#a98968] text-white text-[12px]"
         >
           אישור הכל
         </button>
