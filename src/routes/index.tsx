@@ -14,6 +14,8 @@ import { ServiceCard } from "@/components/home/ServiceCard";
 import { ProcessTimeline } from "@/components/home/ProcessTimeline";
 import { ImpactGrid } from "@/components/home/ImpactGrid";
 import { TestimonialsRow } from "@/components/home/TestimonialsRow";
+import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
+import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
