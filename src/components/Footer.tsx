@@ -24,38 +24,35 @@ export function Footer() {
   return (
     <footer className="relative bg-[#2D1B3D] text-[#F5F0E8] mt-0">
       <div className="shimmer-line" />
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-14 md:py-20">
-        <div className="grid md:grid-cols-4 gap-10 md:gap-12">
-          <div className="space-y-4">
-            <img src={logo} alt="לגעת ברגש" className="h-14 w-auto brightness-0 invert" />
-            <p className="text-sm text-[#F5F0E8]/50 tracking-wide">{t.footer.tagline}</p>
+      <div className="max-w-7xl mx-auto px-6 md:px-10 py-8 md:py-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+          <div className="col-span-2 md:col-span-2 space-y-2">
+            <img src={logo} alt="לגעת ברגש" className="h-10 w-auto brightness-0 invert" />
+            <p className="text-xs text-[#F5F0E8]/50 tracking-wide max-w-xs">{t.footer.tagline}</p>
           </div>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+          <div className="flex flex-col gap-1.5">
+            <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">ניווט</p>
             {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} className="text-sm text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">
+              <Link key={l.to} to={l.to} className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">
                 {l.label}
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">מידע משפטי</p>
+          <div className="flex flex-col gap-1.5">
+            <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">משפטי</p>
             {legalLinks.map((l) => (
-              <Link key={l.to} to={l.to} className="text-sm text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">
+              <Link key={l.to} to={l.to} className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">
                 {l.label}
               </Link>
             ))}
           </div>
-          <div className="space-y-3 text-sm">
-            <p className="text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">צרו קשר</p>
-            <p className="text-[#F5F0E8]/55">
-              <a href="mailto:l.g.bregesh@gmail.com" className="hover:text-[#BA9B78] transition-colors">l.g.bregesh@gmail.com</a>
-            </p>
-            <p>
-              <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">Facebook</a>
-            </p>
+          <div className="flex flex-col gap-1.5">
+            <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">צרו קשר</p>
+            <a href="mailto:l.g.bregesh@gmail.com" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors break-all">l.g.bregesh@gmail.com</a>
+            <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">Facebook</a>
           </div>
         </div>
-        <div className="mt-12 pt-6 border-t border-[#BA9B78]/20 text-center text-xs text-[#F5F0E8]/35 tracking-wide">
+        <div className="mt-6 pt-4 border-t border-[#BA9B78]/20 text-center text-[10px] text-[#F5F0E8]/35 tracking-wide">
           {t.footer.rights}
         </div>
       </div>

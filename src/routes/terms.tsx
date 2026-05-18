@@ -12,11 +12,11 @@ export const Route = createFileRoute("/terms")({
 
 function TermsPage() {
   return (
-    <article className="py-16 md:py-24 px-6 bg-[#F5F0E8]" dir="rtl">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-12 space-y-6 text-[#4A3D30] leading-relaxed">
+    <article className="py-10 md:py-14 px-6 bg-[#F5F0E8]" dir="rtl">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl border border-[#E0D8CC] p-6 md:p-8 space-y-4 text-[13px] text-[#4A3D30] leading-relaxed">
         <header>
-          <h1 className="text-3xl md:text-5xl font-extralight text-[#2D1B3D] mb-3">תנאי שימוש</h1>
-          <p className="text-sm text-[#A0907A]">עודכן לאחרונה: מאי 2026</p>
+          <h1 className="text-2xl md:text-3xl font-light text-[#2D1B3D] mb-3">תנאי שימוש</h1>
+          <p className="text-xs text-[#A0907A]">עודכן לאחרונה: מאי 2026</p>
         </header>
 
         <p>
@@ -84,8 +84,8 @@ function TermsPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-2">
-      <h2 className="text-xl md:text-2xl font-light text-[#2D1B3D]">{title}</h2>
-      <div className="text-[15px]">{children}</div>
+      <h2 className="text-base md:text-lg font-medium text-[#2D1B3D]">{title}</h2>
+      <div className="text-[13px] leading-relaxed">{children}</div>
     </section>
   );
 }

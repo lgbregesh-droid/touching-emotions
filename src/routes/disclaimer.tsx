@@ -12,12 +12,12 @@ export const Route = createFileRoute("/disclaimer")({
 
 function DisclaimerPage() {
   return (
-    <article className="py-16 md:py-24 px-6 bg-[#F5F0E8]" dir="rtl">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-12 text-[#4A3D30] leading-relaxed space-y-6">
+    <article className="py-10 md:py-14 px-6 bg-[#F5F0E8]" dir="rtl">
+      <div className="max-w-2xl mx-auto space-y-4">
+        <div className="bg-white rounded-xl border border-[#E0D8CC] p-6 md:p-8 text-[13px] text-[#4A3D30] leading-relaxed space-y-4">
           <header>
-            <h1 className="text-3xl md:text-5xl font-extralight text-[#2D1B3D] mb-3">דיסקליימר — אינו טיפול</h1>
-            <p className="text-sm text-[#A0907A]">עודכן לאחרונה: מאי 2026</p>
+            <h1 className="text-2xl md:text-3xl font-light text-[#2D1B3D] mb-3">דיסקליימר — אינו טיפול</h1>
+            <p className="text-xs text-[#A0907A]">עודכן לאחרונה: מאי 2026</p>
           </header>
 
           <p className="text-lg">
@@ -49,7 +49,7 @@ export function EmergencyBox() {
       aria-label="הודעת חירום"
     >
       <h2 className="text-lg md:text-xl font-medium mb-2">במקרה של מצוקה או חירום</h2>
-      <p className="text-[15px] leading-relaxed">
+      <p className="text-[13px] leading-relaxed leading-relaxed">
         לגעת ברגש איננה שירות חירום או טיפול נפשי. במקרה של סכנה מיידית או
         מצוקה חריפה יש לפנות לשירותי חירום או לעזרה ראשונה נפשית בטלפון{" "}
         <a href="tel:1201" className="font-semibold text-[#4E8C85] underline">1201</a>{" "}
