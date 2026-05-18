@@ -40,7 +40,7 @@ export function EventsHomeSection() {
           </div>
         )}
 
-        <div className="text-center mt-10">
+        <div className="text-center mt-6">
           <Link to="/events" className="text-sm text-[#BA9B78] hover:underline">{t.events_home.view_all} ←</Link>
         </div>
       </div>
