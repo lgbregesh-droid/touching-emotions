@@ -240,7 +240,12 @@ function Home() {
             <p className="text-xs tracking-[0.25em] uppercase text-[#BA9B78] text-center mb-2">— {t.testimonials.label} —</p>
             <h2 className="text-2xl md:text-4xl font-extralight text-[#2D1B3D] text-center mb-10">{t.testimonials.heading}</h2>
           </Reveal>
-          <TestimonialsRow items={testimonials} />
+          <StaggerTestimonials
+            items={testimonials.map((t) => ({
+              testimonial: t.quote,
+              by: `${t.name} · ${t.role}`,
+            }))}
+          />
         </div>
       </section>
 
