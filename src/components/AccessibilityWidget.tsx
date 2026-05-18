@@ -212,24 +212,30 @@ export function AccessibilityWidget() {
   );
 }
 
-function Toggle({
+function OptionTile({
   label,
-  checked,
-  onChange,
+  icon,
+  active,
+  onClick,
 }: {
   label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
+  icon: string;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-2 cursor-pointer">
-      <span>{label}</span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 accent-[#BA9B78]"
-      />
-    </label>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg border transition-all text-center ${
+        active
+          ? "bg-[#2D1B3D] border-[#2D1B3D] text-white shadow-sm"
+          : "bg-white border-[#E0D8CC] text-[#4A3D30] hover:bg-[#F5F0E8] hover:border-[#BA9B78]"
+      }`}
+    >
+      <span className="text-base leading-none" aria-hidden="true">{icon}</span>
+      <span className="text-[11px] leading-tight">{label}</span>
+    </button>
   );
 }
