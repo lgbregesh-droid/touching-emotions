@@ -13,7 +13,8 @@ import { AudienceCard } from "@/components/home/AudienceCard";
 import { ServiceCard } from "@/components/home/ServiceCard";
 import { ProcessTimeline } from "@/components/home/ProcessTimeline";
 import { ImpactGrid } from "@/components/home/ImpactGrid";
-import { TestimonialsRow } from "@/components/home/TestimonialsRow";
+import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
+import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
@@ -71,7 +72,7 @@ function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden -mt-16 md:-mt-20 pt-16 md:pt-20">
+      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-20 md:pt-24 pb-12">
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src="/hero.mp4"
@@ -137,9 +138,14 @@ function Home() {
           <Reveal delay={0.1}>
             <div className="relative bg-white rounded-2xl p-6 md:p-7 border border-[#E0D8CC] shadow-sm h-full flex items-center" style={{ borderRight: "4px solid #BA9B78" }}>
               <div className="absolute -top-3 right-5 text-6xl text-[#BA9B78] font-serif leading-none">"</div>
-              <p className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed">
+              <TextEffect
+                per="word"
+                preset="blur"
+                as="p"
+                className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed"
+              >
                 {t.about_teaser.quote}
-              </p>
+              </TextEffect>
             </div>
           </Reveal>
         </div>
@@ -234,7 +240,12 @@ function Home() {
             <p className="text-xs tracking-[0.25em] uppercase text-[#BA9B78] text-center mb-2">— {t.testimonials.label} —</p>
             <h2 className="text-2xl md:text-4xl font-extralight text-[#2D1B3D] text-center mb-10">{t.testimonials.heading}</h2>
           </Reveal>
-          <TestimonialsRow items={testimonials} />
+          <StaggerTestimonials
+            items={testimonials.map((t) => ({
+              testimonial: t.quote,
+              by: `${t.name} · ${t.role}`,
+            }))}
+          />
         </div>
       </section>
 
