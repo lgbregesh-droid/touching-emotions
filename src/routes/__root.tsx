@@ -98,7 +98,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
   const isHome = loc.pathname === "/";
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F0E8] pt-9 md:pt-10">
+    <div className="min-h-screen flex flex-col bg-[#F5F0E8]">
       <Navbar />
       <main className={`flex-1 ${isHome ? "" : "pt-16 md:pt-20"}`}>{children}</main>
       <Footer />

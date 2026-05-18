@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import logo from "@/assets/logo.png";
 
@@ -41,7 +41,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className={`fixed top-9 md:top-10 inset-x-0 z-40 transition-all duration-300 ${navBg}`}>
+      <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${navBg}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 shrink-0">
             <img src={logo} alt="לגעת ברגש" className={`h-10 md:h-12 w-auto ${overHero ? "brightness-0 invert" : ""} transition`} />
@@ -65,7 +65,19 @@ export function Navbar() {
             })}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            <button
+              onClick={() => window.dispatchEvent(new Event("lgr:open-chat"))}
+              className={`group flex items-center gap-2 px-4 py-1.5 rounded-full text-xs tracking-wide transition-all ${
+                overHero
+                  ? "bg-white/10 backdrop-blur-md border border-white/20 text-[#F5F0E8] hover:bg-white/20"
+                  : "bg-gradient-to-l from-[#2D1B3D] to-[#4E8C85] text-white hover:opacity-90 shadow-sm"
+              }`}
+              aria-label="פתחו צ'אט עם הבוט"
+            >
+              <MessageCircle size={13} />
+              <span>שאלו את הבוט</span>
+            </button>
             <button
               onClick={() => setLang(lang === "he" ? "en" : "he")}
               className={`text-xs tracking-widest ${overHero ? "text-[#F5F0E8]/70" : "text-[#A0907A]"} hover:opacity-100`}
@@ -85,6 +97,20 @@ export function Navbar() {
               {t.nav.cta}
             </Link>
           </div>
+
+          {/* Mobile chat button — next to hamburger */}
+          <button
+            onClick={() => window.dispatchEvent(new Event("lgr:open-chat"))}
+            aria-label="פתחו צ'אט"
+            className={`lg:hidden mr-auto ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all ${
+              scrolled
+                ? "bg-gradient-to-l from-[#2D1B3D] to-[#4E8C85] text-white"
+                : "bg-white/15 backdrop-blur-md border border-white/25 text-[#F5F0E8]"
+            }`}
+          >
+            <MessageCircle size={12} />
+            <span>שאלו את הבוט</span>
+          </button>
 
           {/* Mobile hamburger */}
           <button
