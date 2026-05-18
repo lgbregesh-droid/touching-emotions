@@ -83,30 +83,36 @@ export const Route = createFileRoute("/api/chat")({
           if (!Array.isArray(messages)) {
             return new Response("Bad request", { status: 400 });
           }
-          const key = process.env.LOVABLE_API_KEY;
-          if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+          const key = process.env.GEMINI_API_KEY;
+          if (!key) return new Response("Missing GEMINI_API_KEY", { status: 500 });
 
-          const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Lovable-API-Key": key,
-              "X-Lovable-AIG-SDK": "vercel-ai-sdk",
+          const contents = messages.map((m) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          }));
+
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents,
+                systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              }),
             },
-            body: JSON.stringify({
-              model: "google/gemini-3-flash-preview",
-              messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
-            }),
-          });
+          );
 
           if (!res.ok) {
             const text = await res.text();
+            console.error("Gemini error", res.status, text);
             return new Response(text || "AI error", { status: res.status });
           }
           const data = (await res.json()) as {
-            choices?: { message?: { content?: string } }[];
+            candidates?: { content?: { parts?: { text?: string }[] } }[];
           };
-          const reply = data.choices?.[0]?.message?.content ?? "";
+          const reply =
+            data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
           return Response.json({ reply });
         } catch (err) {
           console.error("chat error", err);
