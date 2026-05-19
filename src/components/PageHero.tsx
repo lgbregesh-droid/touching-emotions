@@ -32,9 +32,9 @@ export function PageHero({ label, title, intro, ctaLabel, ctaTo, imageSlot, back
             <h1 className="text-[2rem] sm:text-4xl md:text-5xl font-light text-[#461C5B] leading-tight mb-4">{title}</h1>
             {intro && <p className="text-[#4A3D30] font-light text-base md:text-lg leading-relaxed max-w-2xl mb-6">{intro}</p>}
             {ctaLabel && ctaTo && (
-              <Link to={ctaTo} className="inline-flex items-center gap-2 px-6 py-3 bg-[#461C5B] text-white rounded-full text-sm tracking-wide hover:bg-[#5a2674] transition-colors">
+              <a href={ctaTo} className="inline-flex items-center gap-2 px-6 py-3 bg-[#461C5B] text-white rounded-full text-sm tracking-wide hover:bg-[#5a2674] transition-colors">
                 {ctaLabel}
-              </Link>
+              </a>
             )}
           </Reveal>
         </div>
