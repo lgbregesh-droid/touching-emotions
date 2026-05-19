@@ -3,6 +3,8 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireAdmin } from "./auth.functions";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db: any = supabaseAdmin;
 const tokenField = { token: z.string().min(1) };
 
 // Tables allowed through the generic CMS endpoints
