@@ -1,17 +1,23 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Users, Settings } from "lucide-react";
 import { clearAdminToken } from "@/lib/admin/session";
 
 const items = [
   { to: "/admin", label: "לוח בקרה", icon: LayoutDashboard, exact: true },
-  { to: "/admin/inquiries", label: "פניות וטפסים", icon: Mail },
+  { to: "/admin/content", label: "ניהול עמודים", icon: FileText },
+  { to: "/admin/workshops", label: "סדנאות ופעילויות", icon: Calendar },
+  { to: "/admin/lectures", label: "הרצאות ומפגשים", icon: Mic },
+  { to: "/admin/testimonials", label: "המלצות", icon: MessageSquare },
+  { to: "/admin/gallery", label: "גלריה", icon: Image },
+  { to: "/admin/support", label: "תמיכה בעשייה", icon: ShoppingBag },
+  { to: "/admin/faq", label: "שאלות נפוצות", icon: HelpCircle },
+  { to: "/admin/inquiries", label: "פניות", icon: Mail },
+  { to: "/admin/volunteers", label: "פניות מתנדבים", icon: Users },
   { to: "/admin/events", label: "אירועים", icon: Calendar },
-  { to: "/admin/workshops", label: "סדנאות", icon: Calendar },
   { to: "/admin/shop", label: "מוצרים", icon: ShoppingBag },
   { to: "/admin/donations", label: "תרומות", icon: Heart },
-  { to: "/admin/content", label: "תוכן האתר", icon: FileText },
-  { to: "/admin/gallery", label: "גלריה", icon: Image },
+  { to: "/admin/settings", label: "הגדרות אתר", icon: Settings },
 ];
 
 export function AdminShell({ title, children }: { title: string; children: ReactNode }) {
