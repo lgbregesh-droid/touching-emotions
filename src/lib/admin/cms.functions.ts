@@ -53,15 +53,15 @@ export const cmsUpsert = createServerFn({ method: "POST" })
       if (v[k] === "") v[k] = null;
     }
     if (data.id) {
-      const { error } = await supabaseAdmin.from(data.table).update(v).eq("id", data.id);
+      const { error } = await db.from(data.table).update(v).eq("id", data.id);
       if (error) throw new Error(error.message);
     } else {
       // auto order_index if relevant
       if ("order_index" in v && (v.order_index === undefined || v.order_index === null)) {
-        const { count } = await supabaseAdmin.from(data.table).select("id", { count: "exact", head: true });
+        const { count } = await db.from(data.table).select("id", { count: "exact", head: true });
         v.order_index = (count || 0) + 1;
       }
-      const { error } = await supabaseAdmin.from(data.table).insert(v);
+      const { error } = await db.from(data.table).insert(v);
       if (error) throw new Error(error.message);
     }
     return { ok: true };
@@ -71,7 +71,7 @@ export const cmsDelete = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object({ ...tokenField, table: TABLE, id: z.string().uuid() }).parse(i))
   .handler(async ({ data }) => {
-    const { error } = await supabaseAdmin.from(data.table).delete().eq("id", data.id);
+    const { error } = await db.from(data.table).delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -80,14 +80,14 @@ export const cmsReorder = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object({ ...tokenField, table: TABLE, id: z.string().uuid(), direction: z.enum(["up", "down"]) }).parse(i))
   .handler(async ({ data }) => {
-    const { data: all } = await supabaseAdmin.from(data.table).select("id,order_index").order("order_index");
+    const { data: all } = await db.from(data.table).select("id,order_index").order("order_index");
     if (!all) return { ok: true };
     const idx = all.findIndex((r: { id: string }) => r.id === data.id);
     const swapIdx = data.direction === "up" ? idx - 1 : idx + 1;
     if (idx < 0 || swapIdx < 0 || swapIdx >= all.length) return { ok: true };
     const a = all[idx], b = all[swapIdx];
-    await supabaseAdmin.from(data.table).update({ order_index: b.order_index }).eq("id", a.id);
-    await supabaseAdmin.from(data.table).update({ order_index: a.order_index }).eq("id", b.id);
+    await db.from(data.table).update({ order_index: b.order_index }).eq("id", a.id);
+    await db.from(data.table).update({ order_index: a.order_index }).eq("id", b.id);
     return { ok: true };
   });
 
