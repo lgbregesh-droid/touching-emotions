@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
 import { MessageCircle } from "lucide-react";
 
