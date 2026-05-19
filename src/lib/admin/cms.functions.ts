@@ -127,8 +127,8 @@ export const getCmsCounters = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object(tokenField).parse(i))
   .handler(async () => {
     const [ws, tt] = await Promise.all([
-      supabaseAdmin.from("workshops").select("id", { count: "exact", head: true }).eq("is_active", true),
-      supabaseAdmin.from("testimonials").select("id", { count: "exact", head: true }).eq("is_active", true),
+      db.from("workshops").select("id", { count: "exact", head: true }).eq("is_active", true),
+      db.from("testimonials").select("id", { count: "exact", head: true }).eq("is_active", true),
     ]);
     return { activeWorkshops: ws.count || 0, activeTestimonials: tt.count || 0 };
   });
