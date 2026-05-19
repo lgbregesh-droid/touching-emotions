@@ -1,26 +1,42 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { CTABand } from "@/components/CTABand";
 import { Gallery } from "@/components/Gallery";
 
 export const Route = createFileRoute("/gallery")({
-  head: () => ({ meta: [{ title: "גלריה | לגעת ברגש" }] }),
+  head: () => ({ meta: [{ title: "גלריה | לגעת ברגש" }, { name: "description", content: "תמונות מסדנאות, הרצאות ופעילויות קהילתיות של לגעת ברגש." }] }),
   component: GalleryPage,
 });
 
 function GalleryPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isEn = lang === "en";
   return (
-    <section className="relative bg-[#2D1B3D] py-20 md:py-28 px-6 min-h-[80vh] overflow-hidden -mt-16 md:-mt-20 pt-32 md:pt-40">
-      <div className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(78,140,133,0.12), transparent 70%)" }} />
-      <div className="relative max-w-7xl mx-auto">
-        <Reveal>
-          <h1 className="text-4xl md:text-6xl font-extralight text-[#F5F0E8] text-center tracking-wider">{t.gallery.title}</h1>
-          <div className="flex justify-center my-5"><span className="w-[26px] h-px bg-[#BA9B78] opacity-55" /></div>
-          <p className="text-xs tracking-[0.25em] uppercase text-[#F5F0E8]/45 text-center">{t.gallery.sub}</p>
-        </Reveal>
-        <Gallery count={10} featuredOnly={false} />
-      </div>
-    </section>
+    <>
+      <PageHero
+        label={isEn ? "Gallery" : "גלריה"}
+        title={isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד"}
+        intro={isEn
+          ? "Photos from our workshops, lectures, community gatherings and youth activities — a small window into the work we love."
+          : "תמונות מהסדנאות, ההרצאות, המפגשים הקהילתיים והפעילויות עם הנוער — חלון קטן לעשייה שאנחנו אוהבים."}
+        background="cream"
+      />
+
+      <section className="px-6 pb-16 md:pb-20" style={{ background: "#2D1B3D" }}>
+        <div className="max-w-7xl mx-auto pt-10">
+          <Gallery count={12} featuredOnly={false} />
+        </div>
+        <span className="hidden">{t.gallery.title}</span>
+      </section>
+
+      <CTABand
+        title={isEn ? "Want to host a similar activity?" : "רוצים להזמין פעילות דומה?"}
+        sub={isEn ? "Tell us about your group and we'll tailor it." : "ספרו לנו על הקבוצה ונבנה משהו שמתאים."}
+        primaryLabel={isEn ? "Contact us" : "צרו קשר"}
+        whatsappLabel={t.final_cta.whatsapp}
+        variant="blush"
+      />
+    </>
   );
 }
