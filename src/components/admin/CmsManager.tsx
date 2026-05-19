@@ -79,8 +79,9 @@ export function CmsManager(props: Props) {
 
   const toggleField = async (r: Row, field: "is_active" | "is_featured") => {
     try {
-      const values = { ...r, [field]: !r[field] };
-      delete values.id; delete values.created_at; delete values.updated_at;
+      const { id: _id, created_at: _ca, updated_at: _ua, ...rest } = r;
+      void _id; void _ca; void _ua;
+      const values = { ...rest, [field]: !r[field] };
       await saveFn({ data: { token: getAdminToken()!, table, id: r.id, values } });
       invalidate();
     } catch (e) { toast.error((e as Error).message); }
