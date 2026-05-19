@@ -4,17 +4,29 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { FAQ } from "@/components/FAQ";
 import { submitContact } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { EmergencyBox } from "@/routes/disclaimer";
+import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({ meta: [{ title: "צור קשר | לגעת ברגש" }] }),
+  head: () => ({
+    meta: [
+      { title: "צור קשר | לגעת ברגש" },
+      { name: "description", content: "נשמח לשמוע מכם — הזמנת סדנה, הרצאה, התנדבות, תרומה או שאלה כללית." },
+    ],
+  }),
   component: Contact,
 });
 
+const SUBJECTS_HE = ["הזמנת סדנה", "הרצאה / מפגש", "התנדבות", "תרומה", "תמיכה בעשייה", "שאלה כללית"];
+const SUBJECTS_EN = ["Workshop booking", "Lecture / meetup", "Volunteer", "Donation", "Support our work", "General question"];
+
 function Contact() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isEn = lang === "en";
   const submit = useServerFn(submitContact);
   const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
   const [agreed, setAgreed] = useState(false);
@@ -22,7 +34,7 @@ function Contact() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
+  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,62 +53,168 @@ function Contact() {
     }
   };
 
-  return (
-    <section className="py-16 md:py-24 px-6 bg-[#F5F0E8]">
-      <div className="max-w-5xl mx-auto">
-        <Reveal>
-          <h1 className="text-4xl md:text-6xl font-extralight text-[#2D1B3D] text-center mb-3">{t.contact_page.heading}</h1>
-          <div className="flex justify-center mb-12"><span className="w-[26px] h-px bg-[#BA9B78] opacity-65" /></div>
-        </Reveal>
+  const subjects = isEn ? SUBJECTS_EN : SUBJECTS_HE;
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Reveal>
-              {done ? (
-                <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
-                  <p className="text-[#2D1B3D] text-lg font-light">{t.contact_page.success}</p>
+  const channels = [
+    { icon: MessageCircle, title: isEn ? "WhatsApp" : "וואטסאפ", desc: isEn ? "Fastest reply during the day." : "הכי מהיר במהלך היום.", href: "https://wa.me/972528040787", accent: "#25D366" },
+    { icon: Mail, title: isEn ? "Email" : "אימייל", desc: "l.g.bregesh@gmail.com", href: "mailto:l.g.bregesh@gmail.com", accent: "#BA9B78" },
+    { icon: Facebook, title: isEn ? "Facebook" : "פייסבוק", desc: isEn ? "Follow our updates" : "עקבו אחרי העדכונים", href: "https://www.facebook.com/share/17ZD8v1ADv/", accent: "#1877F2" },
+    { icon: FileText, title: isEn ? "Form" : "טופס פנייה", desc: isEn ? "Below — we reply within 48h." : "כאן למטה — נחזור תוך 48 שעות.", href: "#contact-form", accent: "#461C5B" },
+  ];
+
+  const next = [
+    { icon: Inbox, title: isEn ? "We receive" : "מקבלים את הפנייה" },
+    { icon: Search, title: isEn ? "We understand the need" : "מבינים את הצורך" },
+    { icon: PhoneCall, title: isEn ? "We get back to you" : "חוזרים אליכם" },
+    { icon: CheckCircle2, title: isEn ? "We tailor an activity" : "מתאימים פעילות" },
+  ];
+
+  const faqs = isEn
+    ? [
+        { q: "How do I book a workshop?", a: "Send us a message via the form, WhatsApp or email. We'll have a short intro call, understand the need, and build a tailored session for your group." },
+        { q: "Are activities suitable for schools?", a: "Yes — we work with schools, community centers, dorms and youth movements. Most programs are designed in coordination with the school's staff." },
+        { q: "How do I get a price quote?", a: "After a short intro call we send a tailored quote based on group size, location, duration and goal." },
+      ]
+    : [
+        { q: "איך מזמינים סדנה?", a: "שולחים לנו הודעה דרך הטופס, וואטסאפ או מייל. נערוך שיחת היכרות קצרה, נבין את הצורך ונבנה מפגש מותאם לקבוצה שלכם." },
+        { q: "האם הפעילות מתאימה לבתי ספר?", a: "בהחלט — אנחנו עובדים עם בתי ספר, מתנ\"סים, פנימיות ותנועות נוער. רוב התוכניות נבנות בתיאום עם הצוות החינוכי." },
+        { q: "איך מקבלים הצעת מחיר?", a: "אחרי שיחת היכרות קצרה אנחנו שולחים הצעת מחיר מותאמת לפי גודל הקבוצה, מיקום, משך ומטרה." },
+      ];
+
+  return (
+    <>
+      <PageHero
+        label={isEn ? "Contact" : "צרו קשר"}
+        title={isEn ? "We'd love to hear from you" : "נשמח לשמוע מכם"}
+        intro={isEn
+          ? "Whether you want to book a workshop, ask a question, volunteer or just say hi — choose the way that's easiest for you."
+          : "בין אם רוצים להזמין סדנה, לשאול שאלה, להתנדב או רק לומר היי — בחרו את הדרך הכי נוחה לכם."}
+        background="cream"
+      />
+
+      {/* Contact options */}
+      <section className="px-6 py-12 md:py-16" style={{ background: "#EAE3DA" }}>
+        <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {channels.map((c, i) => (
+            <Reveal key={i} delay={i * 0.05}>
+              <a href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer noopener" className="block bg-white rounded-2xl border border-[#E0D8CC] p-6 h-full card-hover" style={{ borderRight: `3px solid ${c.accent}40` }}>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${c.accent}15` }}>
+                  <c.icon className="w-5 h-5" style={{ color: c.accent }} />
                 </div>
-              ) : (
-                <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <Field label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} />
-                    <Field label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} />
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <Field label={t.contact_page.field_email} type="email" value={form.email} onChange={upd("email")} />
-                    <Field label={t.contact_page.field_subject} value={form.subject} onChange={upd("subject")} />
-                  </div>
-                  <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
-                  <div className="space-y-2 pt-1">
-                    <PrivacyConsent checked={agreed} onChange={setAgreed} />
-                    <MarketingConsent checked={marketing} onChange={setMarketing} />
-                  </div>
-                  <button disabled={loading} className="w-full py-3.5 bg-[#BA9B78] hover:bg-[#a98968] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
-                    {loading ? t.contact_page.sending : t.contact_page.btn}
-                  </button>
-                </form>
-              )}
+                <h3 className="text-[#461C5B] mb-1">{c.title}</h3>
+                <p className="text-sm text-[#4A3D30] font-light leading-relaxed break-all">{c.desc}</p>
+              </a>
             </Reveal>
-          </div>
-          <Reveal delay={0.1}>
-            <div className="bg-[#F0F5F3] rounded-2xl border border-[#E0D8CC] p-7 space-y-5 h-fit">
-              <h3 className="text-lg text-[#2D1B3D] font-normal">{t.contact_page.info_heading}</h3>
-              <div>
-                <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.email}</p>
-                <a href="mailto:l.g.bregesh@gmail.com" className="text-[#2D1B3D] hover:text-[#BA9B78] transition-colors text-sm break-all">l.g.bregesh@gmail.com</a>
-              </div>
-              <div>
-                <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.facebook}</p>
-                <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-[#2D1B3D] hover:text-[#BA9B78] transition-colors text-sm">facebook.com/לגעת ברגש</a>
-              </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Form */}
+      <section id="contact-form" className="px-6 py-16 md:py-20" style={{ background: "#FDFBF7" }}>
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-8">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Contact Form" : "טופס פנייה"}</span>
+              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h2>
             </div>
           </Reveal>
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <Reveal>
+                {done ? (
+                  <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
+                    <p className="text-[#461C5B] text-lg font-light">{t.contact_page.success}</p>
+                  </div>
+                ) : (
+                  <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <Field label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} />
+                      <Field label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} />
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <Field label={t.contact_page.field_email} type="email" value={form.email} onChange={upd("email")} />
+                      <label className="block">
+                        <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Inquiry type" : "סוג פנייה"}</span>
+                        <select value={form.subject} onChange={upd("subject")} className="w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition">
+                          <option value="">{isEn ? "Choose..." : "בחרו..."}</option>
+                          {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                    <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
+                    <div className="space-y-2 pt-1">
+                      <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                      <MarketingConsent checked={marketing} onChange={setMarketing} />
+                    </div>
+                    <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
+                      {loading ? t.contact_page.sending : t.contact_page.btn}
+                    </button>
+                  </form>
+                )}
+              </Reveal>
+            </div>
+            <Reveal delay={0.1}>
+              <div className="bg-[#F7E8EA] rounded-2xl border border-[#E0D8CC] p-7 space-y-5 h-fit">
+                <h3 className="text-lg text-[#461C5B] font-normal">{t.contact_page.info_heading}</h3>
+                <div>
+                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.email}</p>
+                  <a href="mailto:l.g.bregesh@gmail.com" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm break-all">l.g.bregesh@gmail.com</a>
+                </div>
+                <div>
+                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{isEn ? "WhatsApp" : "וואטסאפ"}</p>
+                  <a href="https://wa.me/972528040787" target="_blank" rel="noreferrer noopener" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm">052-8040787</a>
+                </div>
+                <div>
+                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.facebook}</p>
+                  <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm">facebook.com/לגעת ברגש</a>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+          <div className="mt-10">
+            <EmergencyBox />
+          </div>
         </div>
-        <div className="mt-10">
-          <EmergencyBox />
+      </section>
+
+      {/* What happens next */}
+      <section className="px-6 py-16 md:py-20" style={{ background: "#EAE3DA" }}>
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-10">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "What Happens Next" : "מה קורה אחר כך"}</span>
+              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "After you send your message" : "אחרי ששולחים את הפנייה"}</h2>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {next.map((n, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <div className="bg-white rounded-2xl border border-[#E0D8CC] p-5 text-center h-full">
+                  <div className="w-10 h-10 mx-auto rounded-full bg-[#F7E8EA] flex items-center justify-center mb-3">
+                    <n.icon className="w-5 h-5 text-[#461C5B]" />
+                  </div>
+                  <div className="text-xs text-[#BA9B78] mb-1">{String(i + 1).padStart(2, "0")}</div>
+                  <p className="text-sm text-[#461C5B]">{n.title}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* FAQ */}
+      <section className="px-6 py-16 md:py-20" style={{ background: "#FDFBF7" }}>
+        <div className="max-w-3xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-8">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "FAQ" : "שאלות נפוצות"}</span>
+              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Common questions" : "שאלות שחוזרות"}</h2>
+            </div>
+          </Reveal>
+          <FAQ items={faqs} />
+        </div>
+      </section>
+    </>
   );
 }
 
