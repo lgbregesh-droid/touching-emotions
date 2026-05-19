@@ -28,7 +28,7 @@ export const cmsList = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const orderCol = data.table === "site_settings" || data.table === "media" ? "created_at" : "order_index";
     const ascending = orderCol === "order_index";
-    const { data: rows, error } = await supabaseAdmin
+    const { data: rows, error } = await db
       .from(data.table)
       .select("*")
       .order(orderCol, { ascending });
