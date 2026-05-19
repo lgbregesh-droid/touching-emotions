@@ -29,9 +29,15 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminAuthedRouteImport } from './routes/admin._authed'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin._authed.index'
 import { Route as AdminAuthedWorkshopsRouteImport } from './routes/admin._authed.workshops'
+import { Route as AdminAuthedVolunteersRouteImport } from './routes/admin._authed.volunteers'
+import { Route as AdminAuthedTestimonialsRouteImport } from './routes/admin._authed.testimonials'
+import { Route as AdminAuthedSupportRouteImport } from './routes/admin._authed.support'
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
+import { Route as AdminAuthedSettingsRouteImport } from './routes/admin._authed.settings'
+import { Route as AdminAuthedLecturesRouteImport } from './routes/admin._authed.lectures'
 import { Route as AdminAuthedInquiriesRouteImport } from './routes/admin._authed.inquiries'
 import { Route as AdminAuthedGalleryRouteImport } from './routes/admin._authed.gallery'
+import { Route as AdminAuthedFaqRouteImport } from './routes/admin._authed.faq'
 import { Route as AdminAuthedEventsRouteImport } from './routes/admin._authed.events'
 import { Route as AdminAuthedDonationsRouteImport } from './routes/admin._authed.donations'
 import { Route as AdminAuthedContentRouteImport } from './routes/admin._authed.content'
@@ -135,9 +141,34 @@ const AdminAuthedWorkshopsRoute = AdminAuthedWorkshopsRouteImport.update({
   path: '/workshops',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedVolunteersRoute = AdminAuthedVolunteersRouteImport.update({
+  id: '/volunteers',
+  path: '/volunteers',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedTestimonialsRoute = AdminAuthedTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedSupportRoute = AdminAuthedSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedShopRoute = AdminAuthedShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedSettingsRoute = AdminAuthedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedLecturesRoute = AdminAuthedLecturesRouteImport.update({
+  id: '/lectures',
+  path: '/lectures',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
 const AdminAuthedInquiriesRoute = AdminAuthedInquiriesRouteImport.update({
@@ -148,6 +179,11 @@ const AdminAuthedInquiriesRoute = AdminAuthedInquiriesRouteImport.update({
 const AdminAuthedGalleryRoute = AdminAuthedGalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
+const AdminAuthedFaqRoute = AdminAuthedFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
 const AdminAuthedEventsRoute = AdminAuthedEventsRouteImport.update({
@@ -187,9 +223,15 @@ export interface FileRoutesByFullPath {
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
+  '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
+  '/admin/support': typeof AdminAuthedSupportRoute
+  '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
+  '/admin/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/workshops': typeof AdminAuthedWorkshopsRoute
   '/admin/': typeof AdminAuthedIndexRoute
 }
@@ -214,9 +256,15 @@ export interface FileRoutesByTo {
   '/admin/content': typeof AdminAuthedContentRoute
   '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
+  '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
+  '/admin/support': typeof AdminAuthedSupportRoute
+  '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
+  '/admin/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/workshops': typeof AdminAuthedWorkshopsRoute
 }
 export interface FileRoutesById {
@@ -242,9 +290,15 @@ export interface FileRoutesById {
   '/admin/_authed/content': typeof AdminAuthedContentRoute
   '/admin/_authed/donations': typeof AdminAuthedDonationsRoute
   '/admin/_authed/events': typeof AdminAuthedEventsRoute
+  '/admin/_authed/faq': typeof AdminAuthedFaqRoute
   '/admin/_authed/gallery': typeof AdminAuthedGalleryRoute
   '/admin/_authed/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/_authed/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/_authed/settings': typeof AdminAuthedSettingsRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
+  '/admin/_authed/support': typeof AdminAuthedSupportRoute
+  '/admin/_authed/testimonials': typeof AdminAuthedTestimonialsRoute
+  '/admin/_authed/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/_authed/workshops': typeof AdminAuthedWorkshopsRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
 }
@@ -271,9 +325,15 @@ export interface FileRouteTypes {
     | '/admin/content'
     | '/admin/donations'
     | '/admin/events'
+    | '/admin/faq'
     | '/admin/gallery'
     | '/admin/inquiries'
+    | '/admin/lectures'
+    | '/admin/settings'
     | '/admin/shop'
+    | '/admin/support'
+    | '/admin/testimonials'
+    | '/admin/volunteers'
     | '/admin/workshops'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -298,9 +358,15 @@ export interface FileRouteTypes {
     | '/admin/content'
     | '/admin/donations'
     | '/admin/events'
+    | '/admin/faq'
     | '/admin/gallery'
     | '/admin/inquiries'
+    | '/admin/lectures'
+    | '/admin/settings'
     | '/admin/shop'
+    | '/admin/support'
+    | '/admin/testimonials'
+    | '/admin/volunteers'
     | '/admin/workshops'
   id:
     | '__root__'
@@ -325,9 +391,15 @@ export interface FileRouteTypes {
     | '/admin/_authed/content'
     | '/admin/_authed/donations'
     | '/admin/_authed/events'
+    | '/admin/_authed/faq'
     | '/admin/_authed/gallery'
     | '/admin/_authed/inquiries'
+    | '/admin/_authed/lectures'
+    | '/admin/_authed/settings'
     | '/admin/_authed/shop'
+    | '/admin/_authed/support'
+    | '/admin/_authed/testimonials'
+    | '/admin/_authed/volunteers'
     | '/admin/_authed/workshops'
     | '/admin/_authed/'
   fileRoutesById: FileRoutesById
@@ -493,11 +565,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedWorkshopsRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/volunteers': {
+      id: '/admin/_authed/volunteers'
+      path: '/volunteers'
+      fullPath: '/admin/volunteers'
+      preLoaderRoute: typeof AdminAuthedVolunteersRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/testimonials': {
+      id: '/admin/_authed/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AdminAuthedTestimonialsRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/support': {
+      id: '/admin/_authed/support'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminAuthedSupportRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/shop': {
       id: '/admin/_authed/shop'
       path: '/shop'
       fullPath: '/admin/shop'
       preLoaderRoute: typeof AdminAuthedShopRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/settings': {
+      id: '/admin/_authed/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminAuthedSettingsRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/lectures': {
+      id: '/admin/_authed/lectures'
+      path: '/lectures'
+      fullPath: '/admin/lectures'
+      preLoaderRoute: typeof AdminAuthedLecturesRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
     '/admin/_authed/inquiries': {
@@ -512,6 +619,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/admin/gallery'
       preLoaderRoute: typeof AdminAuthedGalleryRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
+    '/admin/_authed/faq': {
+      id: '/admin/_authed/faq'
+      path: '/faq'
+      fullPath: '/admin/faq'
+      preLoaderRoute: typeof AdminAuthedFaqRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
     '/admin/_authed/events': {
@@ -542,9 +656,15 @@ interface AdminAuthedRouteChildren {
   AdminAuthedContentRoute: typeof AdminAuthedContentRoute
   AdminAuthedDonationsRoute: typeof AdminAuthedDonationsRoute
   AdminAuthedEventsRoute: typeof AdminAuthedEventsRoute
+  AdminAuthedFaqRoute: typeof AdminAuthedFaqRoute
   AdminAuthedGalleryRoute: typeof AdminAuthedGalleryRoute
   AdminAuthedInquiriesRoute: typeof AdminAuthedInquiriesRoute
+  AdminAuthedLecturesRoute: typeof AdminAuthedLecturesRoute
+  AdminAuthedSettingsRoute: typeof AdminAuthedSettingsRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
+  AdminAuthedSupportRoute: typeof AdminAuthedSupportRoute
+  AdminAuthedTestimonialsRoute: typeof AdminAuthedTestimonialsRoute
+  AdminAuthedVolunteersRoute: typeof AdminAuthedVolunteersRoute
   AdminAuthedWorkshopsRoute: typeof AdminAuthedWorkshopsRoute
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
 }
@@ -553,9 +673,15 @@ const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedContentRoute: AdminAuthedContentRoute,
   AdminAuthedDonationsRoute: AdminAuthedDonationsRoute,
   AdminAuthedEventsRoute: AdminAuthedEventsRoute,
+  AdminAuthedFaqRoute: AdminAuthedFaqRoute,
   AdminAuthedGalleryRoute: AdminAuthedGalleryRoute,
   AdminAuthedInquiriesRoute: AdminAuthedInquiriesRoute,
+  AdminAuthedLecturesRoute: AdminAuthedLecturesRoute,
+  AdminAuthedSettingsRoute: AdminAuthedSettingsRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
+  AdminAuthedSupportRoute: AdminAuthedSupportRoute,
+  AdminAuthedTestimonialsRoute: AdminAuthedTestimonialsRoute,
+  AdminAuthedVolunteersRoute: AdminAuthedVolunteersRoute,
   AdminAuthedWorkshopsRoute: AdminAuthedWorkshopsRoute,
   AdminAuthedIndexRoute: AdminAuthedIndexRoute,
 }
