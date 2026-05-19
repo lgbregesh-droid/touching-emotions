@@ -25,9 +25,9 @@ export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo 
           <h2 className="text-2xl md:text-3xl font-light mb-3">{title}</h2>
           {sub && <p className="text-sm md:text-base font-light opacity-90 mb-7 leading-relaxed">{sub}</p>}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link to={primaryTo} className="px-7 py-3 rounded-full text-sm tracking-wide transition-transform hover:scale-[1.02]" style={{ background: v.btnBg, color: v.btnFg }}>
+            <a href={primaryTo} className="px-7 py-3 rounded-full text-sm tracking-wide transition-transform hover:scale-[1.02]" style={{ background: v.btnBg, color: v.btnFg }}>
               {primaryLabel}
-            </Link>
+            </a>
             <a
               href="https://wa.me/972528040787"
               target="_blank"
