@@ -4,16 +4,27 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
+import { PageHero } from "@/components/PageHero";
+import { InfoCard } from "@/components/InfoCard";
+import { CTABand } from "@/components/CTABand";
 import { submitVolunteer } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
+import { Megaphone, HeartHandshake, Camera, Truck, Share2, Compass, Users, Sparkles } from "lucide-react";
+import facilitator from "@/assets/home/facilitator.jpg";
 
 export const Route = createFileRoute("/volunteers")({
-  head: () => ({ meta: [{ title: "מתנדבים | לגעת ברגש" }] }),
+  head: () => ({
+    meta: [
+      { title: "מתנדבים | לגעת ברגש" },
+      { name: "description", content: "הצטרפו לצוות המתנדבים של לגעת ברגש — הנחיה, ליווי, צילום, לוגיסטיקה וקהילה." },
+    ],
+  }),
   component: Volunteers,
 });
 
 function Volunteers() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isEn = lang === "en";
   const submit = useServerFn(submitVolunteer);
   const [form, setForm] = useState({ name: "", phone: "", profession: "", interest: "" });
   const [agreed, setAgreed] = useState(false);
@@ -40,38 +51,114 @@ function Volunteers() {
     }
   };
 
-  return (
-    <section className="py-16 md:py-24 px-6 bg-[#F5F0E8]">
-      <div className="max-w-2xl mx-auto">
-        <Reveal>
-          <h1 className="text-4xl md:text-6xl font-extralight text-[#2D1B3D] text-center mb-3">{t.volunteers_page.heading}</h1>
-          <div className="flex justify-center mb-6"><span className="w-[26px] h-px bg-[#BA9B78] opacity-65" /></div>
-          <p className="text-center text-[#4A3D30] font-light mb-12">{t.volunteers_page.intro}</p>
-        </Reveal>
+  const roles = [
+    { icon: Megaphone, title: isEn ? "Facilitation" : "הדרכה", desc: isEn ? "Co-facilitating workshops with our team." : "סיוע בהנחיית סדנאות לצד הצוות שלנו." },
+    { icon: HeartHandshake, title: isEn ? "Activity support" : "ליווי פעילות", desc: isEn ? "Helping during meetings, hosting, coordination." : "ליווי במפגשים, אירוח ותיאום." },
+    { icon: Camera, title: isEn ? "Photo & content" : "צילום ותוכן", desc: isEn ? "Photography, video, social media content." : "צילום, וידאו ותוכן לרשתות." },
+    { icon: Truck, title: isEn ? "Logistics" : "סיוע לוגיסטי", desc: isEn ? "Equipment, transport, materials, setup." : "ציוד, הסעות, חומרים והקמה." },
+    { icon: Share2, title: isEn ? "Community & outreach" : "קהילה והפצה", desc: isEn ? "Connecting with schools, communities and partners." : "חיבור לבתי ספר, קהילות ושותפים." },
+  ];
 
-        <Reveal>
-          {done ? (
-            <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
-              <p className="text-[#2D1B3D] text-lg font-light">{t.volunteers_page.success}</p>
+  const gains = [
+    { icon: Sparkles, title: isEn ? "Meaning" : "משמעות", desc: isEn ? "Be part of something that touches real lives." : "להיות חלק ממשהו שנוגע בחיים אמיתיים." },
+    { icon: Users, title: isEn ? "Community" : "קהילה", desc: isEn ? "Join a warm team of facilitators and partners." : "להצטרף לקהילה חמה של מנחים ושותפים." },
+    { icon: HeartHandshake, title: isEn ? "Social impact" : "עשייה חברתית", desc: isEn ? "Real contribution to children, teens and families." : "תרומה אמיתית לילדים, נוער ומשפחות." },
+    { icon: Compass, title: isEn ? "Connection" : "חיבור", desc: isEn ? "Meet people, places and stories that move you." : "להכיר אנשים, מקומות וסיפורים שמרגשים." },
+  ];
+
+  return (
+    <>
+      <PageHero
+        label={isEn ? "Volunteer" : "התנדבות"}
+        title={isEn ? "Join a team that touches the heart" : "הצטרפו לצוות שנוגע בלב"}
+        intro={isEn
+          ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
+          : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם."}
+        ctaLabel={isEn ? "Fill the form" : "מילוי טופס"}
+        ctaTo="/volunteers"
+        imageSlot={<img src={facilitator} alt="" className="rounded-2xl w-full aspect-[4/5] object-cover" />}
+      />
+
+      {/* Who can volunteer */}
+      <section className="px-6 py-16 md:py-20" style={{ background: "#EAE3DA" }}>
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-10">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Volunteer Roles" : "תפקידי התנדבות"}</span>
+              <h2 className="text-2xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "How you can help" : "איך אפשר לעזור"}</h2>
             </div>
-          ) : (
-            <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
-              <Field label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} />
-              <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
-              <Field label={t.volunteers_page.field_role} value={form.profession} onChange={upd("profession")} />
-              <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
-              <div className="space-y-2 pt-1">
-                <PrivacyConsent checked={agreed} onChange={setAgreed} />
-                <MarketingConsent checked={marketing} onChange={setMarketing} />
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {roles.map((r, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <InfoCard icon={r.icon} title={r.title} desc={r.desc} accent={(["teal", "blush", "gold", "purple", "teal"] as const)[i]} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What you gain */}
+      <section className="px-6 py-16 md:py-20" style={{ background: "#FDFBF7" }}>
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-10">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "What You Gain" : "מה מקבלים"}</span>
+              <h2 className="text-2xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "What volunteers take with them" : "מה המתנדבים מקבלים בחזרה"}</h2>
+            </div>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {gains.map((g, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <InfoCard icon={g.icon} title={g.title} desc={g.desc} accent="blush" />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Form */}
+      <section className="px-6 py-16 md:py-20" style={{ background: "#F7E8EA" }}>
+        <div className="max-w-2xl mx-auto">
+          <Reveal>
+            <div className="text-center mb-8">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Volunteer Form" : "טופס התנדבות"}</span>
+              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Leave your details" : "השאירו פרטים"}</h2>
+              <p className="text-sm text-[#4A3D30] font-light mt-2">{isEn ? "We'll get back to you with a fitting role." : "נחזור אליכם עם תפקיד שמתאים."}</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            {done ? (
+              <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
+                <p className="text-[#461C5B] text-lg font-light">{t.volunteers_page.success}</p>
               </div>
-              <button disabled={loading} className="w-full py-3.5 bg-[#BA9B78] hover:bg-[#a98968] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
-                {loading ? t.volunteers_page.sending : t.volunteers_page.btn}
-              </button>
-            </form>
-          )}
-        </Reveal>
-      </div>
-    </section>
+            ) : (
+              <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+                <Field label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} />
+                <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
+                <Field label={t.volunteers_page.field_role} value={form.profession} onChange={upd("profession")} />
+                <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
+                <div className="space-y-2 pt-1">
+                  <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                  <MarketingConsent checked={marketing} onChange={setMarketing} />
+                </div>
+                <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
+                  {loading ? t.volunteers_page.sending : t.volunteers_page.btn}
+                </button>
+              </form>
+            )}
+          </Reveal>
+        </div>
+      </section>
+
+      <CTABand
+        title={isEn ? "Prefer a quick message?" : "מעדיפים הודעה מהירה?"}
+        sub={isEn ? "Reach us on WhatsApp and we'll get back fast." : "אפשר לפנות אלינו בוואטסאפ וניצור קשר מהר."}
+        primaryLabel={isEn ? "Contact us" : "צרו קשר"}
+        whatsappLabel={t.final_cta.whatsapp}
+        variant="purple"
+      />
+    </>
   );
 }
 
