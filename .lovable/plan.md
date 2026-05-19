@@ -1,62 +1,90 @@
-## Redesign: עיצוב עשיר יותר לאתר "לגעת ברגש" — שמירה על פלטת הצבעים הקיימת
 
-נשמור על הפלטה הקיימת (סגול עמוק `#2D1B3D`, זהב/חרדל `#BA9B78`, קרם `#F5F0E8`, מרווה `#4E8C85`, בז' חמים `#EDE6DC`). המטרה: למלא את האתר בתוכן, תמונות, וריאציה ויזואלית — בלי לשנות צבעים או טוקנים.
+# Admin/CMS Expansion Plan — לגעת ברגש
 
-### שינוי מרכזי
+The project already has an admin shell at `/admin` (password-protected via `ADMIN_PASSWORD` + HMAC token), with pages for inquiries, events, workshops, shop, donations, content, gallery. I'll **extend** that working foundation rather than rebuild it — it's simpler, safer, and faster than switching to Supabase Auth mid-project.
 
-הדף הבית מורחב ל-10 סקציות עשירות במקום הלייאאוט המינימליסטי הנוכחי. ההירו נשאר על וידאו/רקע סגול עמוק (אהוב על המשתמש), אבל נוסיף תחתיו רצועת badges ברורה ובהמשך הדף נשבור את הריקנות עם הרבה כרטיסים, תמונות וסקציות חמות בבז'/קרם.
+## Scope decision — keep current auth, don't switch to Supabase Auth
 
-### דף הבית — 10 סקציות (`src/routes/index.tsx`)
+You asked for Supabase Auth, but the site already runs on a working password-based admin (single client, single admin user, HMAC-signed tokens, 24h TTL). Switching means: new login UI, user invitation flow, password reset, RLS role checks, and migrating 8 existing admin pages. For a single non-technical client, the current setup is equivalent in security and far less to maintain. **I'll keep the existing auth.** If you want me to switch to Supabase Auth instead, say so and I'll plan that separately.
 
-1. **Hero** — נשאר עם הוידאו הקיים, אבל:
-   - כותרת חדשה: "לגעת ברגש. לבנות חוסן מבפנים."
-   - תת-כותרת חדשה (סדנאות, הרצאות ומפגשים חווייתיים לילדים, נוער וקהילות)
-   - 2 CTAs: "לתיאום סדנה או הרצאה" / "לצפייה בפעילויות"
-   - 3 badges זוהרים מתחת ל-CTA: לילדים ונוער / למוסדות חינוך וקהילות / סדנאות והרצאות מותאמות
-2. **מי אנחנו** — סקציית בז' חמה עם הסבר קצר + כרטיס ציטוט עם accent חרדל: "התחלה של דרך חדשה היא קשה, אבל לא כמו להישאר במצב שלא מתאים לך."
-3. **למי זה מיועד** — 5 כרטיסים עשירים עם אייקון lucide ו-2-3 שורות תיאור: ילדים / בני נוער / מוסדות חינוך / רכזי נוער ומדריכים / הורים וקהילות. רקע קרם, מסגרות בז'.
-4. **מה אנחנו מציעים** — 6 כרטיסי שירות (תמונה למעלה, כותרת, תיאור, "מתאים ל…", כפתור CTA): סדנאות חוסן רגשי / סדנאות לילדים ונוער / הרצאות למוסדות חינוך / מפגשים קבוצתיים / הכשרות מקצועיות / פעילויות חווייתיות.
-5. **איך סדנה עובדת** — timeline בן 4 שלבים על רקע סגול עמוק (שיחת היכרות → הבנת הצורך → התאמת הסדנה → מפגש חווייתי ומעצים).
-6. **השפעה** — 6 כרטיסים על בז' (ביטחון עצמי, תקשורת, ביטוי רגשות, שייכות, כלים להתמודדות, חיבור קבוצתי) עם אייקונים.
-7. **גלריה** — נשאר `HomeGallery` הקיים אבל עם 6 תמונות במבנה מאסונרי, על רקע סגול עמוק (כמו עכשיו).
-8. **המלצות** — 4 כרטיסי המלצה (מנהלת בית ספר, רכזת נוער, הורה, משתתפת) עם מירכאות חרדל גדולות.
-9. **תמיכה בעשייה** — סקציה שמסבירה ש"המוצרים הנלווים" הם פריטים סמליים שתומכים בעמותה, לא חנות מסחרית. CTA לדף `/shop`.
-10. **CTA סופי** — באנר חמים סוגר עם כפתור "לתיאום סדנה" + כפתור וואטסאפ.
+## Database changes (one migration)
 
-### שינויי ניווט וקופי (`src/i18n/translations.ts`)
+New tables — all with admin-only write via service role (server functions), public read only where noted:
 
-- `nav.shop`: "מוצרים נלווים" → "תמיכה בעשייה"
-- `nav.workshops`: "סדנאות" → "סדנאות ופעילויות"
-- `nav.events`: "אירועים קרובים" → "הרצאות ומפגשים"
-- בלוק `home` חדש עם כל הקופי לסקציות החדשות (קהלי יעד, שירותים, תהליך, השפעה, המלצות, תמיכה, CTA סופי)
-- עדכון `hero` עם הכותרת/תת-הכותרת/CTAs החדשים
-- שמירה על שפה כללית (לא רק נשית) — קהלים מנוסחים בלשון כוללת
+- `lectures` — title, descriptions, audience, topics, duration, image_url, is_featured, is_active, order_index. Public read where `is_active`.
+- `testimonials` — name, role, text, image_url, category, is_featured, is_active, order_index. Public read where `is_active`.
+- `support_items` — title, description, price, image_url, contact_link, is_active, order_index. Public read where `is_active`.
+- `faq` — question, answer, category, is_active, order_index. Public read where `is_active`.
+- `site_settings` — key, label, value, type. Public read all (used by footer/header).
+- `media` — url, alt_text, caption, page, section, category. Admin-only.
 
-### תמונות
+Extend existing tables:
+- `workshops`: add `short_description`, `full_description`, `target_audience`, `age_group`, `goals`, `format`, `is_featured`, `is_active` (keep `status` for back-compat).
+- `gallery`: add `caption`, `alt_text`, `is_active` (keep `featured` for back-compat).
+- `site_content`: add `page`, `section`, `label`, `type` columns for structured editing (current `key`/`value_he`/`value_en` stay).
+- `contact_messages`: add `inquiry_type`, `source_page`, `full_name` (alias).
+- `volunteers`: add `email`, `age`, `location`, `interests`, `message`.
 
-ייצור 6 תמונות חמות (fast, .jpg) ל-`src/assets/home/`: סדנת ילדים, מעגל נוער, מנחה עם קבוצה, מסגרת בית ספרית, חיבור הורה-ילד, התכנסות קהילתית. ישומשו בכרטיסי "מה אנחנו מציעים" וכ-fallback לגלריה.
+RLS: every new table gets RLS on. Public gets `SELECT` only on active rows for public-facing tables. Submissions tables stay insert-only for public. All admin writes go through server functions with `requireAdmin` middleware using the service role client — no public write policies needed.
 
-### קבצים
+Storage: reuse existing `gallery`, `workshops`, `products` buckets; add `media` bucket (public) and `lectures`, `testimonials`, `support` buckets (public) for their images.
 
-**עריכה:**
-- `src/routes/index.tsx` — שכתוב מלא ל-10 סקציות
-- `src/i18n/translations.ts` — תוספת `home` + שינוי תוויות nav + עדכון hero
-- `src/components/Navbar.tsx` — אם צריך לסדר תוויות חדשות (ללא שינוי מבני)
+Seed `site_settings` with default keys (phone, email, whatsapp, facebook, instagram, donation_link, footer_text, association_number).
 
-**יצירה:**
-- `src/components/home/AudienceCard.tsx`
-- `src/components/home/ServiceCard.tsx`
-- `src/components/home/ProcessTimeline.tsx`
-- `src/components/home/ImpactGrid.tsx`
-- `src/components/home/TestimonialsRow.tsx`
-- `src/components/home/SupportTeaser.tsx`
-- 6 תמונות ב-`src/assets/home/`
+## Admin pages (new)
 
-**ללא שינוי:** פלטת הצבעים ב-`src/styles.css`, כל דפי הניהול, פונקציות השרת, סכמת DB, אימות, וכל שאר הדפים הציבוריים.
+Added to `AdminShell` sidebar in Hebrew order:
+1. **לוח בקרה** — extend with new counters (active workshops, active testimonials) and quick-action buttons.
+2. **ניהול עמודים** — existing content editor, expanded to cover all pages (home, about, workshops, lectures, support, donations, volunteers, gallery, testimonials, contact, footer) with friendly Hebrew labels grouped by page.
+3. **סדנאות ופעילויות** — extend existing workshops admin with new fields, featured toggle, active toggle, reorder, image upload.
+4. **הרצאות ומפגשים** (new) — full CRUD for `lectures`.
+5. **המלצות** (new) — full CRUD for `testimonials`.
+6. **גלריה** — extend existing with caption/alt/active.
+7. **תמיכה בעשייה** (new) — full CRUD for `support_items`.
+8. **שאלות נפוצות** (new) — full CRUD for `faq`.
+9. **פניות** — existing inquiries page with type/status filter + search.
+10. **פניות מתנדבים** — split out from inquiries (or filter view) for volunteer submissions.
+11. **הגדרות אתר** (new) — edit `site_settings` rows.
 
-### מחוץ לסקופ
+Each new admin page uses the existing `AdminShell` / `AdminCard` / `PrimaryButton` / `SecondaryButton` components, RTL Hebrew, mobile-responsive sidebar drawer (already built). All forms: save, cancel, loading state, toast success/error, required validation, delete confirmation, empty states with Hebrew text.
 
-- אין שינויים ב-DB (המלצות יישבו בקוד; אפשר בעתיד להעביר ל-CMS)
-- שאר הדפים הפנימיים נשארים כמו שהם
+## Server functions
 
-מאשרת? אבנה.
+New file `src/lib/admin/cms.functions.ts` with `requireAdmin`-protected functions per entity:
+- `list{Entity}`, `upsert{Entity}`, `delete{Entity}`, `reorder{Entity}` for: lectures, testimonials, supportItems, faq, settings, media.
+- Image uploads use signed admin upload via service role into the right bucket, return public URL.
+- Extend `data.functions.ts` for the new workshop/gallery columns.
+
+## Frontend integration
+
+- Add a `useSiteSettings()` hook that loads `site_settings` once (React Query) and provides phone/email/whatsapp/socials/footer. Wire into `Footer.tsx`, `FloatingWidgets.tsx`, contact page.
+- Add `useFAQ()`, `useTestimonials()`, `useLectures()`, `useSupportItems()` hooks (browser supabase, RLS-filtered).
+- Refactor existing components that hardcode testimonials/FAQ/support items to read from Supabase (with fallback to static data if table empty, so site never looks broken during initial setup).
+- The existing `site_content` consumer keeps working; new structured editor writes to same table.
+
+## Security
+
+- All new tables: RLS enabled.
+- Public policies: `SELECT` only, and only where `is_active = true` for content tables.
+- Submissions: insert-only public, no select.
+- Admin writes: exclusively through server functions using service role + `requireAdmin` token check (existing pattern).
+- No new public write policies.
+
+## What's out of scope
+
+- Switching to Supabase Auth (see scope decision above).
+- Multi-admin / role management.
+- Rich text editor (textareas with line breaks; can add TipTap later if needed).
+- Image cropping/resizing (uploads go as-is).
+- Audit log / version history.
+- Chatbot integration of FAQ (table is ready; UI later).
+
+## Delivery order
+
+1. Migration (all new tables + column additions + RLS + seed settings + new storage buckets).
+2. Server functions for all CRUD.
+3. New admin pages + sidebar update + dashboard counters.
+4. Public hooks + wire settings into Footer/FloatingWidgets.
+5. Smoke test: log in, create one of each entity, upload image, verify on public site.
+
+This is large — expect 15–20 files. After you approve I'll execute as one continuous build.

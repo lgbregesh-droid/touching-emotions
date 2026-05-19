@@ -18,30 +18,39 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          full_name: string | null
           id: string
+          inquiry_type: string | null
           message: string
           name: string
           phone: string | null
+          source_page: string | null
           status: string
           subject: string | null
         }
         Insert: {
           created_at?: string
           email?: string | null
+          full_name?: string | null
           id?: string
+          inquiry_type?: string | null
           message: string
           name: string
           phone?: string | null
+          source_page?: string | null
           status?: string
           subject?: string | null
         }
         Update: {
           created_at?: string
           email?: string | null
+          full_name?: string | null
           id?: string
+          inquiry_type?: string | null
           message?: string
           name?: string
           phone?: string | null
+          source_page?: string | null
           status?: string
           subject?: string | null
         }
@@ -178,32 +187,155 @@ export type Database = {
         }
         Relationships: []
       }
+      faq: {
+        Row: {
+          answer: string
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          order_index: number
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          order_index?: number
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          order_index?: number
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery: {
         Row: {
+          alt_text: string | null
+          caption: string | null
           category: string
           created_at: string
           featured: boolean
           id: string
+          is_active: boolean
           order_index: number
           storage_path: string | null
           url: string
         }
         Insert: {
+          alt_text?: string | null
+          caption?: string | null
           category?: string
           created_at?: string
           featured?: boolean
           id?: string
+          is_active?: boolean
           order_index?: number
           storage_path?: string | null
           url: string
         }
         Update: {
+          alt_text?: string | null
+          caption?: string | null
           category?: string
           created_at?: string
           featured?: boolean
           id?: string
+          is_active?: boolean
           order_index?: number
           storage_path?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      lectures: {
+        Row: {
+          created_at: string
+          duration: string | null
+          full_description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_featured: boolean
+          order_index: number
+          short_description: string | null
+          target_audience: string | null
+          title: string
+          topics: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration?: string | null
+          full_description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          order_index?: number
+          short_description?: string | null
+          target_audience?: string | null
+          title: string
+          topics?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration?: string | null
+          full_description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          order_index?: number
+          short_description?: string | null
+          target_audience?: string | null
+          title?: string
+          topics?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          category: string | null
+          created_at: string
+          id: string
+          page: string | null
+          section: string | null
+          url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          page?: string | null
+          section?: string | null
+          url: string
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          page?: string | null
+          section?: string | null
           url?: string
         }
         Relationships: []
@@ -287,6 +419,10 @@ export type Database = {
         Row: {
           id: string
           key: string
+          label: string | null
+          page: string | null
+          section: string | null
+          type: string
           updated_at: string
           value_en: string | null
           value_he: string | null
@@ -294,6 +430,10 @@ export type Database = {
         Insert: {
           id?: string
           key: string
+          label?: string | null
+          page?: string | null
+          section?: string | null
+          type?: string
           updated_at?: string
           value_en?: string | null
           value_he?: string | null
@@ -301,35 +441,162 @@ export type Database = {
         Update: {
           id?: string
           key?: string
+          label?: string | null
+          page?: string | null
+          section?: string | null
+          type?: string
           updated_at?: string
           value_en?: string | null
           value_he?: string | null
         }
         Relationships: []
       }
-      volunteers: {
+      site_settings: {
         Row: {
+          id: string
+          key: string
+          label: string | null
+          type: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          label?: string | null
+          type?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          label?: string | null
+          type?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      support_items: {
+        Row: {
+          contact_link: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          order_index: number
+          price: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          contact_link?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          order_index?: number
+          price?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          contact_link?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          order_index?: number
+          price?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          category: string | null
           created_at: string
           id: string
+          image_url: string | null
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          order_index: number
+          role: string | null
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          name: string
+          order_index?: number
+          role?: string | null
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          name?: string
+          order_index?: number
+          role?: string | null
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      volunteers: {
+        Row: {
+          age: string | null
+          created_at: string
+          email: string | null
+          id: string
           interest: string | null
+          interests: string | null
+          location: string | null
+          message: string | null
           name: string
           phone: string | null
           profession: string | null
           status: string
         }
         Insert: {
+          age?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           interest?: string | null
+          interests?: string | null
+          location?: string | null
+          message?: string | null
           name: string
           phone?: string | null
           profession?: string | null
           status?: string
         }
         Update: {
+          age?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           interest?: string | null
+          interests?: string | null
+          location?: string | null
+          message?: string | null
           name?: string
           phone?: string | null
           profession?: string | null
@@ -374,56 +641,80 @@ export type Database = {
       }
       workshops: {
         Row: {
+          age_group: string | null
           audience: string | null
           created_at: string
           date: string | null
           desc_en: string | null
           desc_he: string | null
+          format: string | null
+          full_description: string | null
+          goals: string | null
           id: string
           image_url: string | null
+          is_active: boolean
+          is_featured: boolean
           location: string | null
           max_participants: number | null
           name_en: string | null
           name_he: string
           order_index: number
           price: number
+          short_description: string | null
           status: string
+          target_audience: string | null
           time: string | null
           updated_at: string
         }
         Insert: {
+          age_group?: string | null
           audience?: string | null
           created_at?: string
           date?: string | null
           desc_en?: string | null
           desc_he?: string | null
+          format?: string | null
+          full_description?: string | null
+          goals?: string | null
           id?: string
           image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
           location?: string | null
           max_participants?: number | null
           name_en?: string | null
           name_he: string
           order_index?: number
           price?: number
+          short_description?: string | null
           status?: string
+          target_audience?: string | null
           time?: string | null
           updated_at?: string
         }
         Update: {
+          age_group?: string | null
           audience?: string | null
           created_at?: string
           date?: string | null
           desc_en?: string | null
           desc_he?: string | null
+          format?: string | null
+          full_description?: string | null
+          goals?: string | null
           id?: string
           image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
           location?: string | null
           max_participants?: number | null
           name_en?: string | null
           name_he?: string
           order_index?: number
           price?: number
+          short_description?: string | null
           status?: string
+          target_audience?: string | null
           time?: string | null
           updated_at?: string
         }
