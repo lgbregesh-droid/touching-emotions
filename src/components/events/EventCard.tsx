@@ -69,10 +69,10 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
         <h3 className="text-sm font-medium text-[#2D1B3D] mb-1 line-clamp-1">{title}</h3>
         <div className="flex items-center gap-3 text-[11px] text-[#A0907A] mb-1.5 flex-wrap">
           {time && <span className="flex items-center gap-1"><Clock size={11} />{time}</span>}
-          {loc && <span className="flex items-center gap-1"><MapPin size={11} />{loc}</span>}
+          <span className="flex items-center gap-1"><MapPin size={11} />{loc || (lang === "he" ? "יתעדכן בהמשך" : "TBA")}</span>
         </div>
         {desc && <p className="text-[11px] text-[#4A3D30] leading-relaxed mb-2 line-clamp-2">{desc}</p>}
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="mt-auto flex items-center justify-between pt-2 gap-2">
           <span className={`text-[11px] ${lowSpots ? "text-[#BA9B78] font-medium" : "text-[#A0907A]"}`}>
             {isFull ? t.events_home.full : `${event.spots_remaining} ${t.events_page.spots_left}`}
           </span>
@@ -83,6 +83,9 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           >
             {t.events_home.register}
           </button>
+        </div>
+        <div className="pt-2 mt-2 border-t border-[#EAE3DA]">
+          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
         </div>
       </div>
     );
