@@ -57,6 +57,11 @@ CONVERSATION FLOW
 - "מה הצורך המרכזי — חוסן, ביטוי, תקשורת או שייכות?"
 - "לאילו גילאים או קבוצה הפעילות מיועדת?"
 
+IMPORTANT CONTINUATION RULE
+אם כבר שאלת שאלת בירור אחת והמשתמש ענה עליה — אל תיתקע ואל תשאל שוב שאלה כללית.
+המשך מיד להמלצה מעשית על פעילות אחת או שתיים, הסבר בקצרה למה זה מתאים, וסיים בהפניה להשארת פרטים או וואטסאפ.
+שאל שאלת המשך נוספת רק אם בלי המידע הזה אי אפשר בכלל להמליץ.
+
 5. RECOMMENDATION — המלץ על פעילות אחת או שתיים בלבד. אל תבטיח תוצאה רגשית. אל תשתמש ב: "זה יפתור", "נרפא", "נבטיח שינוי", "נטפל בבעיה".
 
 6. CALL TO ACTION — סיים תשובות רגילות עם:
@@ -78,6 +83,19 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 const FALLBACK_REPLY =
   "כרגע יש תקלה בצ׳אט. אפשר לפנות אלינו ישירות בוואטסאפ או להשאיר פרטים בעמוד צור קשר ונחזור אליכם 💙";
 
+function normalizeMessages(messages: ChatMessage[]) {
+  const cleaned = messages
+    .filter((m) => (m.role === "user" || m.role === "assistant") && m.content?.trim())
+    .slice(-16);
+
+  while (cleaned[0]?.role === "assistant") cleaned.shift();
+
+  return cleaned.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content.trim().slice(0, 1800) }],
+  }));
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
@@ -90,10 +108,10 @@ export const Route = createFileRoute("/api/chat")({
           const key = process.env.GEMINI_API_KEY;
           if (!key) return new Response("Missing GEMINI_API_KEY", { status: 500 });
 
-          const contents = messages.map((m) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          }));
+          const contents = normalizeMessages(messages);
+          if (!contents.length || contents[contents.length - 1]?.role !== "user") {
+            return new Response("Bad request", { status: 400 });
+          }
 
           const res = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,

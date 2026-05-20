@@ -103,9 +103,9 @@ export function Navbar() {
             onClick={() => window.dispatchEvent(new Event("lgr:open-chat"))}
             aria-label="פתחו צ'אט"
             className={`lg:hidden mr-auto ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all ${
-              scrolled
-                ? "bg-gradient-to-l from-[#2D1B3D] to-[#4E8C85] text-white"
-                : "bg-white/15 backdrop-blur-md border border-white/25 text-[#F5F0E8]"
+              overHero
+                ? "bg-white/15 backdrop-blur-md border border-white/25 text-[#F5F0E8]"
+                : "bg-gradient-to-l from-[#2D1B3D] to-[#4E8C85] text-white shadow-sm"
             }`}
           >
             <MessageCircle size={12} />
