@@ -30,6 +30,7 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
     setErrMsg("");
     try {
       await fn({ data: { event_id: event.id, ...form } });
+      trackCalendar("event_registration_submitted", { id: event.id, title });
       setStatus("success");
       qc.invalidateQueries({ queryKey: ["events"] });
     } catch (err) {
