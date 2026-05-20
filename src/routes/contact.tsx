@@ -92,85 +92,74 @@ function Contact() {
         background="cream"
       />
 
-      {/* Contact options */}
-      <section className="px-6 py-12 md:py-16" style={{ background: "#EAE3DA" }}>
-        <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {channels.map((c, i) => (
-            <Reveal key={i} delay={i * 0.05}>
-              <a href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer noopener" className="block bg-white rounded-2xl border border-[#E0D8CC] p-6 h-full card-hover" style={{ borderRight: `3px solid ${c.accent}40` }}>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${c.accent}15` }}>
-                  <c.icon className="w-5 h-5" style={{ color: c.accent }} />
-                </div>
-                <h3 className="text-[#461C5B] mb-1">{c.title}</h3>
-                <p className="text-sm text-[#4A3D30] font-light leading-relaxed break-all">{c.desc}</p>
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Form */}
-      <section id="contact-form" className="px-6 py-16 md:py-20" style={{ background: "#FDFBF7" }}>
-        <div className="max-w-5xl mx-auto">
+      {/* Form — primary */}
+      <section id="contact-form" className="px-6 py-14 md:py-20" style={{ background: "#FDFBF7" }}>
+        <div className="max-w-3xl mx-auto">
           <Reveal>
             <div className="text-center mb-8">
               <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Contact Form" : "טופס פנייה"}</span>
               <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h2>
+              <p className="text-sm text-[#4A3D30] font-light mt-2">{isEn ? "We reply within 48 hours." : "נחזור אליכם תוך 48 שעות."}</p>
             </div>
           </Reveal>
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <Reveal>
-                {done ? (
-                  <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
-                    <p className="text-[#461C5B] text-lg font-light">{t.contact_page.success}</p>
-                  </div>
-                ) : (
-                  <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
-                    <div className="grid sm:grid-cols-2 gap-5">
-                      <Field label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} />
-                      <Field label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} />
-                    </div>
-                    <div className="grid sm:grid-cols-2 gap-5">
-                      <Field label={t.contact_page.field_email} type="email" value={form.email} onChange={upd("email")} />
-                      <label className="block">
-                        <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Inquiry type" : "סוג פנייה"}</span>
-                        <select value={form.subject} onChange={upd("subject")} className="w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition">
-                          <option value="">{isEn ? "Choose..." : "בחרו..."}</option>
-                          {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </label>
-                    </div>
-                    <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
-                    <div className="space-y-2 pt-1">
-                      <PrivacyConsent checked={agreed} onChange={setAgreed} />
-                      <MarketingConsent checked={marketing} onChange={setMarketing} />
-                    </div>
-                    <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
-                      {loading ? t.contact_page.sending : t.contact_page.btn}
-                    </button>
-                  </form>
-                )}
-              </Reveal>
-            </div>
-            <Reveal delay={0.1}>
-              <div className="bg-[#F7E8EA] rounded-2xl border border-[#E0D8CC] p-7 space-y-5 h-fit">
-                <h3 className="text-lg text-[#461C5B] font-normal">{t.contact_page.info_heading}</h3>
-                <div>
-                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.email}</p>
-                  <a href="mailto:l.g.bregesh@gmail.com" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm break-all">l.g.bregesh@gmail.com</a>
-                </div>
-                <div>
-                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{isEn ? "WhatsApp" : "וואטסאפ"}</p>
-                  <a href="https://wa.me/972528040787" target="_blank" rel="noreferrer noopener" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm">052-8040787</a>
-                </div>
-                <div>
-                  <p className="text-xs text-[#A0907A] tracking-wider uppercase mb-1">{t.contact_page.facebook}</p>
-                  <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-[#461C5B] hover:text-[#BA9B78] transition-colors text-sm">facebook.com/לגעת ברגש</a>
-                </div>
+          <Reveal>
+            {done ? (
+              <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
+                <p className="text-[#461C5B] text-lg font-light">{t.contact_page.success}</p>
               </div>
-            </Reveal>
-          </div>
+            ) : (
+              <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5 shadow-sm" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <Field label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} />
+                  <Field label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <Field label={t.contact_page.field_email} type="email" value={form.email} onChange={upd("email")} />
+                  <label className="block">
+                    <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Inquiry type" : "סוג פנייה"}</span>
+                    <select value={form.subject} onChange={upd("subject")} className="w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition">
+                      <option value="">{isEn ? "Choose..." : "בחרו..."}</option>
+                      {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
+                <div className="space-y-2 pt-1">
+                  <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                  <MarketingConsent checked={marketing} onChange={setMarketing} />
+                </div>
+                <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
+                  {loading ? t.contact_page.sending : t.contact_page.btn}
+                </button>
+              </form>
+            )}
+          </Reveal>
+
+          {/* Secondary: alternative channels */}
+          <Reveal delay={0.05}>
+            <div className="mt-10">
+              <div className="text-center mb-4">
+                <span className="text-[11px] tracking-[0.22em] uppercase text-[#A0907A]">{isEn ? "Other ways to reach us" : "דרכים נוספות ליצירת קשר"}</span>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {channels.filter((c) => c.href !== "#contact-form").map((c, i) => (
+                  <a
+                    key={i}
+                    href={c.href}
+                    target={c.href.startsWith("http") ? "_blank" : undefined}
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#E0D8CC] text-xs text-[#461C5B] hover:border-[#BA9B78] transition-colors"
+                  >
+                    <c.icon className="w-3.5 h-3.5" style={{ color: c.accent }} />
+                    <span>{c.title}</span>
+                    <span className="text-[#A0907A] hidden sm:inline">·</span>
+                    <span className="text-[#A0907A] hidden sm:inline break-all">{c.desc}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
           <div className="mt-10">
             <EmergencyBox />
           </div>
