@@ -50,15 +50,20 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
         </button>
 
         {status === "success" ? (
-          <div className="text-center py-6">
+          <div className="text-center py-4">
             <CheckCircle2 className="w-14 h-14 text-[#4E8C85] mx-auto mb-3" />
             <h3 className="text-xl text-[#2D1B3D] font-light mb-2">{t.registration_modal.success}</h3>
-            <p className="text-sm text-[#A0907A] mb-4">{t.registration_modal.success_sub}</p>
-            <div className="bg-[#F5F0E8] rounded-lg p-4 text-sm text-[#2D1B3D] mb-5">
+            <p className="text-sm text-[#A0907A] mb-4">
+              {lang === "he" ? "ההרשמה התקבלה בהצלחה. אפשר להוסיף את האירוע ליומן." : t.registration_modal.success_sub}
+            </p>
+            <div className="bg-[#F5F0E8] rounded-lg p-4 text-sm text-[#2D1B3D] mb-5 text-start">
               <div className="font-medium">{title}</div>
               <div className="text-xs text-[#A0907A] mt-1">{day} {month} {year}{time ? ` · ${time}` : ""}</div>
             </div>
-            <button onClick={onClose} className="px-6 py-2 rounded-full bg-[#BA9B78] text-white text-sm">{t.registration_modal.close}</button>
+            <div className="flex justify-center mb-5">
+              <CalendarActions event={toCalendarEvent(event, lang)} size="md" />
+            </div>
+            <button onClick={onClose} className="px-6 py-2 rounded-full bg-[#461C5B] text-white text-sm hover:bg-[#5a2476] transition">{t.registration_modal.close}</button>
           </div>
         ) : (
           <>
