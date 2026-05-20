@@ -400,6 +400,8 @@ const EventSchema = z.object({
   type: z.enum(["lecture", "workshop", "meetup", "evening"]),
   date: z.string().min(1),
   time: z.string().min(1),
+  end_time: z.string().max(8).optional().nullable(),
+  online_link: z.string().max(500).optional().nullable(),
   location_he: z.string().max(300).optional().nullable(),
   location_en: z.string().max(300).optional().nullable(),
   price: z.number().int().min(0),
