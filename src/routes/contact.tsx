@@ -83,23 +83,13 @@ function Contact() {
 
   return (
     <>
-      <PageHero
-        label={isEn ? "Contact" : "צרו קשר"}
-        title={isEn ? "We'd love to hear from you" : "נשמח לשמוע מכם"}
-        intro={isEn
-          ? "Whether you want to book a workshop, ask a question, volunteer or just say hi — choose the way that's easiest for you."
-          : "בין אם רוצים להזמין סדנה, לשאול שאלה, להתנדב או רק לומר היי — בחרו את הדרך הכי נוחה לכם."}
-        background="cream"
-      />
-
       {/* Form — primary */}
-      <section id="contact-form" className="px-6 py-14 md:py-20" style={{ background: "#FDFBF7" }}>
+      <section id="contact-form" className="px-6 pt-8 pb-14 md:pt-12 md:pb-20" style={{ background: "#FDFBF7" }}>
         <div className="max-w-3xl mx-auto">
           <Reveal>
-            <div className="text-center mb-8">
-              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Contact Form" : "טופס פנייה"}</span>
-              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h2>
-              <p className="text-sm text-[#4A3D30] font-light mt-2">{isEn ? "We reply within 48 hours." : "נחזור אליכם תוך 48 שעות."}</p>
+            <div className="text-center mb-6">
+              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Contact" : "צרו קשר"}</span>
+              <h1 className="text-3xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h1>
             </div>
           </Reveal>
           <Reveal>
