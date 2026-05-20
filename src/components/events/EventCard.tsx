@@ -76,16 +76,16 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           <span className={`text-[11px] ${lowSpots ? "text-[#BA9B78] font-medium" : "text-[#A0907A]"}`}>
             {isFull ? t.events_home.full : `${event.spots_remaining} ${t.events_page.spots_left}`}
           </span>
-          <button
-            onClick={() => onRegister(event)}
-            disabled={isFull}
-            className="text-[11px] px-3 py-1 rounded-full border border-[#BA9B78] text-[#BA9B78] hover:bg-[#BA9B78] hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t.events_home.register}
-          </button>
-        </div>
-        <div className="pt-2 mt-2 border-t border-[#EAE3DA]">
-          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
+          <div className="flex items-center gap-1.5">
+            <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
+            <button
+              onClick={() => onRegister(event)}
+              disabled={isFull}
+              className="text-[11px] px-3 py-1 rounded-full border border-[#BA9B78] text-[#BA9B78] hover:bg-[#BA9B78] hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {t.events_home.register}
+            </button>
+          </div>
         </div>
       </div>
     );
