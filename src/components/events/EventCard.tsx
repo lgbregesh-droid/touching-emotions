@@ -1,5 +1,7 @@
 import { Clock, MapPin, Users } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { CalendarActions } from "./CalendarActions";
+import type { CalendarEvent } from "@/lib/calendar";
 
 export type EventRow = {
   id: string;
@@ -10,6 +12,8 @@ export type EventRow = {
   type: "lecture" | "workshop" | "meetup" | "evening";
   date: string;
   time: string;
+  end_time?: string | null;
+  online_link?: string | null;
   location_he: string | null;
   location_en: string | null;
   price: number;
@@ -18,6 +22,19 @@ export type EventRow = {
   status: string;
   image_url: string | null;
 };
+
+export function toCalendarEvent(event: EventRow, lang: "he" | "en" = "he"): CalendarEvent {
+  return {
+    id: event.id,
+    title: (lang === "en" ? event.title_en : event.title_he) || event.title_he,
+    description: (lang === "en" ? event.description_en : event.description_he) || event.description_he,
+    date: event.date,
+    startTime: event.time,
+    endTime: event.end_time || null,
+    location: (lang === "en" ? event.location_en : event.location_he) || event.location_he,
+    onlineLink: event.online_link || null,
+  };
+}
 
 export function formatDateParts(dateStr: string, lang: "he" | "en") {
   const d = new Date(dateStr + "T00:00:00");
