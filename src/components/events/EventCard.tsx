@@ -108,10 +108,10 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
         {desc && <p className="text-[13px] text-[#4A3D30] leading-relaxed mb-3 line-clamp-3">{desc}</p>}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#A0907A] mb-3">
           {time && <span className="flex items-center gap-1"><Clock size={12} />{time}</span>}
-          {loc && <span className="flex items-center gap-1"><MapPin size={12} />{loc}</span>}
+          <span className="flex items-center gap-1"><MapPin size={12} />{loc || (lang === "he" ? "יתעדכן בהמשך" : "TBA")}</span>
           <span className="flex items-center gap-1"><Users size={12} />{isFull ? t.events_page.full : `${event.spots_remaining} ${t.events_page.spots_left}`}</span>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 mb-3">
           <span className="text-sm">
             {event.price === 0 ? <span className="text-[#4E8C85]">{t.events_page.free}</span> : <span className="text-[#2D1B3D]">₪{event.price}</span>}
           </span>
@@ -120,11 +120,14 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           ) : (
             <button
               onClick={() => onRegister(event)}
-              className="text-sm px-5 py-2 rounded-full bg-[#BA9B78] text-white hover:bg-[#a78865] transition"
+              className="text-sm px-5 py-2 rounded-full bg-[#461C5B] text-white hover:bg-[#5a2476] transition"
             >
               {t.events_page.register}
             </button>
           )}
+        </div>
+        <div className="pt-3 border-t border-[#EAE3DA]">
+          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
         </div>
       </div>
     </div>
