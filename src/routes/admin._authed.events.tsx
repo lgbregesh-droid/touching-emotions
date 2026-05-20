@@ -24,6 +24,8 @@ type EV = {
   time: string;
   location_he?: string | null;
   location_en?: string | null;
+  end_time?: string | null;
+  online_link?: string | null;
   price: number;
   max_spots: number;
   spots_remaining?: number;
