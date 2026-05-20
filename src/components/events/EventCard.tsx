@@ -111,23 +111,23 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           <span className="flex items-center gap-1"><MapPin size={12} />{loc || (lang === "he" ? "יתעדכן בהמשך" : "TBA")}</span>
           <span className="flex items-center gap-1"><Users size={12} />{isFull ? t.events_page.full : `${event.spots_remaining} ${t.events_page.spots_left}`}</span>
         </div>
-        <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="flex items-center justify-between gap-3">
           <span className="text-sm">
             {event.price === 0 ? <span className="text-[#4E8C85]">{t.events_page.free}</span> : <span className="text-[#2D1B3D]">₪{event.price}</span>}
           </span>
-          {isFull ? (
-            <span className="text-xs px-4 py-2 rounded-full bg-gray-100 text-gray-500">{t.events_page.full}</span>
-          ) : (
-            <button
-              onClick={() => onRegister(event)}
-              className="text-sm px-5 py-2 rounded-full bg-[#461C5B] text-white hover:bg-[#5a2476] transition"
-            >
-              {t.events_page.register}
-            </button>
-          )}
-        </div>
-        <div className="pt-3 border-t border-[#EAE3DA]">
-          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
+          <div className="flex items-center gap-2">
+            <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
+            {isFull ? (
+              <span className="text-xs px-4 py-2 rounded-full bg-gray-100 text-gray-500">{t.events_page.full}</span>
+            ) : (
+              <button
+                onClick={() => onRegister(event)}
+                className="text-sm px-5 py-2 rounded-full bg-[#461C5B] text-white hover:bg-[#5a2476] transition"
+              >
+                {t.events_page.register}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
