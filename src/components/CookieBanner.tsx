@@ -56,7 +56,7 @@ export function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="הודעת עוגיות"
-      className="fixed bottom-3 right-3 left-3 md:left-auto md:right-4 z-[90] w-auto md:w-[320px] rounded-xl bg-white border border-[#E0D8CC] shadow-lg p-3 md:p-4 text-right"
+      className="fixed bottom-20 md:bottom-4 right-3 md:right-4 z-[96] w-[min(320px,calc(100vw-1.5rem))] rounded-xl bg-white border border-[#E0D8CC] shadow-lg p-3 md:p-4 text-right"
     >
       <p className="text-[13px] text-[#4A3D30] leading-relaxed">
         אנו משתמשים בעוגיות לשיפור החוויה. פרטים ב
