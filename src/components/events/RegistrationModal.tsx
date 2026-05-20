@@ -5,8 +5,10 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { registerForEvent } from "@/lib/events.functions";
 import { useQueryClient } from "@tanstack/react-query";
 import type { EventRow } from "./EventCard";
-import { formatDateParts } from "./EventCard";
+import { formatDateParts, toCalendarEvent } from "./EventCard";
 import { PrivacyConsent } from "@/components/PrivacyConsent";
+import { CalendarActions } from "./CalendarActions";
+import { trackCalendar } from "@/lib/calendar";
 
 export function RegistrationModal({ event, onClose }: { event: EventRow; onClose: () => void }) {
   const { lang, t } = useLanguage();
