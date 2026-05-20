@@ -1,5 +1,7 @@
 import { Clock, MapPin, Users } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { CalendarActions } from "./CalendarActions";
+import type { CalendarEvent } from "@/lib/calendar";
 
 export type EventRow = {
   id: string;
@@ -10,6 +12,8 @@ export type EventRow = {
   type: "lecture" | "workshop" | "meetup" | "evening";
   date: string;
   time: string;
+  end_time?: string | null;
+  online_link?: string | null;
   location_he: string | null;
   location_en: string | null;
   price: number;
@@ -18,6 +22,19 @@ export type EventRow = {
   status: string;
   image_url: string | null;
 };
+
+export function toCalendarEvent(event: EventRow, lang: "he" | "en" = "he"): CalendarEvent {
+  return {
+    id: event.id,
+    title: (lang === "en" ? event.title_en : event.title_he) || event.title_he,
+    description: (lang === "en" ? event.description_en : event.description_he) || event.description_he,
+    date: event.date,
+    startTime: event.time,
+    endTime: event.end_time || null,
+    location: (lang === "en" ? event.location_en : event.location_he) || event.location_he,
+    onlineLink: event.online_link || null,
+  };
+}
 
 export function formatDateParts(dateStr: string, lang: "he" | "en") {
   const d = new Date(dateStr + "T00:00:00");
@@ -52,10 +69,10 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
         <h3 className="text-sm font-medium text-[#2D1B3D] mb-1 line-clamp-1">{title}</h3>
         <div className="flex items-center gap-3 text-[11px] text-[#A0907A] mb-1.5 flex-wrap">
           {time && <span className="flex items-center gap-1"><Clock size={11} />{time}</span>}
-          {loc && <span className="flex items-center gap-1"><MapPin size={11} />{loc}</span>}
+          <span className="flex items-center gap-1"><MapPin size={11} />{loc || (lang === "he" ? "יתעדכן בהמשך" : "TBA")}</span>
         </div>
         {desc && <p className="text-[11px] text-[#4A3D30] leading-relaxed mb-2 line-clamp-2">{desc}</p>}
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="mt-auto flex items-center justify-between pt-2 gap-2">
           <span className={`text-[11px] ${lowSpots ? "text-[#BA9B78] font-medium" : "text-[#A0907A]"}`}>
             {isFull ? t.events_home.full : `${event.spots_remaining} ${t.events_page.spots_left}`}
           </span>
@@ -66,6 +83,9 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           >
             {t.events_home.register}
           </button>
+        </div>
+        <div className="pt-2 mt-2 border-t border-[#EAE3DA]">
+          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
         </div>
       </div>
     );
@@ -88,10 +108,10 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
         {desc && <p className="text-[13px] text-[#4A3D30] leading-relaxed mb-3 line-clamp-3">{desc}</p>}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#A0907A] mb-3">
           {time && <span className="flex items-center gap-1"><Clock size={12} />{time}</span>}
-          {loc && <span className="flex items-center gap-1"><MapPin size={12} />{loc}</span>}
+          <span className="flex items-center gap-1"><MapPin size={12} />{loc || (lang === "he" ? "יתעדכן בהמשך" : "TBA")}</span>
           <span className="flex items-center gap-1"><Users size={12} />{isFull ? t.events_page.full : `${event.spots_remaining} ${t.events_page.spots_left}`}</span>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 mb-3">
           <span className="text-sm">
             {event.price === 0 ? <span className="text-[#4E8C85]">{t.events_page.free}</span> : <span className="text-[#2D1B3D]">₪{event.price}</span>}
           </span>
@@ -100,11 +120,14 @@ export function EventCard({ event, onRegister, compact }: { event: EventRow; onR
           ) : (
             <button
               onClick={() => onRegister(event)}
-              className="text-sm px-5 py-2 rounded-full bg-[#BA9B78] text-white hover:bg-[#a78865] transition"
+              className="text-sm px-5 py-2 rounded-full bg-[#461C5B] text-white hover:bg-[#5a2476] transition"
             >
               {t.events_page.register}
             </button>
           )}
+        </div>
+        <div className="pt-3 border-t border-[#EAE3DA]">
+          <CalendarActions event={toCalendarEvent(event, lang)} size="sm" />
         </div>
       </div>
     </div>

@@ -24,6 +24,8 @@ type EV = {
   time: string;
   location_he?: string | null;
   location_en?: string | null;
+  end_time?: string | null;
+  online_link?: string | null;
   price: number;
   max_spots: number;
   spots_remaining?: number;
@@ -167,9 +169,11 @@ function EventsAdmin() {
               </select>
             </Field>
             <Field label="תאריך *"><input type="date" className={inp} value={edit.date} onChange={(e) => setEdit({ ...edit, date: e.target.value })} /></Field>
-            <Field label="שעה *"><input type="time" className={inp} value={edit.time} onChange={(e) => setEdit({ ...edit, time: e.target.value })} /></Field>
+            <Field label="שעת התחלה *"><input type="time" className={inp} value={edit.time} onChange={(e) => setEdit({ ...edit, time: e.target.value })} /></Field>
+            <Field label="שעת סיום (אופציונלי)"><input type="time" className={inp} value={edit.end_time || ""} onChange={(e) => setEdit({ ...edit, end_time: e.target.value || null })} /></Field>
             <Field label="מיקום (עברית)"><input className={inp} value={edit.location_he || ""} onChange={(e) => setEdit({ ...edit, location_he: e.target.value })} /></Field>
             <Field label="Location (English)" ltr><input dir="ltr" className={inp} value={edit.location_en || ""} onChange={(e) => setEdit({ ...edit, location_en: e.target.value })} /></Field>
+            <Field label="קישור למפגש מקוון (Zoom וכו׳)" ltr><input dir="ltr" className={inp} placeholder="https://..." value={edit.online_link || ""} onChange={(e) => setEdit({ ...edit, online_link: e.target.value || null })} /></Field>
             <Field label="מחיר ₪ (0 = חינם)"><input type="number" min={0} className={inp} value={edit.price} onChange={(e) => setEdit({ ...edit, price: Number(e.target.value) })} /></Field>
             <Field label="מקסימום משתתפים *"><input type="number" min={0} className={inp} value={edit.max_spots} onChange={(e) => setEdit({ ...edit, max_spots: Number(e.target.value) })} /></Field>
             <Field label="קישור לתמונה"><input className={inp} value={edit.image_url || ""} onChange={(e) => setEdit({ ...edit, image_url: e.target.value })} /></Field>

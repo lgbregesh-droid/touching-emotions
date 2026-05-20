@@ -133,11 +133,13 @@ export type Database = {
           date: string
           description_en: string | null
           description_he: string | null
+          end_time: string | null
           id: string
           image_url: string | null
           location_en: string | null
           location_he: string | null
           max_spots: number
+          online_link: string | null
           price: number
           spots_remaining: number
           status: string
@@ -152,11 +154,13 @@ export type Database = {
           date: string
           description_en?: string | null
           description_he?: string | null
+          end_time?: string | null
           id?: string
           image_url?: string | null
           location_en?: string | null
           location_he?: string | null
           max_spots?: number
+          online_link?: string | null
           price?: number
           spots_remaining?: number
           status?: string
@@ -171,11 +175,13 @@ export type Database = {
           date?: string
           description_en?: string | null
           description_he?: string | null
+          end_time?: string | null
           id?: string
           image_url?: string | null
           location_en?: string | null
           location_he?: string | null
           max_spots?: number
+          online_link?: string | null
           price?: number
           spots_remaining?: number
           status?: string
