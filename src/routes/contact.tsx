@@ -63,6 +63,7 @@ function Contact() {
     waUrl && { icon: MessageCircle, title: isEn ? "WhatsApp" : "וואטסאפ", desc: isEn ? "Fastest reply during the day." : "הכי מהיר במהלך היום.", href: waUrl, accent: "#25D366" },
     s?.email && { icon: Mail, title: isEn ? "Email" : "אימייל", desc: s.email, href: `mailto:${s.email}`, accent: "#BA9B78" },
     s?.facebook_url && { icon: Facebook, title: isEn ? "Facebook" : "פייסבוק", desc: isEn ? "Follow our updates" : "עקבו אחרי העדכונים", href: s.facebook_url, accent: "#1877F2" },
+    s?.address && { icon: MapPin, title: isEn ? "Location" : "כתובת", desc: s.address, href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`, accent: "#2D7D4F" },
     { icon: FileText, title: isEn ? "Form" : "טופס פנייה", desc: isEn ? "Below — we reply within 48h." : "כאן למטה — נחזור תוך 48 שעות.", href: "#contact-form", accent: "#461C5B" },
   ].filter(Boolean) as { icon: typeof Mail; title: string; desc: string; href: string; accent: string }[];
 
