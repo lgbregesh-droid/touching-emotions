@@ -32,11 +32,14 @@ function Home() {
   const { t, lang } = useLanguage();
   const { data: s } = useSiteSettings();
   const { data: cms } = useSiteContent();
+  const { data: dbTestimonials } = useTestimonials({ featuredOnly: true });
+  const { data: featuredWorkshops } = useWorkshops({ featuredOnly: true });
+  const isEn = lang === "en";
   const waUrl = buildWhatsAppLink(s?.whatsapp_number);
   const pick = (key: string, fallback: string) => {
     const v = cms?.[key];
     if (!v) return fallback;
-    return (lang === "en" ? v.en : v.he) || fallback;
+    return (isEn ? v.en : v.he) || fallback;
   };
 
 
@@ -50,7 +53,7 @@ function Home() {
     { icon: HomeIcon, title: t.audiences.a5_title, desc: t.audiences.a5_desc },
   ];
 
-  const services = [
+  const fallbackServices = [
     { image: imgChildren, title: t.offer.s1_title, desc: t.offer.s1_desc, audience: `${t.offer.audience_label}: ${t.offer.s1_aud}`, to: "/workshops" as const },
     { image: imgTeens, title: t.offer.s2_title, desc: t.offer.s2_desc, audience: `${t.offer.audience_label}: ${t.offer.s2_aud}`, to: "/workshops" as const },
     { image: imgSchool, title: t.offer.s3_title, desc: t.offer.s3_desc, audience: `${t.offer.audience_label}: ${t.offer.s3_aud}`, to: "/events" as const },
@@ -58,6 +61,17 @@ function Home() {
     { image: imgFacilitator, title: t.offer.s5_title, desc: t.offer.s5_desc, audience: `${t.offer.audience_label}: ${t.offer.s5_aud}`, to: "/workshops" as const },
     { image: imgParents, title: t.offer.s6_title, desc: t.offer.s6_desc, audience: `${t.offer.audience_label}: ${t.offer.s6_aud}`, to: "/workshops" as const },
   ];
+
+  type WSRow = { name_he?: string; name_en?: string | null; desc_he?: string | null; desc_en?: string | null; image_url?: string | null; audience?: string | null; duration_text?: string | null };
+  const services = (featuredWorkshops && featuredWorkshops.length > 0)
+    ? (featuredWorkshops as WSRow[]).map((w) => ({
+        image: w.image_url || imgChildren,
+        title: (isEn ? (w.name_en || w.name_he) : (w.name_he || w.name_en)) || "",
+        desc: (isEn ? (w.desc_en || w.desc_he) : (w.desc_he || w.desc_en)) || "",
+        audience: `${t.offer.audience_label}: ${w.audience || w.duration_text || ""}`,
+        to: "/workshops" as const,
+      }))
+    : fallbackServices;
 
   const processSteps = [
     { title: t.process.p1_title, desc: t.process.p1_desc },
@@ -75,12 +89,16 @@ function Home() {
     { icon: Network, title: t.impact.i6_title, desc: t.impact.i6_desc },
   ];
 
-  const testimonials = [
+  type TRow = { name?: string; role?: string | null; text?: string };
+  const fallbackTestimonials = [
     { quote: t.testimonials.t1_quote, name: t.testimonials.t1_name, role: t.testimonials.t1_role },
     { quote: t.testimonials.t2_quote, name: t.testimonials.t2_name, role: t.testimonials.t2_role },
     { quote: t.testimonials.t3_quote, name: t.testimonials.t3_name, role: t.testimonials.t3_role },
     { quote: t.testimonials.t4_quote, name: t.testimonials.t4_name, role: t.testimonials.t4_role },
   ];
+  const testimonials = (dbTestimonials && dbTestimonials.length > 0)
+    ? (dbTestimonials as TRow[]).map((r) => ({ quote: r.text || "", name: r.name || "", role: r.role || "" }))
+    : fallbackTestimonials;
 
   return (
     <>
