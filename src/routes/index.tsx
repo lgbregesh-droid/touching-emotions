@@ -16,6 +16,7 @@ import { ImpactGrid } from "@/components/home/ImpactGrid";
 import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
 import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
+import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
 import imgTeens from "@/assets/home/workshop-teens.jpg";
@@ -28,6 +29,9 @@ export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   const { t } = useLanguage();
+  const { data: s } = useSiteSettings();
+  const waUrl = buildWhatsAppLink(s?.whatsapp_number);
+
 
   const audiences = [
     { icon: Baby, title: t.audiences.a1_title, desc: t.audiences.a1_desc },
@@ -279,15 +283,17 @@ function Home() {
               <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
                 {t.final_cta.cta}
               </Link>
-              <a
-                href="https://wa.me/972000000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-[#F5F0E8]/30 text-[#F5F0E8] rounded-full text-sm tracking-wide hover:bg-[#F5F0E8]/10 transition-colors"
-              >
-                <MessageCircle size={16} />
-                {t.final_cta.whatsapp}
-              </a>
+              {waUrl && (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-[#F5F0E8]/30 text-[#F5F0E8] rounded-full text-sm tracking-wide hover:bg-[#F5F0E8]/10 transition-colors"
+                >
+                  <MessageCircle size={16} />
+                  {t.final_cta.whatsapp}
+                </a>
+              )}
             </div>
           </Reveal>
         </div>

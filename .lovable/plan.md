@@ -1,79 +1,51 @@
-## מה כבר קיים בפרויקט
+# Plan: Admin as Single Source of Truth
 
-- `ai_submission_analysis` + `integration_logs` (טבלאות קיימות)
-- `analyzeSubmission` server function שקוראת ל-Gemini דרך Lovable AI Gateway
-- מסך אדמין עם פאנל ניתוח (`AnalysisPanel`) לפניות יצירת קשר ומתנדבים
-- מערכת RAG פעילה (rag_documents, rag_chunks, match_rag_chunks)
-- `GEMINI_API_KEY` כבר מוגדר כסוד
+This is a large, multi-area upgrade. I'll work in phases and stop after each major phase to let you verify before moving on. Nothing existing will be removed — only extended and re-wired.
 
-## מה ייבנה
+## Phase 1 — Foundations (settings + WhatsApp helper)
 
-### שלב 1 — הרחבת סכימת DB
+1. Seed `site_settings` with all required keys (idempotent insert): `site_name`, `site_subtitle`, `phone`, `whatsapp_number`, `email`, `facebook_url`, `instagram_url`, `donation_link`, `association_number`, `footer_text`, `owner_email`, `ai_enabled`, `ai_provider`, `gemini_model`, plus existing keys. Each with Hebrew `label` and `type`.
+2. Extend the existing `הגדרות אתר` admin page so each field shows: Hebrew label, current value, input, helper text ("איפה זה מופיע באתר"), per-section save.
+3. Create `src/lib/site-settings.ts` with:
+   - `useSiteSettings()` hook (React Query, public read)
+   - `buildWhatsAppLink(number, message?)` helper
+   - `getSetting(key, fallback)` helper
+4. Replace hardcoded WhatsApp / phone / email / social / donation / footer / association number across:
+   - `FloatingWidgets`, `Navbar`, `Footer`, `contact.tsx`, `SupportTeaser`, support page CTA, workshop/lecture CTAs, donations page
+   - All WhatsApp links go through `buildWhatsAppLink`.
+5. Fallback behavior: hide/disable links when value is empty; safe placeholders.
 
-**`ai_submission_analysis`** — הוספת עמודות חסרות:
-`submission_table, target_audience, main_need, urgency_level, short_summary, missing_information jsonb, recommended_next_step, suggested_activity_type, matched_workshop_or_lecture jsonb, draft_reply, internal_notes, ai_provider, ai_model, ai_status, error_message`
+## Phase 2 — Page texts (`site_content`)
 
-**`integration_logs`** — הוספת `submission_id, submission_table`
+1. `site_content` table already exists. Seed rows for each editable page text (hero titles, CTA labels, about copy, etc.) with `page`, `section`, `key`, `label`, `type`, `value_he`, `value_en`.
+2. Add admin page `ניהול טקסטים` grouped by page (`דף הבית`, `אודות`, ...). Reuse existing admin shell + CMS manager pattern.
+3. Public components read via `useSiteContent(page)` hook with safe fallbacks to current hardcoded copy.
 
-**טבלאות הגשות** (`contact_messages, volunteers, event_registrations, workshop_registrants, donations, orders`) — הוספת:
-- `ai_status text default 'pending'`
-- `email_status text default 'pending'`
+## Phase 3 — CMS sections (workshops, lectures, testimonials, gallery, support, FAQ, events)
 
-**טבלה חדשה `ai_policies`**: `id, topic, instruction, is_active, created_at, updated_at`
-+ seed של 6 מדיניות ברירת מחדל (לא להמציא מחירים/תאריכים, לא לאבחן וכו׳).
+Each section already has admin pages and tables. I'll:
+- Verify fields match the requested list; add missing columns via migration if needed (e.g., workshops `short_description`, `goals`, `format` already exist; lectures fields exist).
+- Ensure each admin card shows: active toggle, featured toggle, last-updated date, image preview, reorder, delete confirm, validation, success/error toasts.
+- Public pages read active rows; homepage reads active+featured ordered by `order_index`.
+- Verify hidden items don't leak publicly.
+- Events: ensure calendar (`CalendarActions`) builds Google/ICS links from row data (already does — verify).
 
-**`site_settings`** — seed של מפתחות חדשים:
-`ai_provider=gemini`, `gemini_model=gemini-2.5-flash`, `ai_enabled=true`, `ai_analysis_enabled=true`, `owner_email`, `email_notifications_enabled=true`.
+## Phase 4 — Security & RLS audit
 
-### שלב 2 — Server function מאוחד `processSubmission`
+- Verify each public table has `SELECT` policy scoped to `is_active = true` where applicable (faq, lectures, testimonials, support_items already correct; workshops, gallery currently allow all rows — tighten to active where appropriate, keeping admin full access via service role).
+- Verify form submission tables (`contact_messages`, `volunteers`, `event_registrations`, `workshop_registrants`, `donations`, `orders`) and `integration_logs` are not publicly readable (already correct — admin reads via service role through server fns).
 
-קובץ חדש: `src/lib/ai/process-submission.functions.ts`
+## Phase 5 — Refresh behavior
 
-זרימה:
-1. מקבל `{ submissionId, submissionTable }`
-2. שולף את ההגשה + CMS context (workshops, lectures, faq, site_settings, ai_policies פעילים)
-3. בונה prompt מובנה + RAG context מהמערכת הקיימת
-4. קורא ל-Gemini דרך Lovable AI Gateway עם **tool calling** להחזרת JSON בסכימה הנדרשת (`submission_type`, `urgency_level`, `matched_workshop_or_lecture` וכו׳)
-5. שומר ל-`ai_submission_analysis` (insert / upsert לפי `submission_id`)
-6. מעדכן `ai_status` בטבלת ההגשה
-7. כל כשל → `integration_logs` + `ai_status='failed'`, ממשיך הלאה
-8. שולח אימייל לבעלים דרך **Resend** (קיים? אם לא — דרך Lovable Emails)
-9. מעדכן `email_status`
+- After every admin save, invalidate relevant React Query keys (`["site-settings"]`, `["site-content", page]`, `["workshops"]`, etc.).
+- Toasts: `השינוי נשמר בהצלחה` / error message.
+- Public pages re-fetch on next mount; no redeploy.
 
-הפעלה:
-- **רקע אוטומטי** מתוך כל טופס לאחר insert מוצלח (`processSubmission({ submissionId, table })` ללא await — fire & forget)
-- **ידני** — כפתור "צור ניתוח AI מחדש" באדמין
+## Out of scope / preserved as-is
 
-### שלב 3 — חיווט הטפסים
+- Existing pages, design tokens, RTL, WhatsApp/Accessibility/Chatbot floating buttons, calendar feature, AI analysis pipeline, admin auth/login, Supabase client files.
+- No new admin from scratch — only extending current routes under `src/routes/admin._authed.*`.
 
-עדכון 6 הטפסים לקרוא ל-`processSubmission` אחרי insert מוצלח, בלי לחסום את הודעת ההצלחה למשתמש.
+## Suggested checkpoint cadence
 
-### שלב 4 — אימייל
-
-שימוש ב-Resend דרך connector. אם לא מחובר — אבקש להתחבר.
-תבנית בעברית כמו במפרט, נושא דינמי לפי `submissionTable`.
-
-### שלב 5 — אדמין
-
-- הרחבת `AnalysisPanel` להציג את כל השדות החדשים (matched workshop, urgency, missing_information, draft_reply עם כפתור העתקה, internal_notes)
-- הוספת מסך `/admin/integration-logs` (יומני אינטגרציות)
-- כפתור "צור ניתוח AI מחדש" כבר קיים בסיסית — אווודא שעובד מול הפלואו החדש
-- הוספת תצוגת `ai_status` + `email_status` בטבלת הפניות
-
-### שלב 6 — RLS
-
-- הציבור: `INSERT` בלבד לטבלאות הגשה (כבר קיים)
-- אדמין מאומת: קריאה/עדכון של הגשות, `ai_submission_analysis`, `integration_logs`, `ai_policies`
-
-## הערות חשובות
-
-- שימוש ב-Lovable AI Gateway (לא קריאה ישירה ל-Gemini) — `GEMINI_API_KEY` שלך לא יידרש כי `LOVABLE_API_KEY` כבר מוגדר. אם אתה מתעקש על ה-API key הפרטי שלך — אפשר להוסיף סניף שני, אבל ה-Gateway יותר חסכוני ופשוט.
-- מודל ברירת מחדל: `google/gemini-2.5-flash` (שווה ערך ל-`gemini-1.5-flash` של המפרט, מעודכן יותר), ניתן לשינוי מהאדמין דרך `site_settings.gemini_model`.
-- כל הקריאות ל-AI עוברות דרך `createServerFn` — אפס חשיפה של מפתחות בצד לקוח.
-- ה-RAG הקיים יוזרק לפרומפט אוטומטית.
-
-## שאלות לפני שאני מתחיל
-
-1. **אימייל** — להשתמש ב-Resend (צריך לחבר connector אם לא מחובר) או ב-Lovable Emails המובנה?
-2. **API key** — האם להמשיך עם ה-Lovable AI Gateway (מומלץ) או להשתמש ב-`GEMINI_API_KEY` שכבר הזנת בקריאה ישירה ל-Google?
-3. **owner_email** — מה כתובת האימייל לקבלת ההתראות?
+I'll stop after **Phase 1** so you can confirm the WhatsApp/phone/email update flow works end-to-end before I tackle the larger page-texts and CMS sweeps. Reply "המשך" / "continue" to proceed phase by phase, or tell me to do everything in one go.
