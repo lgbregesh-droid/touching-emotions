@@ -107,7 +107,7 @@ export function FloatingWidgets() {
                   {m.role === "assistant" && m.content === ERROR_MESSAGE && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       <a
-                        href={WHATSAPP_URL}
+                        href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="rounded-full bg-[#4E8C85] px-3 py-1 text-xs text-white transition hover:opacity-90"
@@ -169,7 +169,7 @@ export function FloatingWidgets() {
 
       {/* WhatsApp — bottom-left, next to accessibility button */}
       <a
-        href={WHATSAPP_URL}
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="group fixed bottom-4 left-20 z-[95] w-12 h-12 rounded-full shadow-lg bg-[#25D366] text-white flex items-center justify-center transition hover:scale-105 hover:bg-[#1ebe57]"
