@@ -242,6 +242,9 @@ function Home() {
         </div>
       </section>
 
+      {/* UPCOMING EVENTS */}
+      <EventsHomeSection />
+
       {/* GALLERY */}
       <section className="relative bg-[#2D1B3D] py-12 md:py-16 px-6 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(78,140,133,0.12), transparent 70%)" }} />
@@ -280,8 +283,6 @@ function Home() {
         </div>
       </section>
 
-      {/* UPCOMING EVENTS */}
-      <EventsHomeSection />
 
       {/* SUPPORT */}
       <section className="bg-[#EDE6DC] py-14 md:py-20 px-6">
