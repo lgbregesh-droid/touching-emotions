@@ -190,6 +190,31 @@ function CmsForm({ table, fields, initial, isNew, onCancel, onSaved, aiAnalyze }
     finally { setUploadingFor(null); }
   };
 
+  const runAiAnalyze = async (file: File) => {
+    if (!aiAnalyze) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("הקובץ גדול מ-5MB"); return; }
+    setAnalyzing(true);
+    try {
+      const b64 = await new Promise<string>((res, rej) => {
+        const r = new FileReader();
+        r.onloadend = () => res((r.result as string).split(",")[1]);
+        r.onerror = () => rej(r.error);
+        r.readAsDataURL(file);
+      });
+      const result = await aiAnalyze.analyze(b64, file.type);
+      setValues((p) => {
+        const next = { ...p };
+        for (const [k, v] of Object.entries(result)) {
+          if (v !== undefined && v !== null && v !== "") next[k] = v;
+        }
+        return next;
+      });
+      toast.success("הפרטים מולאו אוטומטית");
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setAnalyzing(false); }
+  };
+
+
   const save = async () => {
     for (const f of fields) {
       if (f.required && !values[f.key] && values[f.key] !== false) {
