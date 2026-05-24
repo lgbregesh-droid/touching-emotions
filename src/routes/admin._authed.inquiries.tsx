@@ -7,6 +7,7 @@ import { listInquiries, setInquiryStatus, deleteInquiry } from "@/lib/admin/data
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Eye, Trash2, Check } from "lucide-react";
+import { AnalysisPanel } from "@/components/admin/AnalysisPanel";
 
 export const Route = createFileRoute("/admin/_authed/inquiries")({
   head: () => ({ meta: [{ title: "פניות וטפסים | ניהול" }] }),
@@ -161,7 +162,7 @@ function Inquiries() {
 
       {open && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setOpen(null)}>
-          <div className="bg-white rounded-xl max-w-lg w-full p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg text-[#2D1B3D] mb-3">{open.name}</h3>
             <dl className="space-y-2 text-sm">
               {Object.entries(open).filter(([k]) => !["id"].includes(k)).map(([k, v]) => (
@@ -171,6 +172,7 @@ function Inquiries() {
                 </div>
               ))}
             </dl>
+            <AnalysisPanel kind={tab} id={open.id!} />
             <div className="text-end mt-4">
               <SecondaryButton onClick={() => setOpen(null)}>סגירה</SecondaryButton>
             </div>

@@ -35,6 +35,7 @@ import { Route as AdminAuthedSupportRouteImport } from './routes/admin._authed.s
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
 import { Route as AdminAuthedSettingsRouteImport } from './routes/admin._authed.settings'
 import { Route as AdminAuthedLecturesRouteImport } from './routes/admin._authed.lectures'
+import { Route as AdminAuthedKnowledgeBaseRouteImport } from './routes/admin._authed.knowledge-base'
 import { Route as AdminAuthedInquiriesRouteImport } from './routes/admin._authed.inquiries'
 import { Route as AdminAuthedGalleryRouteImport } from './routes/admin._authed.gallery'
 import { Route as AdminAuthedFaqRouteImport } from './routes/admin._authed.faq'
@@ -171,6 +172,12 @@ const AdminAuthedLecturesRoute = AdminAuthedLecturesRouteImport.update({
   path: '/lectures',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedKnowledgeBaseRoute =
+  AdminAuthedKnowledgeBaseRouteImport.update({
+    id: '/knowledge-base',
+    path: '/knowledge-base',
+    getParentRoute: () => AdminAuthedRoute,
+  } as any)
 const AdminAuthedInquiriesRoute = AdminAuthedInquiriesRouteImport.update({
   id: '/inquiries',
   path: '/inquiries',
@@ -226,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/lectures': typeof AdminAuthedLecturesRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
@@ -259,6 +267,7 @@ export interface FileRoutesByTo {
   '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
   '/admin/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/lectures': typeof AdminAuthedLecturesRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
@@ -293,6 +302,7 @@ export interface FileRoutesById {
   '/admin/_authed/faq': typeof AdminAuthedFaqRoute
   '/admin/_authed/gallery': typeof AdminAuthedGalleryRoute
   '/admin/_authed/inquiries': typeof AdminAuthedInquiriesRoute
+  '/admin/_authed/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/_authed/lectures': typeof AdminAuthedLecturesRoute
   '/admin/_authed/settings': typeof AdminAuthedSettingsRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
     | '/admin/faq'
     | '/admin/gallery'
     | '/admin/inquiries'
+    | '/admin/knowledge-base'
     | '/admin/lectures'
     | '/admin/settings'
     | '/admin/shop'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/faq'
     | '/admin/gallery'
     | '/admin/inquiries'
+    | '/admin/knowledge-base'
     | '/admin/lectures'
     | '/admin/settings'
     | '/admin/shop'
@@ -394,6 +406,7 @@ export interface FileRouteTypes {
     | '/admin/_authed/faq'
     | '/admin/_authed/gallery'
     | '/admin/_authed/inquiries'
+    | '/admin/_authed/knowledge-base'
     | '/admin/_authed/lectures'
     | '/admin/_authed/settings'
     | '/admin/_authed/shop'
@@ -607,6 +620,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedLecturesRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/knowledge-base': {
+      id: '/admin/_authed/knowledge-base'
+      path: '/knowledge-base'
+      fullPath: '/admin/knowledge-base'
+      preLoaderRoute: typeof AdminAuthedKnowledgeBaseRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/inquiries': {
       id: '/admin/_authed/inquiries'
       path: '/inquiries'
@@ -659,6 +679,7 @@ interface AdminAuthedRouteChildren {
   AdminAuthedFaqRoute: typeof AdminAuthedFaqRoute
   AdminAuthedGalleryRoute: typeof AdminAuthedGalleryRoute
   AdminAuthedInquiriesRoute: typeof AdminAuthedInquiriesRoute
+  AdminAuthedKnowledgeBaseRoute: typeof AdminAuthedKnowledgeBaseRoute
   AdminAuthedLecturesRoute: typeof AdminAuthedLecturesRoute
   AdminAuthedSettingsRoute: typeof AdminAuthedSettingsRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
@@ -676,6 +697,7 @@ const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedFaqRoute: AdminAuthedFaqRoute,
   AdminAuthedGalleryRoute: AdminAuthedGalleryRoute,
   AdminAuthedInquiriesRoute: AdminAuthedInquiriesRoute,
+  AdminAuthedKnowledgeBaseRoute: AdminAuthedKnowledgeBaseRoute,
   AdminAuthedLecturesRoute: AdminAuthedLecturesRoute,
   AdminAuthedSettingsRoute: AdminAuthedSettingsRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
