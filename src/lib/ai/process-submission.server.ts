@@ -105,7 +105,11 @@ const TOOL = {
           required: ["type", "title", "reason"],
           additionalProperties: false,
         },
-        draft_reply: { type: "string", description: "טיוטת תשובה אישית בעברית, 3-6 משפטים." },
+        draft_reply: {
+          type: "string",
+          description:
+            "המלצת פעולה פנימית מפורטת לצוות העמותה — איך להמשיך עם הפנייה: למי לחזור, באיזה אופן (טלפון/מייל/וואטסאפ), אילו סדנאות/הרצאות מה-CMS להציע ולמה הן מתאימות, ואילו פרטים חסרים שצריך לברר. 4-7 משפטים, בלשון פנימית. **אסור לכתוב טיוטת תשובה לפונה — רק כיוון פעולה לצוות.**",
+        },
         internal_notes: { type: "string", description: "הערות פנימיות לבעלת האתר." },
       },
       required: [
