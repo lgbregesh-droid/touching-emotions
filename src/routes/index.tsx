@@ -140,7 +140,7 @@ function Home() {
               <p className="mb-5 font-serif italic text-lg md:text-xl" style={{ background: "linear-gradient(90deg, #BA9B78, #4E8C85, #2D1B3D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 {t.about_teaser.tagline}
               </p>
-              <p className="text-[#4A3D30] text-base leading-loose font-light mb-5">{t.about_teaser.text}</p>
+              <p className="text-[#4A3D30] text-base leading-loose font-light mb-5">{pick("home.about.text", t.about_teaser.text)}</p>
               <div className="flex flex-wrap gap-2.5">
                 <span className="px-3.5 py-1.5 text-xs tracking-wider rounded-full border border-[#BA9B78] text-[#2D1B3D] bg-white/40">{t.about_teaser.pill1}</span>
                 <span className="px-3.5 py-1.5 text-xs tracking-wider rounded-full border border-[rgba(78,140,133,0.5)] text-[#2D1B3D] bg-white/40">{t.about_teaser.pill2}</span>
@@ -157,7 +157,7 @@ function Home() {
                 as="p"
                 className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed"
               >
-                {t.about_teaser.quote}
+                {pick("home.quote", t.about_teaser.quote)}
               </TextEffect>
             </div>
           </Reveal>
