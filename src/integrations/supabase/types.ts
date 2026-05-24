@@ -722,6 +722,7 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          created_at: string
           id: string
           key: string
           label: string | null
@@ -730,6 +731,7 @@ export type Database = {
           value: string | null
         }
         Insert: {
+          created_at?: string
           id?: string
           key: string
           label?: string | null
@@ -738,6 +740,7 @@ export type Database = {
           value?: string | null
         }
         Update: {
+          created_at?: string
           id?: string
           key?: string
           label?: string | null
