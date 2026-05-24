@@ -32,7 +32,13 @@ type Props = {
   hasOrder?: boolean; // shows reorder arrows
   emptyText?: string;
   newButtonLabel?: string;
+  aiAnalyze?: {
+    label: string;
+    hint?: string;
+    analyze: (base64: string, contentType: string) => Promise<Record<string, unknown>>;
+  };
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any> & { id: string };
