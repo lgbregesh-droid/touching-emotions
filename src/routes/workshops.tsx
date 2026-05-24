@@ -29,7 +29,13 @@ type Cat = (typeof CATEGORIES)[number];
 
 function Workshops() {
   const { t, lang } = useLanguage();
+  const { data: cms } = useSiteContent();
   const isEn = lang === "en";
+  const pick = (key: string, fallback: string) => {
+    const v = cms?.[key];
+    if (!v) return fallback;
+    return (isEn ? v.en : v.he) || fallback;
+  };
   const [filter, setFilter] = useState<Cat | "all">("all");
 
   const catLabel: Record<Cat, string> = {
