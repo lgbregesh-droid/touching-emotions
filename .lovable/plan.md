@@ -1,83 +1,79 @@
-# תכנית בנייה — ניתוח AI לפניות + בסיס ידע RAG
+## מה כבר קיים בפרויקט
 
-הפרומפט המקורי מתייחס למערכות שלא קיימות בפרויקט (`analyze-submission`, `ai_submission_analysis`, `integration_logs`). לכן הבנייה תתבצע בשני שלבים, כפי שבחרת.
+- `ai_submission_analysis` + `integration_logs` (טבלאות קיימות)
+- `analyzeSubmission` server function שקוראת ל-Gemini דרך Lovable AI Gateway
+- מסך אדמין עם פאנל ניתוח (`AnalysisPanel`) לפניות יצירת קשר ומתנדבים
+- מערכת RAG פעילה (rag_documents, rag_chunks, match_rag_chunks)
+- `GEMINI_API_KEY` כבר מוגדר כסוד
 
-## שלב 1 — תשתית ניתוח AI לפניות (בסיסי, ללא RAG)
+## מה ייבנה
 
-### בסיס נתונים (מיגרציה אחת)
-- `ai_submission_analysis` — שומרת תוצאות ניתוח של הודעות מ-`contact_messages` ו-`volunteers`:
-  - `submission_id`, `submission_type` (contact/volunteer), `summary`, `sentiment` (positive/neutral/negative/urgent), `category`, `suggested_response`, `priority` (low/medium/high), `model`, `created_at`, וגם השדות העתידיים `rag_documents_used jsonb default '[]'`, `rag_context_chars int default 0`.
-- `integration_logs` — לוגים גנריים: `integration_type`, `status`, `error_message`, `metadata jsonb`, `created_at`.
-- RLS: רק admin (auth.role() = 'authenticated') קורא/כותב. ציבור — אין גישה.
+### שלב 1 — הרחבת סכימת DB
 
-### Server function `analyzeSubmission` (TanStack, לא Edge Function)
-- ב-`src/lib/ai/analyze.functions.ts` (admin בלבד דרך טוקן הניהול הקיים).
-- שולפת את הפנייה, בונה פרומפט, קוראת ל-Lovable AI Gateway (`google/gemini-2.5-flash`) עם tool calling להחזרת JSON מובנה (summary/sentiment/category/priority/suggested_response).
-- שומרת תוצאה ב-`ai_submission_analysis` ולוג ב-`integration_logs`.
-- מטפלת ב-429/402 ומשקפת הודעת שגיאה ברורה.
+**`ai_submission_analysis`** — הוספת עמודות חסרות:
+`submission_table, target_audience, main_need, urgency_level, short_summary, missing_information jsonb, recommended_next_step, suggested_activity_type, matched_workshop_or_lecture jsonb, draft_reply, internal_notes, ai_provider, ai_model, ai_status, error_message`
 
-### ממשק אדמין
-- בעמוד `/admin/inquiries` הקיים — להוסיף לכל שורה כפתור "נתח ב-AI" ופאנל שמראה: תקציר, רגש, קטגוריה, עדיפות, תשובה מוצעת. אם כבר יש ניתוח — להציג אותו ולאפשר "נתח מחדש".
+**`integration_logs`** — הוספת `submission_id, submission_table`
 
-## שלב 2 — בסיס ידע RAG עם chunking
+**טבלאות הגשות** (`contact_messages, volunteers, event_registrations, workshop_registrants, donations, orders`) — הוספת:
+- `ai_status text default 'pending'`
+- `email_status text default 'pending'`
 
-### בסיס נתונים (מיגרציה שנייה)
-- הפעלת `pgvector`: `create extension if not exists vector;`
-- `rag_documents`:
-  - `id, title, description, category` (org_profile/workshops_full), `file_name, file_type` (pdf/docx/txt), `file_url, storage_path`, `extraction_status` (pending/completed/failed), `extraction_error`, `is_active boolean default true`, `language` (he/en/both), `chars_total int`, `created_at, updated_at`.
-- `rag_chunks`:
-  - `id, document_id` (FK→rag_documents on delete cascade), `chunk_index int`, `content text`, `embedding vector(1536)` (משתמש ב-`google/gemini-embedding-001` עם `dimensions: 1536` כדי לחסוך מקום וזמן חיפוש), `created_at`.
-  - אינדקס HNSW: `using hnsw (embedding vector_cosine_ops)`.
-- פונקציית RPC `match_rag_chunks(query_embedding, match_count, min_similarity)` שמחזירה את הצ'אנקים הקרובים ביותר ממסמכים פעילים שהושלם להם חילוץ.
-- RLS: admin בלבד, אין גישה ציבורית. גם storage policies בלעדיות.
-- Storage bucket `rag-documents` — פרטי, מוגבל ל-10MB. נקרא רק מצד שרת.
+**טבלה חדשה `ai_policies`**: `id, topic, instruction, is_active, created_at, updated_at`
++ seed של 6 מדיניות ברירת מחדל (לא להמציא מחירים/תאריכים, לא לאבחן וכו׳).
 
-### Server functions
-- `uploadRagDocument` — מקבלת מטא-דאטה + קובץ (base64), מעלה ל-storage, יוצרת רשומה ב-`rag_documents` עם `extraction_status='pending'`, ומפעילה את `extractAndEmbed` ברקע.
-- `extractAndEmbed`:
-  - מוריד מה-storage ב-server.
-  - PDF → `pdfjs-dist/legacy/build/pdf.mjs` (worker-compatible build).
-  - DOCX → `mammoth` (`extractRawText`).
-  - TXT → קריאה ישירה.
-  - מנקה רווחים מיותרים, מפצל לצ'אנקים של ~800 תווים עם חפיפה של ~150 תווים, גבולות במשפטים.
-  - שולח batch ל-`/v1/embeddings` (model: `google/gemini-embedding-001`, dimensions: 1536) ב-batches של 64.
-  - שומר ב-`rag_chunks`. מעדכן `extraction_status='completed'` ולוג ב-`integration_logs`.
-  - על שגיאה: `failed` + `extraction_error` + לוג.
-- `reextractRagDocument` — מוחק chunks ישנים ומריץ שוב.
-- `setRagDocumentActive`, `deleteRagDocument` (מוחק גם storage + chunks).
-- `previewRagDocument` — מחזיר 500 תווים ראשונים מצורפים מהצ'אנקים.
+**`site_settings`** — seed של מפתחות חדשים:
+`ai_provider=gemini`, `gemini_model=gemini-2.5-flash`, `ai_enabled=true`, `ai_analysis_enabled=true`, `owner_email`, `email_notifications_enabled=true`.
 
-### שילוב ב-`analyzeSubmission` (עדכון)
-- לפני קריאה ל-Gemini:
-  - בונה שאילתה (טקסט הפנייה).
-  - יוצר embedding לשאילתה.
-  - קורא ל-`match_rag_chunks` עם `match_count=8, min_similarity=0.6`.
-  - בונה context (מקבץ לפי `document_id`, מציג כותרת+קטגוריה+תוכן הצ'אנקים), חותך ל-8000 תווים סה"כ עם עדיפות `org_profile` לפני `workshops_full`.
-  - מוסיף ל-prompt בתור `KNOWLEDGE_BASE` (לפני CMS_CONTEXT אם קיים).
-  - שומר ב-`ai_submission_analysis.rag_documents_used` רשימה של `{id, title, category}` יחודיים.
-  - שומר ב-`rag_context_chars` את האורך הסופי.
-  - מלוגג ב-`integration_logs.metadata`: `rag_docs_count`, `rag_context_chars`, `rag_docs_included`.
+### שלב 2 — Server function מאוחד `processSubmission`
 
-### ממשק אדמין `/admin/knowledge-base`
-- פריט חדש בסיידבר (📚 בסיס ידע) בין "תוכן האתר" ל"גלריה".
-- אזור העלאה (drag & drop) עם טופס: שם, תיאור, קטגוריה, שפה. אישור → העלאה + הפעלת חילוץ.
-- טבלה: שם, קטגוריה (תווית), שפה, קובץ + אייקון, סטטוס חילוץ (✓/⏳/✗ עם tooltip על שגיאה), טוגל פעיל/כבוי, תאריך, פעולות (תצוגה/חלץ מחדש/מחק).
-- Empty state והודעת מידע למעלה.
-- בעמוד הניתוח של פנייה — להציג רשימת מסמכי RAG שנכללו (`rag_documents_used`).
+קובץ חדש: `src/lib/ai/process-submission.functions.ts`
 
-### תרגומים
-- להוסיף את כל המפתחות מתחת ל-`he.admin.knowledge_base` כפי שמופיע בפרומפט.
+זרימה:
+1. מקבל `{ submissionId, submissionTable }`
+2. שולף את ההגשה + CMS context (workshops, lectures, faq, site_settings, ai_policies פעילים)
+3. בונה prompt מובנה + RAG context מהמערכת הקיימת
+4. קורא ל-Gemini דרך Lovable AI Gateway עם **tool calling** להחזרת JSON בסכימה הנדרשת (`submission_type`, `urgency_level`, `matched_workshop_or_lecture` וכו׳)
+5. שומר ל-`ai_submission_analysis` (insert / upsert לפי `submission_id`)
+6. מעדכן `ai_status` בטבלת ההגשה
+7. כל כשל → `integration_logs` + `ai_status='failed'`, ממשיך הלאה
+8. שולח אימייל לבעלים דרך **Resend** (קיים? אם לא — דרך Lovable Emails)
+9. מעדכן `email_status`
 
-## טכנולוגיה ומפתחות
-- AI: Lovable AI Gateway (משתמש כבר בפרויקט עם `LOVABLE_API_KEY`).
-- חילוץ טקסט: `mammoth` ל-DOCX, `pdfjs-dist` (legacy build) ל-PDF — שניהם תואמי Cloudflare Worker.
-- Embeddings: `google/gemini-embedding-001` עם `dimensions: 1536`.
+הפעלה:
+- **רקע אוטומטי** מתוך כל טופס לאחר insert מוצלח (`processSubmission({ submissionId, table })` ללא await — fire & forget)
+- **ידני** — כפתור "צור ניתוח AI מחדש" באדמין
 
-## הערות / הנחות
-- הניתוח מופעל ידנית מהאדמין (לא אוטומטית בכל הגשת טופס) — מונע הוצאות מיותרות. אם תרצי הפעלה אוטומטית, נוסיף trigger בעתיד.
-- `pdfjs-dist` יכול להיות כבד — אם נתקל בבעיות bundle ב-Cloudflare Worker, נחליף ל-`unpdf`.
-- בכל שלב נחזיר רק serializable data מה-server function, ולא נחשוף את `client.server` ל-client.
+### שלב 3 — חיווט הטפסים
 
----
+עדכון 6 הטפסים לקרוא ל-`processSubmission` אחרי insert מוצלח, בלי לחסום את הודעת ההצלחה למשתמש.
 
-ברגע שתאשרי, אני מתחיל בשלב 1 (מיגרציה ראשונה + ניתוח AI בסיסי + UI ב-inquiries) ואז ממשיך ישירות לשלב 2.
+### שלב 4 — אימייל
+
+שימוש ב-Resend דרך connector. אם לא מחובר — אבקש להתחבר.
+תבנית בעברית כמו במפרט, נושא דינמי לפי `submissionTable`.
+
+### שלב 5 — אדמין
+
+- הרחבת `AnalysisPanel` להציג את כל השדות החדשים (matched workshop, urgency, missing_information, draft_reply עם כפתור העתקה, internal_notes)
+- הוספת מסך `/admin/integration-logs` (יומני אינטגרציות)
+- כפתור "צור ניתוח AI מחדש" כבר קיים בסיסית — אווודא שעובד מול הפלואו החדש
+- הוספת תצוגת `ai_status` + `email_status` בטבלת הפניות
+
+### שלב 6 — RLS
+
+- הציבור: `INSERT` בלבד לטבלאות הגשה (כבר קיים)
+- אדמין מאומת: קריאה/עדכון של הגשות, `ai_submission_analysis`, `integration_logs`, `ai_policies`
+
+## הערות חשובות
+
+- שימוש ב-Lovable AI Gateway (לא קריאה ישירה ל-Gemini) — `GEMINI_API_KEY` שלך לא יידרש כי `LOVABLE_API_KEY` כבר מוגדר. אם אתה מתעקש על ה-API key הפרטי שלך — אפשר להוסיף סניף שני, אבל ה-Gateway יותר חסכוני ופשוט.
+- מודל ברירת מחדל: `google/gemini-2.5-flash` (שווה ערך ל-`gemini-1.5-flash` של המפרט, מעודכן יותר), ניתן לשינוי מהאדמין דרך `site_settings.gemini_model`.
+- כל הקריאות ל-AI עוברות דרך `createServerFn` — אפס חשיפה של מפתחות בצד לקוח.
+- ה-RAG הקיים יוזרק לפרומפט אוטומטית.
+
+## שאלות לפני שאני מתחיל
+
+1. **אימייל** — להשתמש ב-Resend (צריך לחבר connector אם לא מחובר) או ב-Lovable Emails המובנה?
+2. **API key** — האם להמשיך עם ה-Lovable AI Gateway (מומלץ) או להשתמש ב-`GEMINI_API_KEY` שכבר הזנת בקריאה ישירה ל-Google?
+3. **owner_email** — מה כתובת האימייל לקבלת ההתראות?
