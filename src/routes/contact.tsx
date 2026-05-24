@@ -11,7 +11,7 @@ import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { EmergencyBox } from "@/routes/disclaimer";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 import { useFaq } from "@/hooks/use-cms";
-import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2 } from "lucide-react";
+import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
