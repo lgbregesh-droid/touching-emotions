@@ -75,14 +75,14 @@ const WorkshopSchema = z.object({
   name_en: z.string().max(200).optional().nullable(),
   desc_he: z.string().max(2000).optional().nullable(),
   desc_en: z.string().max(2000).optional().nullable(),
-  date: z.string().nullable().optional(),
-  time: z.string().nullable().optional(),
-  location: z.string().max(200).optional().nullable(),
+  full_description: z.string().max(8000).optional().nullable(),
   audience: z.string().max(200).optional().nullable(),
-  price: z.number().min(0).default(0),
-  max_participants: z.number().int().min(0).nullable().optional(),
   image_url: z.string().max(1000).optional().nullable(),
-  status: z.enum(["open", "closed", "ended"]).default("open"),
+  category: z.string().max(50).optional().nullable(),
+  duration_text: z.string().max(200).optional().nullable(),
+  goals_list: z.string().max(500).optional().nullable(),
+  is_active: z.boolean().optional(),
+  is_featured: z.boolean().optional(),
 });
 
 export const listWorkshops = createServerFn({ method: "POST" })
