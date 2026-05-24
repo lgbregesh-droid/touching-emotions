@@ -160,7 +160,7 @@ export function CmsManager(props: Props) {
   );
 }
 
-function CmsForm({ table, fields, initial, isNew, onCancel, onSaved, aiAnalyze }: { table: CmsTable; fields: Field[]; initial: Row; isNew: boolean; onCancel: () => void; onSaved: () => void; aiAnalyze?: Props["aiAnalyze"] }) {
+function CmsForm({ table, fields, initial, isNew, onCancel, onSaved, aiAnalyze }: { table: CmsTable; fields: Field[]; initial: Row; isNew: boolean; onCancel: () => void; onSaved: () => void; aiAnalyze?: Props["aiAnalyze"]; }) {
   const [values, setValues] = useState<Row>(initial);
   const [saving, setSaving] = useState(false);
   const saveFn = useServerFn(cmsUpsert);
