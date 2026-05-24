@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Send } from "lucide-react";
+import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 
-const WHATSAPP_URL =
-  "https://wa.me/972528040787?text=" +
-  encodeURIComponent("שלום, אני רוצה לדעת עוד על עמותת לגעת ברגש");
 const CONTACT_URL = "/contact";
 const ERROR_MESSAGE =
   "כרגע יש תקלה בצ׳אט. אפשר לפנות אלינו ישירות בוואטסאפ או להשאיר פרטים בעמוד צור קשר ונחזור אליכם 💙";
@@ -13,6 +11,11 @@ const OPENING = "שלום! אני הבוט של לגעת ברגש 💙 מה מב
 type Msg = { role: "user" | "assistant"; content: string };
 
 export function FloatingWidgets() {
+  const { data: settings } = useSiteSettings();
+  const whatsappUrl = buildWhatsAppLink(
+    settings?.whatsapp_number,
+    "שלום, אני רוצה לדעת עוד על עמותת לגעת ברגש",
+  );
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: OPENING }]);
   const [input, setInput] = useState("");
