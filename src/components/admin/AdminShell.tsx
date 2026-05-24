@@ -1,11 +1,12 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Users, Settings, BookOpen } from "lucide-react";
 import { clearAdminToken } from "@/lib/admin/session";
 
 const items = [
   { to: "/admin", label: "לוח בקרה", icon: LayoutDashboard, exact: true },
   { to: "/admin/content", label: "ניהול עמודים", icon: FileText },
+  { to: "/admin/knowledge-base", label: "בסיס ידע", icon: BookOpen },
   { to: "/admin/workshops", label: "סדנאות ופעילויות", icon: Calendar },
   { to: "/admin/lectures", label: "הרצאות ומפגשים", icon: Mic },
   { to: "/admin/testimonials", label: "המלצות", icon: MessageSquare },

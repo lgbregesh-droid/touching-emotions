@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_submission_analysis: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          model: string | null
+          priority: string | null
+          rag_context_chars: number
+          rag_documents_used: Json
+          sentiment: string | null
+          submission_id: string
+          submission_type: string
+          suggested_response: string | null
+          summary: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          priority?: string | null
+          rag_context_chars?: number
+          rag_documents_used?: Json
+          sentiment?: string | null
+          submission_id: string
+          submission_type: string
+          suggested_response?: string | null
+          summary?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          priority?: string | null
+          rag_context_chars?: number
+          rag_documents_used?: Json
+          sentiment?: string | null
+          submission_id?: string
+          submission_type?: string
+          suggested_response?: string | null
+          summary?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -265,6 +310,33 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          integration_type: string
+          metadata: Json
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_type: string
+          metadata?: Json
+          status: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_type?: string
+          metadata?: Json
+          status?: string
+        }
+        Relationships: []
+      }
       lectures: {
         Row: {
           created_at: string
@@ -417,6 +489,95 @@ export type Database = {
           name_he?: string
           price?: number
           slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rag_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string
+          document_id: string
+          embedding: string
+          id: string
+        }
+        Insert: {
+          chunk_index: number
+          content: string
+          created_at?: string
+          document_id: string
+          embedding: string
+          id?: string
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          document_id?: string
+          embedding?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "rag_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rag_documents: {
+        Row: {
+          category: string
+          chars_total: number
+          created_at: string
+          description: string | null
+          extraction_error: string | null
+          extraction_status: string
+          file_name: string
+          file_type: string
+          file_url: string | null
+          id: string
+          is_active: boolean
+          language: string
+          storage_path: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          chars_total?: number
+          created_at?: string
+          description?: string | null
+          extraction_error?: string | null
+          extraction_status?: string
+          file_name: string
+          file_type: string
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          language?: string
+          storage_path: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          chars_total?: number
+          created_at?: string
+          description?: string | null
+          extraction_error?: string | null
+          extraction_status?: string
+          file_name?: string
+          file_type?: string
+          file_url?: string | null
+          id?: string
+          is_active?: boolean
+          language?: string
+          storage_path?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -731,7 +892,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_rag_chunks: {
+        Args: {
+          match_count?: number
+          min_similarity?: number
+          query_embedding: string
+        }
+        Returns: {
+          chunk_id: string
+          chunk_index: number
+          content: string
+          doc_category: string
+          doc_language: string
+          doc_title: string
+          document_id: string
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
