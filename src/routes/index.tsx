@@ -287,7 +287,7 @@ function Home() {
           <Reveal>
             <p className="text-xs tracking-[0.25em] uppercase text-[#BA9B78] mb-3">— {t.final_cta.label} —</p>
             <h2 className="text-2xl md:text-4xl font-extralight text-[#F5F0E8] mb-3">{t.final_cta.heading}</h2>
-            <p className="text-[#F5F0E8]/75 font-light mb-8 max-w-xl mx-auto">{t.final_cta.sub}</p>
+            <p className="text-[#F5F0E8]/75 font-light mb-8 max-w-xl mx-auto">{pick("home.cta.text", t.final_cta.sub)}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
                 {t.final_cta.cta}
