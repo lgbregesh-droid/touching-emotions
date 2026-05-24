@@ -173,9 +173,33 @@ export const analyzeSubmission = createServerFn({ method: "POST" })
     const submissionText = buildSubmissionText(data.kind, row);
 
     const rag = await buildRagContext(submissionText);
-    const userPrompt = rag.context
-      ? `KNOWLEDGE_BASE:\n${rag.context}\n\nהמידע למעלה הוא רקע על העמותה. השתמש בו רק כדי להבין הקשר — אל תמציא דברים מעבר אליו.\n\n--- פנייה לניתוח ---\n${submissionText}`
-      : submissionText;
+
+    // Load CMS context so the AI can suggest relevant workshops/lectures
+    const [wsRes, lecRes] = await Promise.all([
+      supabaseAdmin
+        .from("workshops")
+        .select("name_he,short_description,target_audience,age_group,goals")
+        .eq("is_active", true)
+        .order("order_index")
+        .limit(30),
+      supabaseAdmin
+        .from("lectures")
+        .select("title,short_description,target_audience,topics,duration")
+        .eq("is_active", true)
+        .order("order_index")
+        .limit(30),
+    ]);
+    const cmsBlock = JSON.stringify(
+      { workshops: wsRes.data ?? [], lectures: lecRes.data ?? [] },
+      null,
+      2,
+    );
+
+    const userPrompt =
+      (rag.context ? `KNOWLEDGE_BASE:\n${rag.context}\n\n` : "") +
+      `CMS_CONTEXT (סדנאות והרצאות פעילות בעמותה):\n${cmsBlock}\n\n` +
+      `--- פנייה לניתוח ---\n${submissionText}\n\n` +
+      `נתח את הפנייה והחזר ניתוח פנימי לעובדי העמותה. הצע סדנה/הרצאה רלוונטית מה-CMS אם מתאים. אל תכתוב תשובה לפונה — רק כיוון פעולה לצוות.`;
 
     let result: AnalysisResult;
     try {
