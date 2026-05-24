@@ -238,7 +238,22 @@ function CmsForm({ table, fields, initial, isNew, onCancel, onSaved, aiAnalyze }
   return (
     <AdminCard className="mb-6 border-[#BA9B78]/50">
       <h3 className="text-lg font-medium text-[#2D1B3D] mb-4">{isNew ? "פריט חדש" : "עריכה"}</h3>
+      {aiAnalyze && (
+        <div className="mb-4 p-3 rounded-md bg-[#F5F0E8] border border-[#E0D8CC]">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-[#BA9B78]" />
+            <div className="text-sm font-medium text-[#2D1B3D]">{aiAnalyze.label}</div>
+          </div>
+          {aiAnalyze.hint && <div className="text-xs text-[#A0907A] mb-2">{aiAnalyze.hint}</div>}
+          <SecondaryButton onClick={() => aiFileRef.current?.click()} disabled={analyzing}>
+            <Upload className="w-4 h-4 inline ml-1" />{analyzing ? "מנתח..." : "העלאת תמונה לניתוח"}
+          </SecondaryButton>
+          <input ref={aiFileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) runAiAnalyze(f); if (aiFileRef.current) aiFileRef.current.value = ""; }} />
+        </div>
+      )}
       <div className="space-y-3">
+
         {fields.map((f) => {
           const v = values[f.key];
           if (f.type === "boolean") {
