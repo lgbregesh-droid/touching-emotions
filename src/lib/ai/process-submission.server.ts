@@ -308,8 +308,9 @@ function buildEmailHtml(args: {
       ${analysis.missing_information.length ? `<p><b>מידע חסר:</b><br/>• ${analysis.missing_information.map(escapeHtml).join("<br/>• ")}</p>` : ""}
       ${analysis.matched_workshop_or_lecture && analysis.matched_workshop_or_lecture.type !== "none" ? `<p><b>התאמה מה-CMS:</b> ${escapeHtml(analysis.matched_workshop_or_lecture.type)} – ${escapeHtml(analysis.matched_workshop_or_lecture.title)}<br/><i>${escapeHtml(analysis.matched_workshop_or_lecture.reason)}</i></p>` : ""}
       <p><b>צעד הבא מומלץ:</b><br/>${escapeHtml(analysis.recommended_next_step)}</p>
-      <p><b>טיוטת תגובה מוצעת:</b></p>
-      <div style="background:#f5f0e8;padding:12px;border-radius:8px;white-space:pre-wrap">${escapeHtml(analysis.draft_reply)}</div>
+      <p><b>המלצת פעולה לצוות (פנימי):</b></p>
+      <div style="background:#f5f0e8;padding:12px;border-radius:8px;white-space:pre-wrap;border-right:3px solid #BA9B78">${escapeHtml(analysis.draft_reply)}</div>
+      <p style="font-size:11px;color:#888;margin-top:4px">⚠️ זוהי המלצה פנימית לצוות — לא טיוטת תשובה לפונה.</p>
       ${analysis.internal_notes ? `<p style="color:#666"><b>הערות פנימיות:</b> ${escapeHtml(analysis.internal_notes)}</p>` : ""}
     `;
   } else {
