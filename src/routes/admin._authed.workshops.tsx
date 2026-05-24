@@ -164,6 +164,12 @@ function WorkshopsAdmin() {
             <Field label="מומלץ בדף הבית">
               <label className="flex items-center gap-2 mt-2 text-sm"><input type="checkbox" checked={!!edit.is_featured} onChange={(e) => setEdit({ ...edit, is_featured: e.target.checked })} /> הצג גם בדף הבית</label>
             </Field>
+          </div>
+          <div className="flex justify-end gap-2 mt-5">
+            <SecondaryButton onClick={() => setEdit(null)}>ביטול</SecondaryButton>
+            <PrimaryButton onClick={save}>שמירה</PrimaryButton>
+          </div>
+        </Modal>
       )}
 
       {regs && (
