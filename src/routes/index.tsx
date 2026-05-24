@@ -29,9 +29,17 @@ import imgCommunity from "@/assets/home/community.jpg";
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { data: s } = useSiteSettings();
+  const { data: cms } = useSiteContent();
   const waUrl = buildWhatsAppLink(s?.whatsapp_number);
+  const pick = (key: string, fallback: string) => {
+    const v = cms?.[key];
+    if (!v) return fallback;
+    return (lang === "en" ? v.en : v.he) || fallback;
+  };
+
+
 
 
   const audiences = [
