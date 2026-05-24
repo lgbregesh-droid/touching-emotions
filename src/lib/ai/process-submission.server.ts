@@ -32,8 +32,9 @@ const TABLE_LABEL: Record<SubmissionTable, string> = {
   orders: "הזמנת מוצר",
 };
 
-const SYSTEM_PROMPT = `אתה עוזר AI של האתר "לגעת ברגש" — מרכז להעצמה רגשית וחוסן רגשי.
-התפקיד שלך: לנתח פניות שמתקבלות מהטפסים באתר עבור בעלת האתר.
+const SYSTEM_PROMPT = `אתה עוזר AI פנימי של עמותת "לגעת ברגש" — מרכז להעצמה רגשית וחוסן רגשי.
+התפקיד שלך: לנתח פניות שהתקבלו מהטפסים באתר, **עבור עובדי העמותה בלבד** (לא עבור הפונה).
+המטרה: לתת לצוות כיוון פעולה ברור — מה הפנייה, איך כדאי להמשיך איתה, ואיזו פעילות של העמותה מתאימה.
 
 אתה מקבל:
 1. את פרטי ההגשה המקורית
@@ -44,17 +45,19 @@ const SYSTEM_PROMPT = `אתה עוזר AI של האתר "לגעת ברגש" — 
 6. מדיניויות AI
 7. (אופציונלי) ידע מורחב מבסיס הידע (KNOWLEDGE_BASE)
 
-עליך לנתח את הפנייה ולהחזיר JSON מובנה בלבד.
-השתמש בידע מה-CMS כדי שההמלצה תהיה מדויקת.
+עליך לנתח את הפנייה ולהחזיר JSON מובנה בלבד באמצעות הכלי analyze_submission.
+השתמש בידע מה-CMS וה-KNOWLEDGE_BASE כדי שההמלצה תהיה מדויקת ומבוססת.
 אם סדנה או הרצאה מה-CMS תואמת לבקשה — ציין זאת ב-matched_workshop_or_lecture.
-אם אין התאמה — המלץ על צעד הבא כללי.
+אם אין התאמה — המלץ על צעד הבא כללי (חזרה טלפונית, בקשת פרטים נוספים, הפניה).
 
 חוקים מחייבים:
 - ענה תמיד בעברית.
-- היה מקצועי, חמים ותמציתי.
+- **הניתוח מיועד לצוות העמותה — לא לפונה. אל תכתוב טיוטת תשובה אישית לפונה.**
+- כל השדות צריכים להיכתב בלשון פנימית: "מומלץ לחזור...", "כדאי לבדוק...", "הפנייה מתאימה ל-X" — לא בגוף שני אל הפונה.
+- היה מקצועי, תמציתי וקונקרטי.
 - אל תמציא מידע חסר. אל תמציא מחירים, תאריכים, זמינות, מיקומים או הסמכות.
 - אל תאבחן. אל תיתן טיפול. אל תבטיח תוצאות רגשיות.
-- במקרי מצוקה / סכנה / פגיעה עצמית / אלימות — קבע urgency_level="דורשת מענה מהיר" והמלץ על מענה אנושי/מקצועי.
+- במקרי מצוקה / סכנה / פגיעה עצמית / אלימות — קבע urgency_level="דורשת מענה מהיר" והמלץ על מענה אנושי/מקצועי דחוף.
 - החזר JSON תקין בלבד באמצעות הקריאה לכלי analyze_submission.`;
 
 const TOOL = {
@@ -102,7 +105,11 @@ const TOOL = {
           required: ["type", "title", "reason"],
           additionalProperties: false,
         },
-        draft_reply: { type: "string", description: "טיוטת תשובה אישית בעברית, 3-6 משפטים." },
+        draft_reply: {
+          type: "string",
+          description:
+            "המלצת פעולה פנימית מפורטת לצוות העמותה — איך להמשיך עם הפנייה: למי לחזור, באיזה אופן (טלפון/מייל/וואטסאפ), אילו סדנאות/הרצאות מה-CMS להציע ולמה הן מתאימות, ואילו פרטים חסרים שצריך לברר. 4-7 משפטים, בלשון פנימית. **אסור לכתוב טיוטת תשובה לפונה — רק כיוון פעולה לצוות.**",
+        },
         internal_notes: { type: "string", description: "הערות פנימיות לבעלת האתר." },
       },
       required: [
@@ -301,8 +308,9 @@ function buildEmailHtml(args: {
       ${analysis.missing_information.length ? `<p><b>מידע חסר:</b><br/>• ${analysis.missing_information.map(escapeHtml).join("<br/>• ")}</p>` : ""}
       ${analysis.matched_workshop_or_lecture && analysis.matched_workshop_or_lecture.type !== "none" ? `<p><b>התאמה מה-CMS:</b> ${escapeHtml(analysis.matched_workshop_or_lecture.type)} – ${escapeHtml(analysis.matched_workshop_or_lecture.title)}<br/><i>${escapeHtml(analysis.matched_workshop_or_lecture.reason)}</i></p>` : ""}
       <p><b>צעד הבא מומלץ:</b><br/>${escapeHtml(analysis.recommended_next_step)}</p>
-      <p><b>טיוטת תגובה מוצעת:</b></p>
-      <div style="background:#f5f0e8;padding:12px;border-radius:8px;white-space:pre-wrap">${escapeHtml(analysis.draft_reply)}</div>
+      <p><b>המלצת פעולה לצוות (פנימי):</b></p>
+      <div style="background:#f5f0e8;padding:12px;border-radius:8px;white-space:pre-wrap;border-right:3px solid #BA9B78">${escapeHtml(analysis.draft_reply)}</div>
+      <p style="font-size:11px;color:#888;margin-top:4px">⚠️ זוהי המלצה פנימית לצוות — לא טיוטת תשובה לפונה.</p>
       ${analysis.internal_notes ? `<p style="color:#666"><b>הערות פנימיות:</b> ${escapeHtml(analysis.internal_notes)}</p>` : ""}
     `;
   } else {

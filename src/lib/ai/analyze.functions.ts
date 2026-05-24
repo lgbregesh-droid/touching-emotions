@@ -11,31 +11,36 @@ const RAG_MAX_CHARS = 8000;
 const RAG_MATCH_COUNT = 8;
 const RAG_MIN_SIM = 0.5;
 
-const SYSTEM = `אתה עוזר ניהולי של עמותת "לגעת ברגש". המנהלת מקבלת פניות מטופס "צרו קשר" ומטופס מתנדבים.
-המשימה שלך: לקרוא את הפנייה, להבין במה מדובר, ולהחזיר ניתוח מובנה כדי שהמנהלת תוכל לטפל מהר וביעילות.
+const SYSTEM = `אתה עוזר ניהולי פנימי של עמותת "לגעת ברגש". הניתוח שלך מיועד לעובדי העמותה בלבד — לא לפונה.
+מטרת הניתוח: לתת לעובדים כיוון פעולה ברור — מה הפנייה, איך כדאי להמשיך, ואיזו פעילות של העמותה מתאימה.
 
 עקרונות:
 - ענה תמיד בעברית.
-- היה תמציתי, ענייני, ואדיב.
-- אל תמציא פרטים שלא כתובים בפנייה.
-- אם הפנייה לא ברורה, אמור זאת בתקציר.
-- "התשובה המוצעת" היא טיוטה למנהלת לשליחה — לא הבטחה. אל תבטיח טיפול רגשי, מחירים, או תאריכים.
+- אל תכתוב טיוטת תשובה לפונה. הצוות יכתוב את התשובה בעצמו.
+- כתוב בלשון פנימית: "מומלץ לחזור...", "כדאי לבדוק...", "הפנייה מתאימה לסדנת X" — לא בגוף שני אל הפונה.
+- היה תמציתי, ענייני וקונקרטי.
+- אל תמציא פרטים. אם חסר מידע — ציין זאת.
+- אם בפנייה יש סימני מצוקה/דחיפות — סמן עדיפות "high" והסבר.
 
-אם נתון לך KNOWLEDGE_BASE עם מידע על העמותה, השתמש בו כדי להתאים תשובה נכונה ומבוססת.`;
+אם נתון לך KNOWLEDGE_BASE עם מידע על העמותה והפעילויות, השתמש בו כדי להציע פעילות רלוונטית (סדנה / הרצאה / מפגש) שמתאימה לפנייה. ציין את שם הפעילות והסבר למה היא מתאימה.`;
 
 const TOOL = {
   type: "function" as const,
   function: {
     name: "analyze_submission",
-    description: "החזר ניתוח מובנה של פניית הציבור.",
+    description: "החזר ניתוח פנימי של הפנייה לעובדי העמותה.",
     parameters: {
       type: "object",
       properties: {
-        summary: { type: "string", description: "1-2 משפטים תמציתיים על מה הפנייה." },
+        summary: { type: "string", description: "1-2 משפטים: מה הפונה מבקש ומה הצורך המרכזי." },
         sentiment: { type: "string", enum: ["positive", "neutral", "negative", "urgent"] },
         category: { type: "string", description: "תיוג קצר: סדנה, הרצאה, תרומה, התנדבות, מוצר, כללי, אחר." },
         priority: { type: "string", enum: ["low", "medium", "high"] },
-        suggested_response: { type: "string", description: "טיוטת תשובה אישית בעברית, 2-5 משפטים." },
+        suggested_response: {
+          type: "string",
+          description:
+            "המלצת פעולה פנימית לעובדי העמותה — איך להמשיך עם הפנייה: למי לחזור, מה להציע, אילו סדנאות/הרצאות מתאימות מה-KNOWLEDGE_BASE, ומה מידע חסר. 3-6 משפטים, בלשון פנימית. אסור לכתוב טיוטת תשובה לפונה.",
+        },
       },
       required: ["summary", "sentiment", "category", "priority", "suggested_response"],
       additionalProperties: false,
@@ -168,9 +173,33 @@ export const analyzeSubmission = createServerFn({ method: "POST" })
     const submissionText = buildSubmissionText(data.kind, row);
 
     const rag = await buildRagContext(submissionText);
-    const userPrompt = rag.context
-      ? `KNOWLEDGE_BASE:\n${rag.context}\n\nהמידע למעלה הוא רקע על העמותה. השתמש בו רק כדי להבין הקשר — אל תמציא דברים מעבר אליו.\n\n--- פנייה לניתוח ---\n${submissionText}`
-      : submissionText;
+
+    // Load CMS context so the AI can suggest relevant workshops/lectures
+    const [wsRes, lecRes] = await Promise.all([
+      supabaseAdmin
+        .from("workshops")
+        .select("name_he,short_description,target_audience,age_group,goals")
+        .eq("is_active", true)
+        .order("order_index")
+        .limit(30),
+      supabaseAdmin
+        .from("lectures")
+        .select("title,short_description,target_audience,topics,duration")
+        .eq("is_active", true)
+        .order("order_index")
+        .limit(30),
+    ]);
+    const cmsBlock = JSON.stringify(
+      { workshops: wsRes.data ?? [], lectures: lecRes.data ?? [] },
+      null,
+      2,
+    );
+
+    const userPrompt =
+      (rag.context ? `KNOWLEDGE_BASE:\n${rag.context}\n\n` : "") +
+      `CMS_CONTEXT (סדנאות והרצאות פעילות בעמותה):\n${cmsBlock}\n\n` +
+      `--- פנייה לניתוח ---\n${submissionText}\n\n` +
+      `נתח את הפנייה והחזר ניתוח פנימי לעובדי העמותה. הצע סדנה/הרצאה רלוונטית מה-CMS אם מתאים. אל תכתוב תשובה לפונה — רק כיוון פעולה לצוות.`;
 
     let result: AnalysisResult;
     try {
