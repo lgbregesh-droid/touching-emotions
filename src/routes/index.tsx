@@ -105,13 +105,13 @@ function Home() {
             {t.hero.badge}
           </span>
           <h1 className="hero-anim-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extralight text-[#F5F0E8] tracking-wide leading-tight mb-5">
-            {t.hero.title}
+            {pick("home.hero.title", t.hero.title)}
           </h1>
           <div className="flex justify-center mb-5">
             <span className="hero-anim-line gold-divider" />
           </div>
           <p className="hero-anim-sub text-base md:text-lg text-[#F5F0E8]/80 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
-            {t.hero.sub}
+            {pick("home.hero.subtitle", t.hero.sub)}
           </p>
           <div className="hero-anim-cta flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center mb-8">
             <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
