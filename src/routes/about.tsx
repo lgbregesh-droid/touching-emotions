@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useSiteContent } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { InfoCard } from "@/components/InfoCard";
