@@ -11,7 +11,7 @@ export async function logIntegration(entry: {
       integration_type: entry.integration_type,
       status: entry.status,
       error_message: entry.error_message ?? null,
-      metadata: entry.metadata ?? {},
+      metadata: (entry.metadata ?? {}) as never,
     });
   } catch (e) {
     console.error("Failed to write integration log:", e);
