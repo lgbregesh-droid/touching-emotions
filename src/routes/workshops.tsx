@@ -4,9 +4,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteContent, useWorkshops } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
-import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
-import { Phone, Search, Wand2, Sparkles, Heart, MessagesSquare, Users, Compass, ShieldCheck, ArrowRight } from "lucide-react";
+import { Phone, Search, Wand2, Sparkles, Heart, MessagesSquare, Users, Compass, ShieldCheck, ArrowRight, X } from "lucide-react";
 import workshopChildren from "@/assets/home/workshop-children.jpg";
 import workshopTeens from "@/assets/home/workshop-teens.jpg";
 import school from "@/assets/home/school.jpg";
@@ -86,19 +85,22 @@ function Workshops() {
     },
   ];
 
-  type Row = { id?: string; name_he?: string; name_en?: string | null; desc_he?: string | null; desc_en?: string | null; image_url?: string | null; category?: string | null; duration_text?: string | null; audience?: string | null; goals_list?: string | null };
-  const workshops = (dbWorkshops && dbWorkshops.length > 0)
+  type Row = { id?: string; name_he?: string; name_en?: string | null; desc_he?: string | null; desc_en?: string | null; full_description?: string | null; image_url?: string | null; category?: string | null; duration_text?: string | null; audience?: string | null; goals_list?: string | null };
+  type WS = { title: string; desc: string; full: string; goals: string[]; duration: string; image: string; cat: Cat };
+  const workshops: WS[] = (dbWorkshops && dbWorkshops.length > 0)
     ? (dbWorkshops as Row[]).map((r) => ({
         cat: ((["children", "teens", "schools", "communities", "parents"].includes(r.category || "")) ? r.category : "children") as Cat,
         title: (isEn ? (r.name_en || r.name_he) : (r.name_he || r.name_en)) || "",
         desc: (isEn ? (r.desc_en || r.desc_he) : (r.desc_he || r.desc_en)) || "",
+        full: r.full_description || "",
         goals: (r.goals_list || "").split(",").map((s) => s.trim()).filter(Boolean),
         duration: r.duration_text || r.audience || "",
         image: r.image_url || workshopChildren,
       }))
-    : fallback;
+    : fallback.map((f) => ({ ...f, full: "" }));
 
   const filtered = filter === "all" ? workshops : workshops.filter((w) => w.cat === filter);
+  const [openWs, setOpenWs] = useState<WS | null>(null);
 
   const process = [
     { icon: Phone, title: isEn ? "Intro call" : "שיחת היכרות", desc: isEn ? "We listen to the setting, audience and what you're hoping for." : "מקשיבים למסגרת, לקהל ולמה אתם מקווים לקבל." },
@@ -141,7 +143,12 @@ function Workshops() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((w, i) => (
               <Reveal key={i} delay={(i % 3) * 0.06}>
-                <article className="bg-white rounded-2xl overflow-hidden border border-[#E0D8CC] h-full flex flex-col card-hover" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+                <button
+                  type="button"
+                  onClick={() => setOpenWs(w)}
+                  className="text-right bg-white rounded-2xl overflow-hidden border border-[#E0D8CC] h-full flex flex-col card-hover w-full"
+                  style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}
+                >
                   <div className="aspect-[16/10] overflow-hidden">
                     <img src={w.image} alt="" className="w-full h-full object-cover" />
                   </div>
@@ -149,22 +156,66 @@ function Workshops() {
                     <span className="text-[10px] tracking-[0.18em] uppercase text-[#BA9B78] mb-2">{catLabel[w.cat]}</span>
                     <h3 className="text-lg text-[#461C5B] mb-2">{w.title}</h3>
                     <p className="text-sm text-[#4A3D30] font-light leading-relaxed mb-4">{w.desc}</p>
-                    <div className="text-xs text-[#A0907A] mb-3">{w.duration}</div>
+                    {w.duration && <div className="text-xs text-[#A0907A] mb-3">{w.duration}</div>}
                     <div className="flex flex-wrap gap-1.5 mb-4">
                       {w.goals.map((g) => (
                         <span key={g} className="text-[11px] px-2 py-1 rounded-full bg-[#F7E8EA] text-[#461C5B]">{g}</span>
                       ))}
                     </div>
-                    <Link to="/contact" className="mt-auto inline-flex items-center gap-1.5 text-sm text-[#461C5B] hover:text-[#BA9B78] transition-colors">
-                      {isEn ? "Details & booking" : "לפרטים על הסדנה"} <ArrowRight className="w-4 h-4 rotate-180" />
-                    </Link>
+                    <span className="mt-auto inline-flex items-center gap-1.5 text-sm text-[#461C5B]">
+                      {isEn ? "What this workshop includes" : "מה הסדנה כוללת"} <ArrowRight className="w-4 h-4 rotate-180" />
+                    </span>
                   </div>
-                </article>
+                </button>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Workshop details modal */}
+      {openWs && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-start md:items-center justify-center p-4 overflow-y-auto" onClick={() => setOpenWs(null)}>
+          <div className="bg-white rounded-2xl max-w-3xl w-full my-8 overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="relative aspect-[16/8] overflow-hidden">
+              <img src={openWs.image} alt="" className="w-full h-full object-cover" />
+              <button onClick={() => setOpenWs(null)} className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 hover:bg-white flex items-center justify-center text-[#461C5B]" aria-label="סגירה">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 md:p-8">
+              <span className="text-[10px] tracking-[0.18em] uppercase text-[#BA9B78]">{catLabel[openWs.cat]}</span>
+              <h3 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-2 mb-3">{openWs.title}</h3>
+              <p className="text-[#4A3D30] leading-relaxed mb-4">{openWs.desc}</p>
+              {openWs.duration && <div className="text-sm text-[#A0907A] mb-4">⏱ {openWs.duration}</div>}
+              {openWs.full ? (
+                <div className="text-[#4A3D30] leading-relaxed whitespace-pre-wrap mb-5 border-t border-[#E0D8CC] pt-5">
+                  {openWs.full}
+                </div>
+              ) : (
+                <p className="text-sm text-[#A0907A] mb-5 italic">
+                  {isEn ? "Tailored for your group — talk to us about goals, age and time." : "כל סדנה מותאמת אישית לקבוצה — דברו איתנו על הגיל, המטרה והזמן."}
+                </p>
+              )}
+              {openWs.goals.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  {openWs.goals.map((g) => (
+                    <span key={g} className="text-[11px] px-2 py-1 rounded-full bg-[#F7E8EA] text-[#461C5B]">{g}</span>
+                  ))}
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3">
+                <Link to="/contact" className="px-5 py-2.5 rounded-full bg-[#461C5B] text-white text-sm hover:opacity-90 transition">
+                  {isEn ? "Request a tailored workshop" : "להזמנת סדנה מותאמת"}
+                </Link>
+                <button onClick={() => setOpenWs(null)} className="px-5 py-2.5 rounded-full border border-[#E0D8CC] text-[#461C5B] text-sm hover:bg-[#F5F0E8]">
+                  {isEn ? "Close" : "סגירה"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* How we adapt */}
       <section className="px-6 py-16 md:py-20" style={{ background: "#FDFBF7" }}>
