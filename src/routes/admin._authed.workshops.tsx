@@ -20,10 +20,15 @@ type WS = {
   date?: string | null; time?: string | null; location?: string | null; audience?: string | null;
   price: number; max_participants?: number | null; image_url?: string | null;
   status: "open" | "closed" | "ended";
+  category?: string | null;
+  goals_list?: string | null;
+  duration_text?: string | null;
+  is_active?: boolean;
+  is_featured?: boolean;
   registrants?: { count: number }[];
 };
 
-const empty: WS = { name_he: "", price: 0, status: "open" };
+const empty: WS = { name_he: "", price: 0, status: "open", is_active: true, is_featured: false, category: "children" };
 
 function WorkshopsAdmin() {
   const qc = useQueryClient();
