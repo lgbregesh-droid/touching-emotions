@@ -50,6 +50,9 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-1.5">
             <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">צרו קשר</p>
+            {s?.address && (
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`} target="_blank" rel="noreferrer noopener" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">{s.address}</a>
+            )}
             {s?.email && (
               <a href={`mailto:${s.email}`} className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors break-all">{s.email}</a>
             )}
