@@ -160,6 +160,33 @@ function Contact() {
             </div>
           </Reveal>
 
+          {s?.address && (
+            <Reveal delay={0.08}>
+              <div className="mt-10">
+                <div className="rounded-2xl overflow-hidden border border-[#E0D8CC] bg-white">
+                  <iframe
+                    title="map"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
+                    width="100%"
+                    height="280"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    style={{ border: 0, display: "block" }}
+                  />
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="block px-4 py-3 text-xs text-[#461C5B] hover:text-[#BA9B78] border-t border-[#E0D8CC]"
+                  >
+                    <MapPin className="inline w-3.5 h-3.5 ml-1" style={{ color: "#2D7D4F" }} />
+                    {s.address} — {isEn ? "Open in Google Maps" : "פתח ב-Google Maps"}
+                  </a>
+                </div>
+              </div>
+            </Reveal>
+          )}
+
           <div className="mt-10">
             <EmergencyBox />
           </div>
