@@ -57,7 +57,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       </span>
       <h3
         className={cn(
-          "text-sm md:text-base font-light leading-relaxed flex-1 overflow-hidden",
+          "text-[13px] md:text-sm font-light leading-relaxed flex-1 overflow-y-auto pr-1 [scrollbar-width:thin]",
           isCenter ? "text-[#F5F0E8]" : "text-[#4A3D30]"
         )}
       >
