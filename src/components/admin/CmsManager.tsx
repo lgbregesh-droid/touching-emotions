@@ -108,8 +108,10 @@ export function CmsManager(props: Props) {
           isNew={creating}
           onCancel={cancel}
           onSaved={() => { cancel(); invalidate(); }}
+          aiAnalyze={aiAnalyze}
         />
       )}
+
 
       {isLoading ? (
         <div className="text-center py-12 text-[#A0907A]">טוען...</div>
