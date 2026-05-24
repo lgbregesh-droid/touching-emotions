@@ -5,7 +5,7 @@ import { AdminCard, PrimaryButton, SecondaryButton } from "./AdminShell";
 import { cmsList, cmsUpsert, cmsDelete, cmsReorder, cmsUploadImage } from "@/lib/admin/cms.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Pencil, Trash2, ChevronUp, ChevronDown, Plus, Upload, Eye, EyeOff, Star } from "lucide-react";
+import { Pencil, Trash2, ChevronUp, ChevronDown, Plus, Upload, Eye, EyeOff, Star, Sparkles } from "lucide-react";
 
 export type FieldType = "text" | "textarea" | "number" | "url" | "image" | "boolean" | "select";
 
