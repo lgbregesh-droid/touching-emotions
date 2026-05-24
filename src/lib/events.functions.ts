@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { fireProcessSubmission } from "@/lib/ai/process-submission.server";
 
 export const listUpcomingEvents = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ limit: z.number().int().min(1).max(50).optional() }).parse(i))
@@ -43,13 +44,17 @@ const RegSchema = z.object({
 export const registerForEvent = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => RegSchema.parse(i))
   .handler(async ({ data }) => {
-    const { error } = await supabaseAdmin.from("event_registrations").insert({
-      event_id: data.event_id,
-      name: data.name,
-      phone: data.phone,
-      email: data.email,
-      notes: data.notes || null,
-    });
+    const { data: ins, error } = await supabaseAdmin
+      .from("event_registrations")
+      .insert({
+        event_id: data.event_id,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        notes: data.notes || null,
+      })
+      .select("id")
+      .single();
     if (error) {
       const msg = error.message || "";
       if (msg.includes("EVENT_FULL")) throw new Error("FULL");
@@ -59,5 +64,6 @@ export const registerForEvent = createServerFn({ method: "POST" })
       }
       throw new Error(error.message);
     }
+    if (ins?.id) fireProcessSubmission(ins.id as string, "event_registrations");
     return { ok: true };
   });

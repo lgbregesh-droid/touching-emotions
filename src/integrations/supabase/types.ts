@@ -14,55 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      ai_submission_analysis: {
+      ai_policies: {
         Row: {
-          category: string | null
           created_at: string
           id: string
+          instruction: string
+          is_active: boolean
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instruction: string
+          is_active?: boolean
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instruction?: string
+          is_active?: boolean
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_submission_analysis: {
+        Row: {
+          ai_model: string | null
+          ai_provider: string | null
+          ai_status: string | null
+          category: string | null
+          created_at: string
+          draft_reply: string | null
+          error_message: string | null
+          id: string
+          internal_notes: string | null
+          main_need: string | null
+          matched_workshop_or_lecture: Json | null
+          missing_information: Json | null
           model: string | null
           priority: string | null
           rag_context_chars: number
           rag_documents_used: Json
+          recommended_next_step: string | null
           sentiment: string | null
+          short_summary: string | null
           submission_id: string
+          submission_table: string | null
           submission_type: string
+          suggested_activity_type: string | null
           suggested_response: string | null
           summary: string | null
+          target_audience: string | null
+          urgency_level: string | null
         }
         Insert: {
+          ai_model?: string | null
+          ai_provider?: string | null
+          ai_status?: string | null
           category?: string | null
           created_at?: string
+          draft_reply?: string | null
+          error_message?: string | null
           id?: string
+          internal_notes?: string | null
+          main_need?: string | null
+          matched_workshop_or_lecture?: Json | null
+          missing_information?: Json | null
           model?: string | null
           priority?: string | null
           rag_context_chars?: number
           rag_documents_used?: Json
+          recommended_next_step?: string | null
           sentiment?: string | null
+          short_summary?: string | null
           submission_id: string
+          submission_table?: string | null
           submission_type: string
+          suggested_activity_type?: string | null
           suggested_response?: string | null
           summary?: string | null
+          target_audience?: string | null
+          urgency_level?: string | null
         }
         Update: {
+          ai_model?: string | null
+          ai_provider?: string | null
+          ai_status?: string | null
           category?: string | null
           created_at?: string
+          draft_reply?: string | null
+          error_message?: string | null
           id?: string
+          internal_notes?: string | null
+          main_need?: string | null
+          matched_workshop_or_lecture?: Json | null
+          missing_information?: Json | null
           model?: string | null
           priority?: string | null
           rag_context_chars?: number
           rag_documents_used?: Json
+          recommended_next_step?: string | null
           sentiment?: string | null
+          short_summary?: string | null
           submission_id?: string
+          submission_table?: string | null
           submission_type?: string
+          suggested_activity_type?: string | null
           suggested_response?: string | null
           summary?: string | null
+          target_audience?: string | null
+          urgency_level?: string | null
         }
         Relationships: []
       }
       contact_messages: {
         Row: {
+          ai_status: string | null
           created_at: string
           email: string | null
+          email_status: string | null
           full_name: string | null
           id: string
           inquiry_type: string | null
@@ -74,8 +148,10 @@ export type Database = {
           subject: string | null
         }
         Insert: {
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           full_name?: string | null
           id?: string
           inquiry_type?: string | null
@@ -87,8 +163,10 @@ export type Database = {
           subject?: string | null
         }
         Update: {
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           full_name?: string | null
           id?: string
           inquiry_type?: string | null
@@ -103,28 +181,34 @@ export type Database = {
       }
       donations: {
         Row: {
+          ai_status: string | null
           amount: number
           created_at: string
           donor_name: string | null
           email: string | null
+          email_status: string | null
           id: string
           status: string
           type: string
         }
         Insert: {
+          ai_status?: string | null
           amount?: number
           created_at?: string
           donor_name?: string | null
           email?: string | null
+          email_status?: string | null
           id?: string
           status?: string
           type?: string
         }
         Update: {
+          ai_status?: string | null
           amount?: number
           created_at?: string
           donor_name?: string | null
           email?: string | null
+          email_status?: string | null
           id?: string
           status?: string
           type?: string
@@ -133,9 +217,11 @@ export type Database = {
       }
       event_registrations: {
         Row: {
+          ai_status: string | null
           confirmation_sent: boolean
           created_at: string
           email: string
+          email_status: string | null
           event_id: string
           id: string
           name: string
@@ -143,9 +229,11 @@ export type Database = {
           phone: string
         }
         Insert: {
+          ai_status?: string | null
           confirmation_sent?: boolean
           created_at?: string
           email: string
+          email_status?: string | null
           event_id: string
           id?: string
           name: string
@@ -153,9 +241,11 @@ export type Database = {
           phone: string
         }
         Update: {
+          ai_status?: string | null
           confirmation_sent?: boolean
           created_at?: string
           email?: string
+          email_status?: string | null
           event_id?: string
           id?: string
           name?: string
@@ -318,6 +408,8 @@ export type Database = {
           integration_type: string
           metadata: Json
           status: string
+          submission_id: string | null
+          submission_table: string | null
         }
         Insert: {
           created_at?: string
@@ -326,6 +418,8 @@ export type Database = {
           integration_type: string
           metadata?: Json
           status: string
+          submission_id?: string | null
+          submission_table?: string | null
         }
         Update: {
           created_at?: string
@@ -334,6 +428,8 @@ export type Database = {
           integration_type?: string
           metadata?: Json
           status?: string
+          submission_id?: string | null
+          submission_table?: string | null
         }
         Relationships: []
       }
@@ -420,30 +516,36 @@ export type Database = {
       }
       orders: {
         Row: {
+          ai_status: string | null
           amount: number
           buyer_name: string
           created_at: string
           email: string | null
+          email_status: string | null
           id: string
           phone: string | null
           quantity: number
           shipping_status: string
         }
         Insert: {
+          ai_status?: string | null
           amount?: number
           buyer_name: string
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           phone?: string | null
           quantity?: number
           shipping_status?: string
         }
         Update: {
+          ai_status?: string | null
           amount?: number
           buyer_name?: string
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           phone?: string | null
           quantity?: number
@@ -729,8 +831,10 @@ export type Database = {
       volunteers: {
         Row: {
           age: string | null
+          ai_status: string | null
           created_at: string
           email: string | null
+          email_status: string | null
           id: string
           interest: string | null
           interests: string | null
@@ -743,8 +847,10 @@ export type Database = {
         }
         Insert: {
           age?: string | null
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           interest?: string | null
           interests?: string | null
@@ -757,8 +863,10 @@ export type Database = {
         }
         Update: {
           age?: string | null
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           interest?: string | null
           interests?: string | null
@@ -773,24 +881,30 @@ export type Database = {
       }
       workshop_registrants: {
         Row: {
+          ai_status: string | null
           created_at: string
           email: string | null
+          email_status: string | null
           id: string
           name: string
           phone: string | null
           workshop_id: string
         }
         Insert: {
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           name: string
           phone?: string | null
           workshop_id: string
         }
         Update: {
+          ai_status?: string | null
           created_at?: string
           email?: string | null
+          email_status?: string | null
           id?: string
           name?: string
           phone?: string | null
