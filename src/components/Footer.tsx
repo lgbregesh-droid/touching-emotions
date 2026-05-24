@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useSiteSettings } from "@/lib/site-settings";
 import logo from "@/assets/logo.png";
 
 export function Footer() {
   const { t } = useLanguage();
+  const { data: s } = useSiteSettings();
   const navLinks = [
     { to: "/", label: t.nav.home },
     { to: "/about", label: t.nav.about },
@@ -48,13 +50,28 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-1.5">
             <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">צרו קשר</p>
-            <a href="mailto:l.g.bregesh@gmail.com" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors break-all">l.g.bregesh@gmail.com</a>
-            <a href="https://www.facebook.com/share/17ZD8v1ADv/" target="_blank" rel="noreferrer noopener" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">Facebook</a>
+            {s?.email && (
+              <a href={`mailto:${s.email}`} className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors break-all">{s.email}</a>
+            )}
+            {s?.phone && (
+              <a href={`tel:${s.phone}`} className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors" dir="ltr">{s.phone}</a>
+            )}
+            {s?.facebook_url && (
+              <a href={s.facebook_url} target="_blank" rel="noreferrer noopener" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">Facebook</a>
+            )}
+            {s?.instagram_url && (
+              <a href={s.instagram_url} target="_blank" rel="noreferrer noopener" className="text-xs text-[#F5F0E8]/55 hover:text-[#BA9B78] transition-colors">Instagram</a>
+            )}
           </div>
         </div>
         <div className="mt-6 pt-4 border-t border-[#BA9B78]/20 text-center text-[10px] text-[#F5F0E8]/35 tracking-wide">
-          {t.footer.rights}
+          {s?.footer_text || t.footer.rights}
+          {s?.association_number ? ` · ע״ר ${s.association_number}` : ""}
         </div>
+      </div>
+    </footer>
+  );
+}
       </div>
     </footer>
   );
