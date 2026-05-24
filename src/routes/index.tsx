@@ -16,6 +16,7 @@ import { ImpactGrid } from "@/components/home/ImpactGrid";
 import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
 import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
+import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
 import imgTeens from "@/assets/home/workshop-teens.jpg";
@@ -28,6 +29,9 @@ export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   const { t } = useLanguage();
+  const { data: s } = useSiteSettings();
+  const waUrl = buildWhatsAppLink(s?.whatsapp_number);
+
 
   const audiences = [
     { icon: Baby, title: t.audiences.a1_title, desc: t.audiences.a1_desc },
