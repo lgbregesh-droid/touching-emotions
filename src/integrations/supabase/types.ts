@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_submission_analysis: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          model: string | null
+          priority: string | null
+          rag_context_chars: number
+          rag_documents_used: Json
+          sentiment: string | null
+          submission_id: string
+          submission_type: string
+          suggested_response: string | null
+          summary: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          priority?: string | null
+          rag_context_chars?: number
+          rag_documents_used?: Json
+          sentiment?: string | null
+          submission_id: string
+          submission_type: string
+          suggested_response?: string | null
+          summary?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          priority?: string | null
+          rag_context_chars?: number
+          rag_documents_used?: Json
+          sentiment?: string | null
+          submission_id?: string
+          submission_type?: string
+          suggested_response?: string | null
+          summary?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -262,6 +307,33 @@ export type Database = {
           order_index?: number
           storage_path?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      integration_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          integration_type: string
+          metadata: Json
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_type: string
+          metadata?: Json
+          status: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          integration_type?: string
+          metadata?: Json
+          status?: string
         }
         Relationships: []
       }
