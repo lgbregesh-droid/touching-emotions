@@ -9,6 +9,7 @@ import { FAQ } from "@/components/FAQ";
 import { submitContact } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { EmergencyBox } from "@/routes/disclaimer";
+import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
@@ -28,6 +29,7 @@ function Contact() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
   const submit = useServerFn(submitContact);
+  const { data: s } = useSiteSettings();
   const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
   const [agreed, setAgreed] = useState(false);
   const [marketing, setMarketing] = useState(false);
@@ -55,12 +57,13 @@ function Contact() {
 
   const subjects = isEn ? SUBJECTS_EN : SUBJECTS_HE;
 
+  const waUrl = buildWhatsAppLink(s?.whatsapp_number);
   const channels = [
-    { icon: MessageCircle, title: isEn ? "WhatsApp" : "וואטסאפ", desc: isEn ? "Fastest reply during the day." : "הכי מהיר במהלך היום.", href: "https://wa.me/972528040787", accent: "#25D366" },
-    { icon: Mail, title: isEn ? "Email" : "אימייל", desc: "l.g.bregesh@gmail.com", href: "mailto:l.g.bregesh@gmail.com", accent: "#BA9B78" },
-    { icon: Facebook, title: isEn ? "Facebook" : "פייסבוק", desc: isEn ? "Follow our updates" : "עקבו אחרי העדכונים", href: "https://www.facebook.com/share/17ZD8v1ADv/", accent: "#1877F2" },
+    waUrl && { icon: MessageCircle, title: isEn ? "WhatsApp" : "וואטסאפ", desc: isEn ? "Fastest reply during the day." : "הכי מהיר במהלך היום.", href: waUrl, accent: "#25D366" },
+    s?.email && { icon: Mail, title: isEn ? "Email" : "אימייל", desc: s.email, href: `mailto:${s.email}`, accent: "#BA9B78" },
+    s?.facebook_url && { icon: Facebook, title: isEn ? "Facebook" : "פייסבוק", desc: isEn ? "Follow our updates" : "עקבו אחרי העדכונים", href: s.facebook_url, accent: "#1877F2" },
     { icon: FileText, title: isEn ? "Form" : "טופס פנייה", desc: isEn ? "Below — we reply within 48h." : "כאן למטה — נחזור תוך 48 שעות.", href: "#contact-form", accent: "#461C5B" },
-  ];
+  ].filter(Boolean) as { icon: typeof Mail; title: string; desc: string; href: string; accent: string }[];
 
   const next = [
     { icon: Inbox, title: isEn ? "We receive" : "מקבלים את הפנייה" },

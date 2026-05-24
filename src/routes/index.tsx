@@ -279,15 +279,17 @@ function Home() {
               <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
                 {t.final_cta.cta}
               </Link>
-              <a
-                href="https://wa.me/972000000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-[#F5F0E8]/30 text-[#F5F0E8] rounded-full text-sm tracking-wide hover:bg-[#F5F0E8]/10 transition-colors"
-              >
-                <MessageCircle size={16} />
-                {t.final_cta.whatsapp}
-              </a>
+              {waUrl && (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-[#F5F0E8]/30 text-[#F5F0E8] rounded-full text-sm tracking-wide hover:bg-[#F5F0E8]/10 transition-colors"
+                >
+                  <MessageCircle size={16} />
+                  {t.final_cta.whatsapp}
+                </a>
+              )}
             </div>
           </Reveal>
         </div>

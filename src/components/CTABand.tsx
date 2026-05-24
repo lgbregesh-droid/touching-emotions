@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/Reveal";
 import { MessageCircle } from "lucide-react";
+import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 
 type Props = {
   title: string;
@@ -18,6 +19,8 @@ const VARIANTS = {
 
 export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo = "/contact", whatsappLabel = "וואטסאפ", variant = "blush" }: Props) {
   const v = VARIANTS[variant];
+  const { data: s } = useSiteSettings();
+  const wa = buildWhatsAppLink(s?.whatsapp_number);
   return (
     <section className="px-6 py-14 md:py-20" style={{ background: v.bg, color: v.fg }}>
       <Reveal>
@@ -28,16 +31,18 @@ export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo 
             <a href={primaryTo} className="px-7 py-3 rounded-full text-sm tracking-wide transition-transform hover:scale-[1.02]" style={{ background: v.btnBg, color: v.btnFg }}>
               {primaryLabel}
             </a>
-            <a
-              href="https://wa.me/972528040787"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="px-7 py-3 rounded-full text-sm tracking-wide border inline-flex items-center gap-2 transition-colors"
-              style={{ borderColor: v.fg, color: v.fg }}
-            >
-              <MessageCircle className="w-4 h-4" />
-              {whatsappLabel}
-            </a>
+            {wa && (
+              <a
+                href={wa}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="px-7 py-3 rounded-full text-sm tracking-wide border inline-flex items-center gap-2 transition-colors"
+                style={{ borderColor: v.fg, color: v.fg }}
+              >
+                <MessageCircle className="w-4 h-4" />
+                {whatsappLabel}
+              </a>
+            )}
           </div>
         </div>
       </Reveal>
