@@ -3,12 +3,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { AdminShell, AdminCard, PrimaryButton, SecondaryButton } from "@/components/admin/AdminShell";
-import {
-  listWorkshops, upsertWorkshop, deleteWorkshop, duplicateWorkshop, listWorkshopRegistrants,
-} from "@/lib/admin/data.functions";
+import { listWorkshops, upsertWorkshop, deleteWorkshop, duplicateWorkshop } from "@/lib/admin/data.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Pencil, Copy, Users, Trash2, Plus } from "lucide-react";
+import { Pencil, Copy, Trash2, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/admin/_authed/workshops")({
   head: () => ({ meta: [{ title: "סדנאות | ניהול" }] }),
@@ -16,19 +14,28 @@ export const Route = createFileRoute("/admin/_authed/workshops")({
 });
 
 type WS = {
-  id?: string; name_he: string; name_en?: string | null; desc_he?: string | null; desc_en?: string | null;
-  date?: string | null; time?: string | null; location?: string | null; audience?: string | null;
-  price: number; max_participants?: number | null; image_url?: string | null;
-  status: "open" | "closed" | "ended";
+  id?: string;
+  name_he: string;
+  name_en?: string | null;
+  desc_he?: string | null;
+  desc_en?: string | null;
+  full_description?: string | null;
+  audience?: string | null;
+  image_url?: string | null;
   category?: string | null;
-  goals_list?: string | null;
   duration_text?: string | null;
+  goals_list?: string | null;
   is_active?: boolean;
   is_featured?: boolean;
-  registrants?: { count: number }[];
 };
 
-const empty: WS = { name_he: "", price: 0, status: "open", is_active: true, is_featured: false, category: "children" };
+const empty: WS = {
+  name_he: "",
+  is_active: true,
+  is_featured: false,
+  category: "children",
+  full_description: "",
+};
 
 function WorkshopsAdmin() {
   const qc = useQueryClient();
@@ -36,7 +43,6 @@ function WorkshopsAdmin() {
   const saveFn = useServerFn(upsertWorkshop);
   const delFn = useServerFn(deleteWorkshop);
   const dupFn = useServerFn(duplicateWorkshop);
-  const regsFn = useServerFn(listWorkshopRegistrants);
 
   const { data } = useQuery({
     queryKey: ["workshops"],
@@ -45,27 +51,16 @@ function WorkshopsAdmin() {
   const rows = (data?.rows || []) as WS[];
 
   const [edit, setEdit] = useState<WS | null>(null);
-  const [regs, setRegs] = useState<{ ws: WS; rows: { name: string; phone?: string | null; email?: string | null }[] } | null>(null);
 
   const save = async () => {
     if (!edit) return;
-    const { id, registrants, ...values } = edit;
-    void registrants;
+    const { id, ...values } = edit;
     try {
-      await saveFn({
-        data: {
-          token: getAdminToken()!,
-          id,
-          values: {
-            ...values,
-            price: Number(values.price) || 0,
-            max_participants: values.max_participants ? Number(values.max_participants) : null,
-          },
-        },
-      });
+      await saveFn({ data: { token: getAdminToken()!, id, values } });
       toast.success("נשמר");
       setEdit(null);
       qc.invalidateQueries({ queryKey: ["workshops"] });
+      qc.invalidateQueries({ queryKey: ["workshops-public"] });
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -75,6 +70,7 @@ function WorkshopsAdmin() {
     if (!confirm("למחוק את הסדנה?")) return;
     await delFn({ data: { token: getAdminToken()!, id } });
     qc.invalidateQueries({ queryKey: ["workshops"] });
+    qc.invalidateQueries({ queryKey: ["workshops-public"] });
   };
 
   const duplicate = async (id: string) => {
@@ -83,16 +79,18 @@ function WorkshopsAdmin() {
     qc.invalidateQueries({ queryKey: ["workshops"] });
   };
 
-  const showRegs = async (ws: WS) => {
-    const r = await regsFn({ data: { token: getAdminToken()!, workshop_id: ws.id! } });
-    setRegs({ ws, rows: r.rows as { name: string; phone?: string | null; email?: string | null }[] });
-  };
+  const catLabel = (c?: string | null) => ({
+    children: "ילדים", teens: "נוער", schools: "צוותים חינוכיים", communities: "קהילות", parents: "הורים",
+  }[c || ""] || "—");
 
   return (
-    <AdminShell title="סדנאות">
+    <AdminShell title="סדנאות ופעילויות">
+      <p className="text-sm text-[#A0907A] mb-4">
+        אלו דוגמאות לסדנאות שמוצגות באתר. הסדנאות מותאמות אישית לכל קבוצה — אין רישום ישיר ואין תאריכים. כל סדנה כוללת תיאור מלא של מה היא כוללת ומה אפשר לבקש.
+      </p>
       <div className="flex justify-end mb-4">
         <PrimaryButton onClick={() => setEdit({ ...empty })}>
-          <Plus className="w-4 h-4 inline ml-1" />הוסף סדנה חדשה
+          <Plus className="w-4 h-4 inline ml-1" />הוסף דוגמת סדנה
         </PrimaryButton>
       </div>
 
@@ -102,23 +100,20 @@ function WorkshopsAdmin() {
           <AdminCard key={ws.id}>
             <div className="flex items-start justify-between mb-2">
               <h3 className="text-lg text-[#2D1B3D]">{ws.name_he}</h3>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                ws.status === "open" ? "bg-green-100 text-green-800"
-                : ws.status === "closed" ? "bg-orange-100 text-orange-800"
-                : "bg-gray-100 text-gray-700"
-              }`}>{ws.status === "open" ? "פתוח" : ws.status === "closed" ? "סגור" : "הסתיים"}</span>
+              <div className="flex flex-col gap-1 items-end">
+                {ws.is_featured && <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">בדף הבית</span>}
+                {ws.is_active === false && <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">מוסתר</span>}
+              </div>
             </div>
             <div className="text-sm text-[#A0907A] space-y-1 mb-3">
-              {ws.date && <div>📅 {ws.date}{ws.time ? ` · ${ws.time}` : ""}</div>}
-              {ws.location && <div>📍 {ws.location}</div>}
+              <div>קטגוריה: {catLabel(ws.category)}</div>
+              {ws.duration_text && <div>⏱ {ws.duration_text}</div>}
               {ws.audience && <div>👥 {ws.audience}</div>}
-              <div>💰 {ws.price > 0 ? `₪${ws.price}` : "חינם"}</div>
-              <div>📝 נרשמו: {ws.registrants?.[0]?.count ?? 0}{ws.max_participants ? ` / ${ws.max_participants}` : ""}</div>
             </div>
+            {ws.desc_he && <p className="text-xs text-[#4A3D30] line-clamp-2 mb-3">{ws.desc_he}</p>}
             <div className="flex flex-wrap gap-2 text-xs">
               <button onClick={() => setEdit(ws)} className="px-2 py-1 rounded border border-[#E0D8CC] hover:bg-[#F5F0E8]"><Pencil className="w-3 h-3 inline ml-1" />עריכה</button>
               <button onClick={() => duplicate(ws.id!)} className="px-2 py-1 rounded border border-[#E0D8CC] hover:bg-[#F5F0E8]"><Copy className="w-3 h-3 inline ml-1" />שכפל</button>
-              <button onClick={() => showRegs(ws)} className="px-2 py-1 rounded border border-[#E0D8CC] hover:bg-[#F5F0E8]"><Users className="w-3 h-3 inline ml-1" />נרשמים</button>
               <button onClick={() => remove(ws.id!)} className="px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50"><Trash2 className="w-3 h-3 inline ml-1" />מחיקה</button>
             </div>
           </AdminCard>
@@ -131,16 +126,27 @@ function WorkshopsAdmin() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <Field label="שם הסדנה (עברית)"><input className={inp} value={edit.name_he} onChange={(e) => setEdit({ ...edit, name_he: e.target.value })} /></Field>
             <Field label="Workshop name (English)" ltr><input dir="ltr" className={inp} value={edit.name_en || ""} onChange={(e) => setEdit({ ...edit, name_en: e.target.value })} /></Field>
-            <Field label="תיאור"><textarea className={inp} rows={3} value={edit.desc_he || ""} onChange={(e) => setEdit({ ...edit, desc_he: e.target.value })} /></Field>
-            <Field label="Description" ltr><textarea dir="ltr" className={inp} rows={3} value={edit.desc_en || ""} onChange={(e) => setEdit({ ...edit, desc_en: e.target.value })} /></Field>
-            <Field label="תאריך"><input type="date" className={inp} value={edit.date || ""} onChange={(e) => setEdit({ ...edit, date: e.target.value })} /></Field>
-            <Field label="שעה"><input type="time" className={inp} value={edit.time || ""} onChange={(e) => setEdit({ ...edit, time: e.target.value })} /></Field>
-            <Field label="מיקום"><input className={inp} value={edit.location || ""} onChange={(e) => setEdit({ ...edit, location: e.target.value })} /></Field>
+
+            <Field label="תיאור קצר (מופיע על הכרטיס)"><textarea className={inp} rows={2} value={edit.desc_he || ""} onChange={(e) => setEdit({ ...edit, desc_he: e.target.value })} /></Field>
+            <Field label="Short description" ltr><textarea dir="ltr" className={inp} rows={2} value={edit.desc_en || ""} onChange={(e) => setEdit({ ...edit, desc_en: e.target.value })} /></Field>
+
+            <div className="md:col-span-2">
+              <Field label="הסבר מלא — מה הסדנה כוללת, מה מקבלים, דוגמאות לבקשות (מוצג כשנכנסים לסדנה)">
+                <textarea
+                  className={inp}
+                  rows={10}
+                  placeholder={"לדוגמה:\n• מפגש חווייתי של 90 דקות שמותאם לקבוצה\n• מה כולל המפגש: פעילות פתיחה, מעגל שיח, יצירה רגשית, סיכום\n• מה מקבלים: ערכת המשך להורים/למורים, חוברת דיגיטלית\n• דוגמאות לבקשות: התמקדות במעברים, חברות וקבלת השונה, התמודדות עם לחץ\n• מותאם לגיל, לזמן ולמטרה"}
+                  value={edit.full_description || ""}
+                  onChange={(e) => setEdit({ ...edit, full_description: e.target.value })}
+                />
+              </Field>
+            </div>
+
             <Field label="קהל יעד / גיל"><input className={inp} value={edit.audience || ""} onChange={(e) => setEdit({ ...edit, audience: e.target.value })} /></Field>
-            <Field label="מחיר ₪"><input type="number" min={0} className={inp} value={edit.price} onChange={(e) => setEdit({ ...edit, price: Number(e.target.value) })} /></Field>
-            <Field label="מקסימום משתתפים"><input type="number" min={0} className={inp} value={edit.max_participants ?? ""} onChange={(e) => setEdit({ ...edit, max_participants: e.target.value ? Number(e.target.value) : null })} /></Field>
+            <Field label="משך / פורמט (טקסט חופשי)"><input className={inp} placeholder="90 דק׳ · א׳–ד׳" value={edit.duration_text || ""} onChange={(e) => setEdit({ ...edit, duration_text: e.target.value })} /></Field>
+
             <Field label="קישור לתמונה"><input className={inp} value={edit.image_url || ""} onChange={(e) => setEdit({ ...edit, image_url: e.target.value })} /></Field>
-            <Field label="קטגוריה (קהל יעד לפילטר)">
+            <Field label="קטגוריה (לפילטר)">
               <select className={inp} value={edit.category || "children"} onChange={(e) => setEdit({ ...edit, category: e.target.value })}>
                 <option value="children">ילדים</option>
                 <option value="teens">נוער</option>
@@ -149,15 +155,11 @@ function WorkshopsAdmin() {
                 <option value="parents">הורים</option>
               </select>
             </Field>
-            <Field label="משך (טקסט חופשי, לדוגמה: 90 דק׳ · א׳–ד׳)"><input className={inp} value={edit.duration_text || ""} onChange={(e) => setEdit({ ...edit, duration_text: e.target.value })} /></Field>
-            <Field label="מטרות / תגיות (מופרדות בפסיקים)"><input className={inp} placeholder="שפה רגשית, מודעות עצמית, ביטחון" value={edit.goals_list || ""} onChange={(e) => setEdit({ ...edit, goals_list: e.target.value })} /></Field>
-            <Field label="סטטוס">
-              <select className={inp} value={edit.status} onChange={(e) => setEdit({ ...edit, status: e.target.value as "open" | "closed" | "ended" })}>
-                <option value="open">פתוח לרישום</option>
-                <option value="closed">סגור</option>
-                <option value="ended">הסתיים</option>
-              </select>
-            </Field>
+
+            <div className="md:col-span-2">
+              <Field label="מטרות / תגיות (מופרדות בפסיקים)"><input className={inp} placeholder="שפה רגשית, מודעות עצמית, ביטחון" value={edit.goals_list || ""} onChange={(e) => setEdit({ ...edit, goals_list: e.target.value })} /></Field>
+            </div>
+
             <Field label="פעיל באתר">
               <label className="flex items-center gap-2 mt-2 text-sm"><input type="checkbox" checked={edit.is_active !== false} onChange={(e) => setEdit({ ...edit, is_active: e.target.checked })} /> מוצג באתר הציבורי</label>
             </Field>
@@ -169,25 +171,6 @@ function WorkshopsAdmin() {
             <SecondaryButton onClick={() => setEdit(null)}>ביטול</SecondaryButton>
             <PrimaryButton onClick={save}>שמירה</PrimaryButton>
           </div>
-        </Modal>
-      )}
-
-      {regs && (
-        <Modal onClose={() => setRegs(null)}>
-          <h3 className="text-lg text-[#2D1B3D] mb-3">נרשמים: {regs.ws.name_he}</h3>
-          {regs.rows.length === 0 ? (
-            <div className="text-sm text-[#A0907A]">אין נרשמים עדיין.</div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead><tr className="text-right text-xs text-[#A0907A] border-b border-[#E0D8CC]"><th className="py-2">שם</th><th className="py-2">טלפון</th><th className="py-2">מייל</th></tr></thead>
-              <tbody>
-                {regs.rows.map((r, i) => (
-                  <tr key={i} className="border-b border-[#E0D8CC]/60"><td className="py-2">{r.name}</td><td className="py-2">{r.phone || "—"}</td><td className="py-2">{r.email || "—"}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          <div className="text-end mt-4"><SecondaryButton onClick={() => setRegs(null)}>סגירה</SecondaryButton></div>
         </Modal>
       )}
     </AdminShell>
