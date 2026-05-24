@@ -140,6 +140,17 @@ function WorkshopsAdmin() {
             <Field label="מחיר ₪"><input type="number" min={0} className={inp} value={edit.price} onChange={(e) => setEdit({ ...edit, price: Number(e.target.value) })} /></Field>
             <Field label="מקסימום משתתפים"><input type="number" min={0} className={inp} value={edit.max_participants ?? ""} onChange={(e) => setEdit({ ...edit, max_participants: e.target.value ? Number(e.target.value) : null })} /></Field>
             <Field label="קישור לתמונה"><input className={inp} value={edit.image_url || ""} onChange={(e) => setEdit({ ...edit, image_url: e.target.value })} /></Field>
+            <Field label="קטגוריה (קהל יעד לפילטר)">
+              <select className={inp} value={edit.category || "children"} onChange={(e) => setEdit({ ...edit, category: e.target.value })}>
+                <option value="children">ילדים</option>
+                <option value="teens">נוער</option>
+                <option value="schools">צוותים חינוכיים</option>
+                <option value="communities">קהילות</option>
+                <option value="parents">הורים</option>
+              </select>
+            </Field>
+            <Field label="משך (טקסט חופשי, לדוגמה: 90 דק׳ · א׳–ד׳)"><input className={inp} value={edit.duration_text || ""} onChange={(e) => setEdit({ ...edit, duration_text: e.target.value })} /></Field>
+            <Field label="מטרות / תגיות (מופרדות בפסיקים)"><input className={inp} placeholder="שפה רגשית, מודעות עצמית, ביטחון" value={edit.goals_list || ""} onChange={(e) => setEdit({ ...edit, goals_list: e.target.value })} /></Field>
             <Field label="סטטוס">
               <select className={inp} value={edit.status} onChange={(e) => setEdit({ ...edit, status: e.target.value as "open" | "closed" | "ended" })}>
                 <option value="open">פתוח לרישום</option>
@@ -147,12 +158,12 @@ function WorkshopsAdmin() {
                 <option value="ended">הסתיים</option>
               </select>
             </Field>
-          </div>
-          <div className="flex justify-end gap-2 mt-5">
-            <SecondaryButton onClick={() => setEdit(null)}>ביטול</SecondaryButton>
-            <PrimaryButton onClick={save}>שמירה</PrimaryButton>
-          </div>
-        </Modal>
+            <Field label="פעיל באתר">
+              <label className="flex items-center gap-2 mt-2 text-sm"><input type="checkbox" checked={edit.is_active !== false} onChange={(e) => setEdit({ ...edit, is_active: e.target.checked })} /> מוצג באתר הציבורי</label>
+            </Field>
+            <Field label="מומלץ בדף הבית">
+              <label className="flex items-center gap-2 mt-2 text-sm"><input type="checkbox" checked={!!edit.is_featured} onChange={(e) => setEdit({ ...edit, is_featured: e.target.checked })} /> הצג גם בדף הבית</label>
+            </Field>
       )}
 
       {regs && (
