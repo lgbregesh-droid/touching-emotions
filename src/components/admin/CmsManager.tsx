@@ -5,7 +5,7 @@ import { AdminCard, PrimaryButton, SecondaryButton } from "./AdminShell";
 import { cmsList, cmsUpsert, cmsDelete, cmsReorder, cmsUploadImage } from "@/lib/admin/cms.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Pencil, Trash2, ChevronUp, ChevronDown, Plus, Upload, Eye, EyeOff, Star } from "lucide-react";
+import { Pencil, Trash2, ChevronUp, ChevronDown, Plus, Upload, Eye, EyeOff, Star, Sparkles } from "lucide-react";
 
 export type FieldType = "text" | "textarea" | "number" | "url" | "image" | "boolean" | "select";
 
@@ -32,13 +32,19 @@ type Props = {
   hasOrder?: boolean; // shows reorder arrows
   emptyText?: string;
   newButtonLabel?: string;
+  aiAnalyze?: {
+    label: string;
+    hint?: string;
+    analyze: (base64: string, contentType: string) => Promise<Record<string, unknown>>;
+  };
 };
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any> & { id: string };
 
 export function CmsManager(props: Props) {
-  const { table, fields, primaryField, secondaryField, imageField, hasFeatured, hasActive, hasOrder, emptyText, newButtonLabel } = props;
+  const { table, fields, primaryField, secondaryField, imageField, hasFeatured, hasActive, hasOrder, emptyText, newButtonLabel, aiAnalyze } = props;
   const qc = useQueryClient();
   const listFn = useServerFn(cmsList);
   const saveFn = useServerFn(cmsUpsert);
@@ -102,8 +108,10 @@ export function CmsManager(props: Props) {
           isNew={creating}
           onCancel={cancel}
           onSaved={() => { cancel(); invalidate(); }}
+          aiAnalyze={aiAnalyze}
         />
       )}
+
 
       {isLoading ? (
         <div className="text-center py-12 text-[#A0907A]">טוען...</div>
@@ -152,13 +160,16 @@ export function CmsManager(props: Props) {
   );
 }
 
-function CmsForm({ table, fields, initial, isNew, onCancel, onSaved }: { table: CmsTable; fields: Field[]; initial: Row; isNew: boolean; onCancel: () => void; onSaved: () => void; }) {
+function CmsForm({ table, fields, initial, isNew, onCancel, onSaved, aiAnalyze }: { table: CmsTable; fields: Field[]; initial: Row; isNew: boolean; onCancel: () => void; onSaved: () => void; aiAnalyze?: Props["aiAnalyze"]; }) {
   const [values, setValues] = useState<Row>(initial);
   const [saving, setSaving] = useState(false);
   const saveFn = useServerFn(cmsUpsert);
   const upFn = useServerFn(cmsUploadImage);
   const fileRef = useRef<HTMLInputElement>(null);
+  const aiFileRef = useRef<HTMLInputElement>(null);
   const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
 
   const set = (k: string, v: unknown) => setValues((p) => ({ ...p, [k]: v }));
 
@@ -178,6 +189,31 @@ function CmsForm({ table, fields, initial, isNew, onCancel, onSaved }: { table: 
     } catch (e) { toast.error((e as Error).message); }
     finally { setUploadingFor(null); }
   };
+
+  const runAiAnalyze = async (file: File) => {
+    if (!aiAnalyze) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("הקובץ גדול מ-5MB"); return; }
+    setAnalyzing(true);
+    try {
+      const b64 = await new Promise<string>((res, rej) => {
+        const r = new FileReader();
+        r.onloadend = () => res((r.result as string).split(",")[1]);
+        r.onerror = () => rej(r.error);
+        r.readAsDataURL(file);
+      });
+      const result = await aiAnalyze.analyze(b64, file.type);
+      setValues((p) => {
+        const next = { ...p };
+        for (const [k, v] of Object.entries(result)) {
+          if (v !== undefined && v !== null && v !== "") next[k] = v;
+        }
+        return next;
+      });
+      toast.success("הפרטים מולאו אוטומטית");
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setAnalyzing(false); }
+  };
+
 
   const save = async () => {
     for (const f of fields) {
@@ -202,7 +238,22 @@ function CmsForm({ table, fields, initial, isNew, onCancel, onSaved }: { table: 
   return (
     <AdminCard className="mb-6 border-[#BA9B78]/50">
       <h3 className="text-lg font-medium text-[#2D1B3D] mb-4">{isNew ? "פריט חדש" : "עריכה"}</h3>
+      {aiAnalyze && (
+        <div className="mb-4 p-3 rounded-md bg-[#F5F0E8] border border-[#E0D8CC]">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-4 h-4 text-[#BA9B78]" />
+            <div className="text-sm font-medium text-[#2D1B3D]">{aiAnalyze.label}</div>
+          </div>
+          {aiAnalyze.hint && <div className="text-xs text-[#A0907A] mb-2">{aiAnalyze.hint}</div>}
+          <SecondaryButton onClick={() => aiFileRef.current?.click()} disabled={analyzing}>
+            <Upload className="w-4 h-4 inline ml-1" />{analyzing ? "מנתח..." : "העלאת תמונה לניתוח"}
+          </SecondaryButton>
+          <input ref={aiFileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) runAiAnalyze(f); if (aiFileRef.current) aiFileRef.current.value = ""; }} />
+        </div>
+      )}
       <div className="space-y-3">
+
         {fields.map((f) => {
           const v = values[f.key];
           if (f.type === "boolean") {

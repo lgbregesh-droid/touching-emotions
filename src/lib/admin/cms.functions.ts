@@ -120,6 +120,80 @@ export const cmsUploadImage = createServerFn({ method: "POST" })
     return { url: pub.publicUrl };
   });
 
+// ---------- AI: analyze testimonial image ----------
+
+export const aiAnalyzeTestimonialImage = createServerFn({ method: "POST" })
+  .middleware([requireAdmin])
+  .inputValidator((i: unknown) =>
+    z.object({
+      ...tokenField,
+      contentType: z.string().min(1).max(100),
+      base64: z.string().min(1),
+    }).parse(i),
+  )
+  .handler(async ({ data }) => {
+    if (!/^image\/(jpeg|png|webp|gif)$/.test(data.contentType)) throw new Error("סוג קובץ לא נתמך");
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("LOVABLE_API_KEY חסר");
+
+    const tool = {
+      type: "function" as const,
+      function: {
+        name: "extract_testimonial",
+        description: "Extract testimonial fields from the image (screenshot of WhatsApp / message / handwritten note / etc.)",
+        parameters: {
+          type: "object",
+          properties: {
+            name: { type: "string", description: "שם הממליץ/ה. אם לא ניתן לזהות — מחרוזת ריקה." },
+            role: { type: "string", description: "תפקיד / שיוך (למשל: אמא לתלמיד, מנהלת בית ספר). אם לא ידוע — ריק." },
+            text: { type: "string", description: "תוכן ההמלצה כפי שכתוב בתמונה, בעברית, ללא ציטוטים מיותרים." },
+            category: { type: "string", description: "קטגוריה: הורה / מנהלת / מתנדבת / מורה / אחר. אם לא ברור — ריק." },
+          },
+          required: ["name", "role", "text", "category"],
+          additionalProperties: false,
+        },
+      },
+    };
+
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content:
+              'את מקבלת תמונה של המלצה (צילום מסך מוואטסאפ, מייל, פתק, או דף כתוב). חלצי את שם הממליץ/ה, התפקיד/שיוך אם מצוין, את גוף ההמלצה בעברית, וקטגוריה. אל תמציאי פרטים — אם משהו לא מופיע, החזירי מחרוזת ריקה.',
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "חלצי את פרטי ההמלצה מהתמונה." },
+              { type: "image_url", image_url: { url: `data:${data.contentType};base64,${data.base64}` } },
+            ],
+          },
+        ],
+        tools: [tool],
+        tool_choice: { type: "function", function: { name: "extract_testimonial" } },
+        temperature: 0.2,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      if (res.status === 429) throw new Error("חרגנו ממגבלת השימוש ב-AI. נסי שוב בעוד דקה.");
+      if (res.status === 402) throw new Error("נגמרו הקרדיטים ל-AI. יש להוסיף קרדיט ב-Lovable Cloud.");
+      throw new Error(`AI gateway error (${res.status}): ${body.slice(0, 200)}`);
+    }
+    const json = (await res.json()) as {
+      choices?: { message?: { tool_calls?: { function?: { arguments?: string } }[] } }[];
+    };
+    const args = json.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+    if (!args) throw new Error("ה-AI לא החזיר תוצאה מובנית");
+    const parsed = JSON.parse(args) as { name: string; role: string; text: string; category: string };
+    return { values: parsed };
+  });
+
 // ---------- Extended dashboard counters ----------
 
 export const getCmsCounters = createServerFn({ method: "POST" })
@@ -132,3 +206,4 @@ export const getCmsCounters = createServerFn({ method: "POST" })
     ]);
     return { activeWorkshops: ws.count || 0, activeTestimonials: tt.count || 0 };
   });
+
