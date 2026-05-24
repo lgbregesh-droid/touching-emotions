@@ -44,7 +44,7 @@ type Props = {
 type Row = Record<string, any> & { id: string };
 
 export function CmsManager(props: Props) {
-  const { table, fields, primaryField, secondaryField, imageField, hasFeatured, hasActive, hasOrder, emptyText, newButtonLabel } = props;
+  const { table, fields, primaryField, secondaryField, imageField, hasFeatured, hasActive, hasOrder, emptyText, newButtonLabel, aiAnalyze } = props;
   const qc = useQueryClient();
   const listFn = useServerFn(cmsList);
   const saveFn = useServerFn(cmsUpsert);
