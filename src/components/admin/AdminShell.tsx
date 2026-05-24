@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Users, Settings, BookOpen } from "lucide-react";
+import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Users, Settings, BookOpen, Activity } from "lucide-react";
 import { clearAdminToken } from "@/lib/admin/session";
 
 const items = [
@@ -18,6 +18,7 @@ const items = [
   { to: "/admin/events", label: "אירועים", icon: Calendar },
   { to: "/admin/shop", label: "מוצרים", icon: ShoppingBag },
   { to: "/admin/donations", label: "תרומות", icon: Heart },
+  { to: "/admin/integration-logs", label: "יומני אינטגרציות", icon: Activity },
   { to: "/admin/settings", label: "הגדרות אתר", icon: Settings },
 ];
 
