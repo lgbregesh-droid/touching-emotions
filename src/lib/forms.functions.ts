@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { fireProcessSubmission } from "@/lib/ai/process-submission.server";
 
 const ContactSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -13,14 +14,19 @@ const ContactSchema = z.object({
 export const submitContact = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ContactSchema.parse(input))
   .handler(async ({ data }) => {
-    const { error } = await supabaseAdmin.from("contact_messages").insert({
-      name: data.name,
-      phone: data.phone || null,
-      email: data.email || null,
-      subject: data.subject || null,
-      message: data.message,
-    });
-    if (error) throw new Error(error.message);
+    const { data: ins, error } = await supabaseAdmin
+      .from("contact_messages")
+      .insert({
+        name: data.name,
+        phone: data.phone || null,
+        email: data.email || null,
+        subject: data.subject || null,
+        message: data.message,
+      })
+      .select("id")
+      .single();
+    if (error || !ins) throw new Error(error?.message ?? "שמירה נכשלה");
+    fireProcessSubmission(ins.id as string, "contact_messages");
     return { ok: true };
   });
 
@@ -34,12 +40,17 @@ const VolunteerSchema = z.object({
 export const submitVolunteer = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => VolunteerSchema.parse(input))
   .handler(async ({ data }) => {
-    const { error } = await supabaseAdmin.from("volunteers").insert({
-      name: data.name,
-      phone: data.phone || null,
-      profession: data.profession || null,
-      interest: data.interest || null,
-    });
-    if (error) throw new Error(error.message);
+    const { data: ins, error } = await supabaseAdmin
+      .from("volunteers")
+      .insert({
+        name: data.name,
+        phone: data.phone || null,
+        profession: data.profession || null,
+        interest: data.interest || null,
+      })
+      .select("id")
+      .single();
+    if (error || !ins) throw new Error(error?.message ?? "שמירה נכשלה");
+    fireProcessSubmission(ins.id as string, "volunteers");
     return { ok: true };
   });
