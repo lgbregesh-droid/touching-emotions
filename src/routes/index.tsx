@@ -17,6 +17,7 @@ import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
 import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
+import { useSiteContent } from "@/hooks/use-cms";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
 import imgTeens from "@/assets/home/workshop-teens.jpg";
