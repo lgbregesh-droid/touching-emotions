@@ -10,6 +10,7 @@ import { submitContact } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { EmergencyBox } from "@/routes/disclaimer";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
+import { useFaq } from "@/hooks/use-cms";
 import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
@@ -72,7 +73,8 @@ function Contact() {
     { icon: CheckCircle2, title: isEn ? "We tailor an activity" : "מתאימים פעילות" },
   ];
 
-  const faqs = isEn
+  const { data: dbFaq } = useFaq();
+  const fallbackFaq = isEn
     ? [
         { q: "How do I book a workshop?", a: "Send us a message via the form, WhatsApp or email. We'll have a short intro call, understand the need, and build a tailored session for your group." },
         { q: "Are activities suitable for schools?", a: "Yes — we work with schools, community centers, dorms and youth movements. Most programs are designed in coordination with the school's staff." },
@@ -83,6 +85,10 @@ function Contact() {
         { q: "האם הפעילות מתאימה לבתי ספר?", a: "בהחלט — אנחנו עובדים עם בתי ספר, מתנ\"סים, פנימיות ותנועות נוער. רוב התוכניות נבנות בתיאום עם הצוות החינוכי." },
         { q: "איך מקבלים הצעת מחיר?", a: "אחרי שיחת היכרות קצרה אנחנו שולחים הצעת מחיר מותאמת לפי גודל הקבוצה, מיקום, משך ומטרה." },
       ];
+  type FaqRow = { question?: string; answer?: string };
+  const faqs = (dbFaq && dbFaq.length > 0)
+    ? (dbFaq as FaqRow[]).map((r) => ({ q: r.question || "", a: r.answer || "" }))
+    : fallbackFaq;
 
   return (
     <>

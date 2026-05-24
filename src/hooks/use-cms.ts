@@ -18,6 +18,19 @@ export function useSiteSettings() {
   });
 }
 
+export function useWorkshops(opts: { featuredOnly?: boolean } = {}) {
+  return useQuery({
+    queryKey: ["workshops-public", opts],
+    queryFn: async () => {
+      let q = db.from("workshops").select("*").eq("is_active", true).order("order_index", { ascending: true });
+      if (opts.featuredOnly) q = q.eq("is_featured", true);
+      const { data, error } = await q;
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
 export function useTestimonials(opts: { featuredOnly?: boolean } = {}) {
   return useQuery({
     queryKey: ["testimonials", opts],

@@ -927,13 +927,16 @@ export type Database = {
         Row: {
           age_group: string | null
           audience: string | null
+          category: string | null
           created_at: string
           date: string | null
           desc_en: string | null
           desc_he: string | null
+          duration_text: string | null
           format: string | null
           full_description: string | null
           goals: string | null
+          goals_list: string | null
           id: string
           image_url: string | null
           is_active: boolean
@@ -953,13 +956,16 @@ export type Database = {
         Insert: {
           age_group?: string | null
           audience?: string | null
+          category?: string | null
           created_at?: string
           date?: string | null
           desc_en?: string | null
           desc_he?: string | null
+          duration_text?: string | null
           format?: string | null
           full_description?: string | null
           goals?: string | null
+          goals_list?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
@@ -979,13 +985,16 @@ export type Database = {
         Update: {
           age_group?: string | null
           audience?: string | null
+          category?: string | null
           created_at?: string
           date?: string | null
           desc_en?: string | null
           desc_he?: string | null
+          duration_text?: string | null
           format?: string | null
           full_description?: string | null
           goals?: string | null
+          goals_list?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { useSiteContent } from "@/hooks/use-cms";
+import { useSiteContent, useWorkshops } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { InfoCard } from "@/components/InfoCard";
@@ -30,6 +30,7 @@ type Cat = (typeof CATEGORIES)[number];
 function Workshops() {
   const { t, lang } = useLanguage();
   const { data: cms } = useSiteContent();
+  const { data: dbWorkshops } = useWorkshops();
   const isEn = lang === "en";
   const pick = (key: string, fallback: string) => {
     const v = cms?.[key];
@@ -46,7 +47,7 @@ function Workshops() {
     parents: isEn ? "Parents" : "הורים",
   };
 
-  const workshops: { cat: Cat; title: string; desc: string; goals: string[]; duration: string; image: string }[] = [
+  const fallback: { cat: Cat; title: string; desc: string; goals: string[]; duration: string; image: string }[] = [
     {
       cat: "children", title: isEn ? "Emotion Detectives" : "בלשי הרגשות",
       desc: isEn ? "Experiential workshop teaching kids to recognize and name what they feel through play, art and movement." : "סדנה חווייתית שמלמדת ילדים לזהות ולתת שם לרגשות דרך משחק, יצירה ותנועה.",
@@ -84,6 +85,18 @@ function Workshops() {
       duration: isEn ? "Half day · 4–6 hrs" : "חצי יום · 4–6 שעות", image: facilitator,
     },
   ];
+
+  type Row = { id?: string; name_he?: string; name_en?: string | null; desc_he?: string | null; desc_en?: string | null; image_url?: string | null; category?: string | null; duration_text?: string | null; audience?: string | null; goals_list?: string | null };
+  const workshops = (dbWorkshops && dbWorkshops.length > 0)
+    ? (dbWorkshops as Row[]).map((r) => ({
+        cat: ((["children", "teens", "schools", "communities", "parents"].includes(r.category || "")) ? r.category : "children") as Cat,
+        title: (isEn ? (r.name_en || r.name_he) : (r.name_he || r.name_en)) || "",
+        desc: (isEn ? (r.desc_en || r.desc_he) : (r.desc_he || r.desc_en)) || "",
+        goals: (r.goals_list || "").split(",").map((s) => s.trim()).filter(Boolean),
+        duration: r.duration_text || r.audience || "",
+        image: r.image_url || workshopChildren,
+      }))
+    : fallback;
 
   const filtered = filter === "all" ? workshops : workshops.filter((w) => w.cat === filter);
 
