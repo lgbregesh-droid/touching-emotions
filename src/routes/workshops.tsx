@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useSiteContent } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { InfoCard } from "@/components/InfoCard";
@@ -28,7 +29,13 @@ type Cat = (typeof CATEGORIES)[number];
 
 function Workshops() {
   const { t, lang } = useLanguage();
+  const { data: cms } = useSiteContent();
   const isEn = lang === "en";
+  const pick = (key: string, fallback: string) => {
+    const v = cms?.[key];
+    if (!v) return fallback;
+    return (isEn ? v.en : v.he) || fallback;
+  };
   const [filter, setFilter] = useState<Cat | "all">("all");
 
   const catLabel: Record<Cat, string> = {
@@ -99,10 +106,10 @@ function Workshops() {
     <>
       <PageHero
         label={isEn ? "Workshops & Activities" : "סדנאות ופעילויות"}
-        title={isEn ? "Workshops tailored to age, group and need" : "סדנאות שמותאמות לגיל, לקבוצה ולצורך"}
-        intro={isEn
+        title={pick("workshops.title", isEn ? "Workshops tailored to age, group and need" : "סדנאות שמותאמות לגיל, לקבוצה ולצורך")}
+        intro={pick("workshops.subtitle", isEn
           ? "Every workshop is built together with you. Choose by audience, see how it works, and book a tailored session for your school, group or community."
-          : "כל סדנה נבנית יחד איתכם. בחרו לפי קהל יעד, ראו איך התהליך עובד והזמינו מפגש מותאם לבית הספר, לקבוצה או לקהילה שלכם."}
+          : "כל סדנה נבנית יחד איתכם. בחרו לפי קהל יעד, ראו איך התהליך עובד והזמינו מפגש מותאם לבית הספר, לקבוצה או לקהילה שלכם.")}
         ctaLabel={isEn ? "Book a workshop" : "להזמנת סדנה"}
         ctaTo="/contact"
         background="cream"

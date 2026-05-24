@@ -17,6 +17,7 @@ import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
 import { TextEffect } from "@/components/ui/text-effect";
 import { SupportTeaser } from "@/components/home/SupportTeaser";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
+import { useSiteContent } from "@/hooks/use-cms";
 
 import imgChildren from "@/assets/home/workshop-children.jpg";
 import imgTeens from "@/assets/home/workshop-teens.jpg";
@@ -28,9 +29,17 @@ import imgCommunity from "@/assets/home/community.jpg";
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { data: s } = useSiteSettings();
+  const { data: cms } = useSiteContent();
   const waUrl = buildWhatsAppLink(s?.whatsapp_number);
+  const pick = (key: string, fallback: string) => {
+    const v = cms?.[key];
+    if (!v) return fallback;
+    return (lang === "en" ? v.en : v.he) || fallback;
+  };
+
+
 
 
   const audiences = [
@@ -96,13 +105,13 @@ function Home() {
             {t.hero.badge}
           </span>
           <h1 className="hero-anim-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extralight text-[#F5F0E8] tracking-wide leading-tight mb-5">
-            {t.hero.title}
+            {pick("home.hero.title", t.hero.title)}
           </h1>
           <div className="flex justify-center mb-5">
             <span className="hero-anim-line gold-divider" />
           </div>
           <p className="hero-anim-sub text-base md:text-lg text-[#F5F0E8]/80 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
-            {t.hero.sub}
+            {pick("home.hero.subtitle", t.hero.sub)}
           </p>
           <div className="hero-anim-cta flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center mb-8">
             <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
@@ -131,7 +140,7 @@ function Home() {
               <p className="mb-5 font-serif italic text-lg md:text-xl" style={{ background: "linear-gradient(90deg, #BA9B78, #4E8C85, #2D1B3D)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                 {t.about_teaser.tagline}
               </p>
-              <p className="text-[#4A3D30] text-base leading-loose font-light mb-5">{t.about_teaser.text}</p>
+              <p className="text-[#4A3D30] text-base leading-loose font-light mb-5">{pick("home.about.text", t.about_teaser.text)}</p>
               <div className="flex flex-wrap gap-2.5">
                 <span className="px-3.5 py-1.5 text-xs tracking-wider rounded-full border border-[#BA9B78] text-[#2D1B3D] bg-white/40">{t.about_teaser.pill1}</span>
                 <span className="px-3.5 py-1.5 text-xs tracking-wider rounded-full border border-[rgba(78,140,133,0.5)] text-[#2D1B3D] bg-white/40">{t.about_teaser.pill2}</span>
@@ -148,7 +157,7 @@ function Home() {
                 as="p"
                 className="text-[#2D1B3D] text-base md:text-lg font-serif italic leading-relaxed"
               >
-                {t.about_teaser.quote}
+                {pick("home.quote", t.about_teaser.quote)}
               </TextEffect>
             </div>
           </Reveal>
@@ -278,7 +287,7 @@ function Home() {
           <Reveal>
             <p className="text-xs tracking-[0.25em] uppercase text-[#BA9B78] mb-3">— {t.final_cta.label} —</p>
             <h2 className="text-2xl md:text-4xl font-extralight text-[#F5F0E8] mb-3">{t.final_cta.heading}</h2>
-            <p className="text-[#F5F0E8]/75 font-light mb-8 max-w-xl mx-auto">{t.final_cta.sub}</p>
+            <p className="text-[#F5F0E8]/75 font-light mb-8 max-w-xl mx-auto">{pick("home.cta.text", t.final_cta.sub)}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/contact" className="btn-pulse px-8 py-3.5 bg-[#BA9B78] text-white rounded-full text-sm tracking-wide hover:bg-[#a98968] transition-colors">
                 {t.final_cta.cta}

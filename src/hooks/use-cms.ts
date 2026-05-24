@@ -65,3 +65,28 @@ export function useSupportItems() {
     },
   });
 }
+
+/** Site content overrides keyed by `key` -> { he, en } */
+export function useSiteContent() {
+  return useQuery({
+    queryKey: ["site-content"],
+    queryFn: async () => {
+      const { data, error } = await db.from("site_content").select("key,value_he,value_en");
+      if (error) throw error;
+      const map: Record<string, { he: string; en: string }> = {};
+      for (const r of (data || []) as { key: string; value_he: string | null; value_en: string | null }[]) {
+        map[r.key] = { he: r.value_he || "", en: r.value_en || "" };
+      }
+      return map;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+/** Hook: returns content override for `key` in current language, or fallback. */
+export function useContent(key: string, fallback: string, lang: "he" | "en" = "he"): string {
+  const { data } = useSiteContent();
+  const v = data?.[key];
+  if (!v) return fallback;
+  return (lang === "en" ? v.en : v.he) || fallback;
+}

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useSiteContent } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { InfoCard } from "@/components/InfoCard";
@@ -22,7 +23,11 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   const { t, lang } = useLanguage();
+  const { data: cms } = useSiteContent();
   const isEn = lang === "en";
+  const aboutMain = cms?.["about.main"];
+  const aboutMainText = aboutMain ? (isEn ? aboutMain.en : aboutMain.he) : "";
+
 
   const approach = [
     { icon: Ear, title: isEn ? "Listening" : "הקשבה", desc: isEn ? "A real space where children, teens and adults are heard — without judgment, without rushing." : "מרחב שבו ילדים, נוער ומבוגרים מרגישים שמקשיבים להם באמת — בלי שיפוטיות ובלי למהר." },
@@ -67,16 +72,22 @@ function About() {
               <h2 className="text-2xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "Why we built this place" : "למה הקמנו את המקום הזה"}</h2>
             </div>
             <div className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 leading-loose text-[#4A3D30] font-light" style={{ borderRight: "3px solid rgba(78,140,133,0.3)" }}>
-              <p className="mb-4">
-                {isEn
-                  ? "Touching Emotion was born from a simple insight: too many children, teens and adults carry feelings they have no language for. They grow up in classrooms, families and communities that never made room to talk about what's happening inside."
-                  : "‎לגעת ברגש נולד מתובנה פשוטה: יותר מדי ילדים, נוער ומבוגרים נושאים בתוכם רגשות שאין להם מילים אליהם. הם גדלים בכיתות, במשפחות ובקהילות שלא תמיד נתנו מקום לדבר על מה שקורה בפנים."}
-              </p>
-              <p>
-                {isEn
-                  ? "Our mission is to bring emotional awareness, expression, resilience and empowerment into the places where life actually happens — schools, youth groups, family homes and community spaces. Not as a lecture, but as a lived experience."
-                  : "‎המשימה שלנו היא להכניס מודעות רגשית, ביטוי, חוסן והעצמה אל המקומות שבהם החיים באמת קורים — בתי ספר, תנועות נוער, בתים וקהילות. לא כהרצאה, אלא כחוויה חיה."}
-              </p>
+              {aboutMainText ? (
+                <div className="whitespace-pre-line">{aboutMainText}</div>
+              ) : (
+                <>
+                  <p className="mb-4">
+                    {isEn
+                      ? "Touching Emotion was born from a simple insight: too many children, teens and adults carry feelings they have no language for. They grow up in classrooms, families and communities that never made room to talk about what's happening inside."
+                      : "‎לגעת ברגש נולד מתובנה פשוטה: יותר מדי ילדים, נוער ומבוגרים נושאים בתוכם רגשות שאין להם מילים אליהם. הם גדלים בכיתות, במשפחות ובקהילות שלא תמיד נתנו מקום לדבר על מה שקורה בפנים."}
+                  </p>
+                  <p>
+                    {isEn
+                      ? "Our mission is to bring emotional awareness, expression, resilience and empowerment into the places where life actually happens — schools, youth groups, family homes and community spaces. Not as a lecture, but as a lived experience."
+                      : "‎המשימה שלנו היא להכניס מודעות רגשית, ביטוי, חוסן והעצמה אל המקומות שבהם החיים באמת קורים — בתי ספר, תנועות נוער, בתים וקהילות. לא כהרצאה, אלא כחוויה חיה."}
+                  </p>
+                </>
+              )}
             </div>
           </Reveal>
         </div>
