@@ -228,7 +228,7 @@ export const analyzeSubmission = createServerFn({ method: "POST" })
 
     const { data: ins, error: insErr } = await supabaseAdmin
       .from("ai_submission_analysis")
-      .insert({
+      .upsert({
         submission_id: data.id,
         submission_type: data.kind,
         summary: result.summary,
@@ -239,7 +239,7 @@ export const analyzeSubmission = createServerFn({ method: "POST" })
         model: ANALYSIS_MODEL,
         rag_documents_used: rag.documentsUsed as never,
         rag_context_chars: rag.chars,
-      })
+      }, { onConflict: "submission_id,submission_type" })
       .select("*")
       .single();
     if (insErr) throw new Error(insErr.message);
