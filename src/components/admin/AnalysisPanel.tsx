@@ -74,7 +74,7 @@ export function AnalysisPanel({ kind, id }: { kind: "contact" | "volunteer"; id:
       </div>
 
       {!a && !running && !isLoading && (
-        <div className="text-xs text-[#A0907A]">עדיין לא בוצע ניתוח. לחצי "נתח ב-AI" כדי לקבל תקציר, רגש, עדיפות וטיוטת תשובה.</div>
+        <div className="text-xs text-[#A0907A]">עדיין לא בוצע ניתוח. לחצי "נתח ב-AI" כדי לקבל תקציר, עדיפות והמלצת פעולה פנימית לצוות.</div>
       )}
 
       {a && (
@@ -90,17 +90,18 @@ export function AnalysisPanel({ kind, id }: { kind: "contact" | "volunteer"; id:
           </div>
           {a.summary && (
             <div>
-              <div className="text-xs text-[#A0907A] mb-1">תקציר</div>
+              <div className="text-xs text-[#A0907A] mb-1">תקציר הפנייה</div>
               <div className="text-[#2D1B3D]">{a.summary}</div>
             </div>
           )}
           {a.suggested_response && (
             <div>
               <div className="flex items-center gap-2 text-xs text-[#A0907A] mb-1">
-                <span>תשובה מוצעת</span>
-                <button onClick={copyResp} className="hover:text-[#BA9B78]"><Copy className="w-3 h-3" /></button>
+                <span>המלצת פעולה לצוות (פנימי)</span>
+                <button onClick={copyResp} className="hover:text-[#BA9B78]" title="העתק"><Copy className="w-3 h-3" /></button>
               </div>
-              <div className="text-[#2D1B3D] whitespace-pre-wrap p-3 rounded-md bg-[#F5F0E8]">{a.suggested_response}</div>
+              <div className="text-[#2D1B3D] whitespace-pre-wrap p-3 rounded-md bg-[#F5F0E8] border border-[#E0D8CC]">{a.suggested_response}</div>
+              <div className="text-[11px] text-[#A0907A] mt-1">⚠️ זוהי המלצה פנימית — לא טיוטת תשובה לפונה.</div>
             </div>
           )}
           {a.rag_documents_used && a.rag_documents_used.length > 0 && (
