@@ -23,7 +23,11 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   const { t, lang } = useLanguage();
+  const { data: cms } = useSiteContent();
   const isEn = lang === "en";
+  const aboutMain = cms?.["about.main"];
+  const aboutMainText = aboutMain ? (isEn ? aboutMain.en : aboutMain.he) : "";
+
 
   const approach = [
     { icon: Ear, title: isEn ? "Listening" : "הקשבה", desc: isEn ? "A real space where children, teens and adults are heard — without judgment, without rushing." : "מרחב שבו ילדים, נוער ומבוגרים מרגישים שמקשיבים להם באמת — בלי שיפוטיות ובלי למהר." },
