@@ -85,6 +85,10 @@ export const StaggerTestimonials: React.FC<{
     items.map((it, i) => ({ ...it, tempId: i }))
   );
 
+  useEffect(() => {
+    setList(items.map((it, i) => ({ ...it, tempId: i })));
+  }, [items]);
+
   const handleMove = (steps: number) => {
     const newList = [...list];
     if (steps > 0) {
