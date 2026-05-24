@@ -72,7 +72,3 @@ export function Footer() {
     </footer>
   );
 }
-      </div>
-    </footer>
-  );
-}
