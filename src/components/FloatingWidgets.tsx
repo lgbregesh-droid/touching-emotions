@@ -168,20 +168,22 @@ export function FloatingWidgets() {
       )}
 
       {/* WhatsApp — bottom-left, next to accessibility button */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group fixed bottom-4 left-20 z-[95] w-12 h-12 rounded-full shadow-lg bg-[#25D366] text-white flex items-center justify-center transition hover:scale-105 hover:bg-[#1ebe57]"
-        aria-label="WhatsApp"
-      >
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true">
-          <path d="M19.11 17.27c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.59-1.5-1.86-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.46l-.52-.01c-.18 0-.48.07-.73.34s-.96.94-.96 2.29.99 2.66 1.12 2.84c.14.18 1.95 2.97 4.72 4.17.66.29 1.18.46 1.58.59.66.21 1.27.18 1.75.11.53-.08 1.6-.66 1.83-1.29.23-.63.23-1.17.16-1.29-.07-.12-.25-.18-.52-.32zM16 4C9.37 4 4 9.37 4 16c0 2.11.55 4.17 1.6 5.98L4 28l6.2-1.63A11.93 11.93 0 0 0 16 28c6.63 0 12-5.37 12-12S22.63 4 16 4zm0 21.82a9.8 9.8 0 0 1-5-1.37l-.36-.21-3.68.97.98-3.59-.23-.37A9.8 9.8 0 1 1 16 25.82z" />
-        </svg>
-        <span className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs bg-[#2D1B3D] text-white px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
-          וואטסאפ
-        </span>
-      </a>
+      {whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group fixed bottom-4 left-20 z-[95] w-12 h-12 rounded-full shadow-lg bg-[#25D366] text-white flex items-center justify-center transition hover:scale-105 hover:bg-[#1ebe57]"
+          aria-label="WhatsApp"
+        >
+          <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true">
+            <path d="M19.11 17.27c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.59-1.5-1.86-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.46l-.52-.01c-.18 0-.48.07-.73.34s-.96.94-.96 2.29.99 2.66 1.12 2.84c.14.18 1.95 2.97 4.72 4.17.66.29 1.18.46 1.58.59.66.21 1.27.18 1.75.11.53-.08 1.6-.66 1.83-1.29.23-.63.23-1.17.16-1.29-.07-.12-.25-.18-.52-.32zM16 4C9.37 4 4 9.37 4 16c0 2.11.55 4.17 1.6 5.98L4 28l6.2-1.63A11.93 11.93 0 0 0 16 28c6.63 0 12-5.37 12-12S22.63 4 16 4zm0 21.82a9.8 9.8 0 0 1-5-1.37l-.36-.21-3.68.97.98-3.59-.23-.37A9.8 9.8 0 1 1 16 25.82z" />
+          </svg>
+          <span className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs bg-[#2D1B3D] text-white px-2.5 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
+            וואטסאפ
+          </span>
+        </a>
+      )}
     </>
   );
 }
