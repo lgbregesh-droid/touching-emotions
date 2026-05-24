@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { CmsManager, type Field } from "@/components/admin/CmsManager";
+import { aiAnalyzeTestimonialImage } from "@/lib/admin/cms.functions";
+import { getAdminToken } from "@/lib/admin/session";
 
 export const Route = createFileRoute("/admin/_authed/testimonials")({
   head: () => ({ meta: [{ title: "המלצות | ניהול" }] }),
@@ -18,6 +21,7 @@ const fields: Field[] = [
 ];
 
 function TestimonialsAdmin() {
+  const analyzeFn = useServerFn(aiAnalyzeTestimonialImage);
   return (
     <AdminShell title="המלצות">
       <CmsManager
@@ -31,6 +35,14 @@ function TestimonialsAdmin() {
         hasOrder
         emptyText="עדיין לא נוספו המלצות"
         newButtonLabel="הוספת המלצה"
+        aiAnalyze={{
+          label: "מילוי אוטומטי מתמונה",
+          hint: "העלי צילום מסך של ההמלצה (וואטסאפ, מייל, פתק) וה-AI ימלא שם, תפקיד, קטגוריה וטקסט.",
+          analyze: async (base64, contentType) => {
+            const out = await analyzeFn({ data: { token: getAdminToken()!, base64, contentType } });
+            return out.values as Record<string, unknown>;
+          },
+        }}
       />
     </AdminShell>
   );
