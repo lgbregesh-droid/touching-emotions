@@ -16,6 +16,7 @@ const items = [
   { to: "/admin/team", label: "צוות", icon: Users },
   { to: "/admin/knowledge-base", label: "בסיס ידע", icon: BookOpen },
   { to: "/admin/gallery", label: "גלריה", icon: Image },
+  { to: "/admin/linkedin", label: "לינקדאין", icon: Linkedin },
   { to: "/admin/support", label: "תמיכה בעשייה", icon: ShoppingBag },
   { to: "/admin/faq", label: "שאלות נפוצות", icon: HelpCircle },
   { to: "/admin/integration-logs", label: "יומני אינטגרציות", icon: Activity },
