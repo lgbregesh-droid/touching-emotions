@@ -154,10 +154,10 @@ function Dashboard() {
         {/* Quick actions */}
         <h2 className="text-[13px] font-semibold text-[#2D1B3D] mt-5 mb-2.5">פעולות מהירות</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <QuickAction onClick={() => nav({ to: "/admin/linkedin", search: { new: "1" } as never })} icon={<Linkedin className="w-5 h-5" />} label="צור פוסט לינקדאין" />
-          <QuickAction onClick={() => nav({ to: "/admin/events", search: { new: "1" } as never })} icon={<Calendar className="w-5 h-5" />} label="הוסף אירוע" />
-          <QuickAction onClick={() => nav({ to: "/admin/gallery" })} icon={<ImageIcon className="w-5 h-5" />} label="העלה לגלריה" />
-          <QuickAction onClick={() => nav({ to: "/admin/volunteers", search: { new: "1" } as never })} icon={<UserPlus className="w-5 h-5" />} label="הוסף מתנדב" />
+           <QuickAction onClick={() => nav({ to: "/admin/linkedin" })} icon={<Linkedin className="w-5 h-5" />} label="צור פוסט לינקדאין" />
+           <QuickAction onClick={() => nav({ to: "/admin/events" })} icon={<Calendar className="w-5 h-5" />} label="הוסף אירוע" />
+           <QuickAction onClick={() => nav({ to: "/admin/gallery" })} icon={<ImageIcon className="w-5 h-5" />} label="העלה לגלריה" />
+           <QuickAction onClick={() => nav({ to: "/admin/volunteers" })} icon={<UserPlus className="w-5 h-5" />} label="הוסף מתנדב" />
         </div>
 
         {/* Activity */}
