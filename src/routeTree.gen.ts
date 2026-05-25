@@ -32,7 +32,6 @@ import { Route as AdminAuthedWorkshopsRouteImport } from './routes/admin._authed
 import { Route as AdminAuthedVolunteersRouteImport } from './routes/admin._authed.volunteers'
 import { Route as AdminAuthedTestimonialsRouteImport } from './routes/admin._authed.testimonials'
 import { Route as AdminAuthedTeamRouteImport } from './routes/admin._authed.team'
-import { Route as AdminAuthedSupportRouteImport } from './routes/admin._authed.support'
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
 import { Route as AdminAuthedSettingsRouteImport } from './routes/admin._authed.settings'
 import { Route as AdminAuthedLinkedinRouteImport } from './routes/admin._authed.linkedin'
@@ -43,7 +42,6 @@ import { Route as AdminAuthedInquiriesRouteImport } from './routes/admin._authed
 import { Route as AdminAuthedGalleryRouteImport } from './routes/admin._authed.gallery'
 import { Route as AdminAuthedFaqRouteImport } from './routes/admin._authed.faq'
 import { Route as AdminAuthedEventsRouteImport } from './routes/admin._authed.events'
-import { Route as AdminAuthedDonationsRouteImport } from './routes/admin._authed.donations'
 import { Route as AdminAuthedContentRouteImport } from './routes/admin._authed.content'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
@@ -160,11 +158,6 @@ const AdminAuthedTeamRoute = AdminAuthedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
-const AdminAuthedSupportRoute = AdminAuthedSupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => AdminAuthedRoute,
-} as any)
 const AdminAuthedShopRoute = AdminAuthedShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -217,11 +210,6 @@ const AdminAuthedEventsRoute = AdminAuthedEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
-const AdminAuthedDonationsRoute = AdminAuthedDonationsRouteImport.update({
-  id: '/donations',
-  path: '/donations',
-  getParentRoute: () => AdminAuthedRoute,
-} as any)
 const AdminAuthedContentRoute = AdminAuthedContentRouteImport.update({
   id: '/content',
   path: '/content',
@@ -247,7 +235,6 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat': typeof ApiChatRoute
   '/admin/content': typeof AdminAuthedContentRoute
-  '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
   '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
@@ -258,7 +245,6 @@ export interface FileRoutesByFullPath {
   '/admin/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
-  '/admin/support': typeof AdminAuthedSupportRoute
   '/admin/team': typeof AdminAuthedTeamRoute
   '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/volunteers': typeof AdminAuthedVolunteersRoute
@@ -284,7 +270,6 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat': typeof ApiChatRoute
   '/admin/content': typeof AdminAuthedContentRoute
-  '/admin/donations': typeof AdminAuthedDonationsRoute
   '/admin/events': typeof AdminAuthedEventsRoute
   '/admin/faq': typeof AdminAuthedFaqRoute
   '/admin/gallery': typeof AdminAuthedGalleryRoute
@@ -295,7 +280,6 @@ export interface FileRoutesByTo {
   '/admin/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
-  '/admin/support': typeof AdminAuthedSupportRoute
   '/admin/team': typeof AdminAuthedTeamRoute
   '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/volunteers': typeof AdminAuthedVolunteersRoute
@@ -322,7 +306,6 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat': typeof ApiChatRoute
   '/admin/_authed/content': typeof AdminAuthedContentRoute
-  '/admin/_authed/donations': typeof AdminAuthedDonationsRoute
   '/admin/_authed/events': typeof AdminAuthedEventsRoute
   '/admin/_authed/faq': typeof AdminAuthedFaqRoute
   '/admin/_authed/gallery': typeof AdminAuthedGalleryRoute
@@ -333,7 +316,6 @@ export interface FileRoutesById {
   '/admin/_authed/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/_authed/settings': typeof AdminAuthedSettingsRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
-  '/admin/_authed/support': typeof AdminAuthedSupportRoute
   '/admin/_authed/team': typeof AdminAuthedTeamRoute
   '/admin/_authed/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/_authed/volunteers': typeof AdminAuthedVolunteersRoute
@@ -361,7 +343,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat'
     | '/admin/content'
-    | '/admin/donations'
     | '/admin/events'
     | '/admin/faq'
     | '/admin/gallery'
@@ -372,7 +353,6 @@ export interface FileRouteTypes {
     | '/admin/linkedin'
     | '/admin/settings'
     | '/admin/shop'
-    | '/admin/support'
     | '/admin/team'
     | '/admin/testimonials'
     | '/admin/volunteers'
@@ -398,7 +378,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat'
     | '/admin/content'
-    | '/admin/donations'
     | '/admin/events'
     | '/admin/faq'
     | '/admin/gallery'
@@ -409,7 +388,6 @@ export interface FileRouteTypes {
     | '/admin/linkedin'
     | '/admin/settings'
     | '/admin/shop'
-    | '/admin/support'
     | '/admin/team'
     | '/admin/testimonials'
     | '/admin/volunteers'
@@ -435,7 +413,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat'
     | '/admin/_authed/content'
-    | '/admin/_authed/donations'
     | '/admin/_authed/events'
     | '/admin/_authed/faq'
     | '/admin/_authed/gallery'
@@ -446,7 +423,6 @@ export interface FileRouteTypes {
     | '/admin/_authed/linkedin'
     | '/admin/_authed/settings'
     | '/admin/_authed/shop'
-    | '/admin/_authed/support'
     | '/admin/_authed/team'
     | '/admin/_authed/testimonials'
     | '/admin/_authed/volunteers'
@@ -636,13 +612,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedTeamRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
-    '/admin/_authed/support': {
-      id: '/admin/_authed/support'
-      path: '/support'
-      fullPath: '/admin/support'
-      preLoaderRoute: typeof AdminAuthedSupportRouteImport
-      parentRoute: typeof AdminAuthedRoute
-    }
     '/admin/_authed/shop': {
       id: '/admin/_authed/shop'
       path: '/shop'
@@ -713,13 +682,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedEventsRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
-    '/admin/_authed/donations': {
-      id: '/admin/_authed/donations'
-      path: '/donations'
-      fullPath: '/admin/donations'
-      preLoaderRoute: typeof AdminAuthedDonationsRouteImport
-      parentRoute: typeof AdminAuthedRoute
-    }
     '/admin/_authed/content': {
       id: '/admin/_authed/content'
       path: '/content'
@@ -732,7 +694,6 @@ declare module '@tanstack/react-router' {
 
 interface AdminAuthedRouteChildren {
   AdminAuthedContentRoute: typeof AdminAuthedContentRoute
-  AdminAuthedDonationsRoute: typeof AdminAuthedDonationsRoute
   AdminAuthedEventsRoute: typeof AdminAuthedEventsRoute
   AdminAuthedFaqRoute: typeof AdminAuthedFaqRoute
   AdminAuthedGalleryRoute: typeof AdminAuthedGalleryRoute
@@ -743,7 +704,6 @@ interface AdminAuthedRouteChildren {
   AdminAuthedLinkedinRoute: typeof AdminAuthedLinkedinRoute
   AdminAuthedSettingsRoute: typeof AdminAuthedSettingsRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
-  AdminAuthedSupportRoute: typeof AdminAuthedSupportRoute
   AdminAuthedTeamRoute: typeof AdminAuthedTeamRoute
   AdminAuthedTestimonialsRoute: typeof AdminAuthedTestimonialsRoute
   AdminAuthedVolunteersRoute: typeof AdminAuthedVolunteersRoute
@@ -753,7 +713,6 @@ interface AdminAuthedRouteChildren {
 
 const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedContentRoute: AdminAuthedContentRoute,
-  AdminAuthedDonationsRoute: AdminAuthedDonationsRoute,
   AdminAuthedEventsRoute: AdminAuthedEventsRoute,
   AdminAuthedFaqRoute: AdminAuthedFaqRoute,
   AdminAuthedGalleryRoute: AdminAuthedGalleryRoute,
@@ -764,7 +723,6 @@ const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedLinkedinRoute: AdminAuthedLinkedinRoute,
   AdminAuthedSettingsRoute: AdminAuthedSettingsRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
-  AdminAuthedSupportRoute: AdminAuthedSupportRoute,
   AdminAuthedTeamRoute: AdminAuthedTeamRoute,
   AdminAuthedTestimonialsRoute: AdminAuthedTestimonialsRoute,
   AdminAuthedVolunteersRoute: AdminAuthedVolunteersRoute,
