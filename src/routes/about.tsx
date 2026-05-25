@@ -146,17 +146,8 @@ function About() {
         </Reveal>
       </section>
 
-      {/* Image strip */}
-      <section className="px-6 py-12 md:py-16" style={{ background: "#FDFBF7" }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
-          <img src={workshopChildren} alt="" className="rounded-2xl aspect-[4/3] object-cover" />
-          <img src={school} alt="" className="rounded-2xl aspect-[4/3] object-cover" />
-          <img src={community} alt="" className="rounded-2xl aspect-[4/3] object-cover col-span-2 md:col-span-1" />
-        </div>
-        <div className="text-center mt-6">
-          <Link to="/gallery" className="text-sm text-[#BA9B78] hover:underline">{isEn ? "Visit our gallery →" : "לכל הגלריה ←"}</Link>
-        </div>
-      </section>
+      {/* Team section (replaces gallery strip) */}
+      <TeamSection />
 
       <CTABand
         title={isEn ? "Want to understand which activity fits you?" : "רוצים להבין איזו פעילות מתאימה לכם?"}
