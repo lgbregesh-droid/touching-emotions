@@ -7,6 +7,7 @@ import { listWorkshops, upsertWorkshop, deleteWorkshop, duplicateWorkshop } from
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Pencil, Copy, Trash2, Plus } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/_authed/workshops")({
   head: () => ({ meta: [{ title: "סדנאות | ניהול" }] }),
@@ -145,7 +146,9 @@ function WorkshopsAdmin() {
             <Field label="קהל יעד / גיל"><input className={inp} value={edit.audience || ""} onChange={(e) => setEdit({ ...edit, audience: e.target.value })} /></Field>
             <Field label="משך / פורמט (טקסט חופשי)"><input className={inp} placeholder="90 דק׳ · א׳–ד׳" value={edit.duration_text || ""} onChange={(e) => setEdit({ ...edit, duration_text: e.target.value })} /></Field>
 
-            <Field label="קישור לתמונה"><input className={inp} value={edit.image_url || ""} onChange={(e) => setEdit({ ...edit, image_url: e.target.value })} /></Field>
+            <div className="md:col-span-2">
+              <ImageUpload table="workshops" label="תמונת הסדנה" value={edit.image_url} onChange={(url) => setEdit({ ...edit, image_url: url })} />
+            </div>
             <Field label="קטגוריה (לפילטר)">
               <select className={inp} value={edit.category || "children"} onChange={(e) => setEdit({ ...edit, category: e.target.value })}>
                 <option value="children">ילדים</option>
