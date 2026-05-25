@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Settings, BookOpen, Activity, Users, HandHeart } from "lucide-react";
+import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Settings, BookOpen, Activity, Users, HandHeart, Linkedin } from "lucide-react";
 import { clearAdminToken } from "@/lib/admin/session";
 
 const items = [
