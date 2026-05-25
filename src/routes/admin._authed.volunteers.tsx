@@ -1,15 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminShell, AdminCard, PrimaryButton, SecondaryButton } from "@/components/admin/AdminShell";
 import { listActiveVolunteers, upsertActiveVolunteer, deleteActiveVolunteer } from "@/lib/admin/team.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, X, Mail } from "lucide-react";
 
+type VolunteersSearch = {
+  prefillId?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  role?: string;
+};
+
 export const Route = createFileRoute("/admin/_authed/volunteers")({
   head: () => ({ meta: [{ title: "מתנדבים פעילים | ניהול" }] }),
+  validateSearch: (s: Record<string, unknown>): VolunteersSearch => ({
+    prefillId: typeof s.prefillId === "string" ? s.prefillId : undefined,
+    name: typeof s.name === "string" ? s.name : undefined,
+    phone: typeof s.phone === "string" ? s.phone : undefined,
+    email: typeof s.email === "string" ? s.email : undefined,
+    role: typeof s.role === "string" ? s.role : undefined,
+  }),
   component: VolunteersAdmin,
 });
 
@@ -20,6 +35,7 @@ type Vol = {
   start_date: string | null; notes: string | null;
   status: "active" | "paused" | "ended";
   created_at: string;
+  source_inquiry_id?: string | null;
 };
 
 const STATUS_LABEL: Record<Vol["status"], string> = { active: "פעיל", paused: "בהפסקה", ended: "סיים" };
@@ -31,6 +47,8 @@ const STATUS_CLR: Record<Vol["status"], string> = {
 
 function VolunteersAdmin() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const searchParams = Route.useSearch();
   const listFn = useServerFn(listActiveVolunteers);
   const saveFn = useServerFn(upsertActiveVolunteer);
   const delFn = useServerFn(deleteActiveVolunteer);
@@ -41,6 +59,21 @@ function VolunteersAdmin() {
   const [filter, setFilter] = useState<"active" | "paused" | "ended" | "all">("active");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<Vol> | null>(null);
+
+  useEffect(() => {
+    if (searchParams.prefillId) {
+      setEditing({
+        status: "active",
+        name: searchParams.name || "",
+        phone: searchParams.phone || "",
+        email: searchParams.email || "",
+        role: searchParams.role || "",
+        source_inquiry_id: searchParams.prefillId,
+      });
+      navigate({ to: "/admin/volunteers", search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.prefillId]);
 
   const counts = useMemo(() => ({
     active: rows.filter((r) => r.status === "active").length,
@@ -57,7 +90,10 @@ function VolunteersAdmin() {
     return true;
   }), [rows, filter, search]);
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ["active-volunteers"] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["active-volunteers"] });
+    qc.invalidateQueries({ queryKey: ["inquiries", "volunteer"] });
+  };
 
   const startNew = () => setEditing({ status: "active" });
 
@@ -76,6 +112,7 @@ function VolunteersAdmin() {
           start_date: editing.start_date || null,
           notes: editing.notes || null,
           status: editing.status || "active",
+          source_inquiry_id: editing.source_inquiry_id || null,
         },
       } });
       toast.success("נשמר");

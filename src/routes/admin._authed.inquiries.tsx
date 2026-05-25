@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { AdminShell, AdminCard, SecondaryButton } from "@/components/admin/AdminShell";
 import { listInquiries, setInquiryStatus, deleteInquiry } from "@/lib/admin/data.functions";
+import { listActiveVolunteers } from "@/lib/admin/team.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Eye, Trash2, Check } from "lucide-react";
+import { Eye, Trash2, Check, UserPlus } from "lucide-react";
 import { AnalysisPanel } from "@/components/admin/AnalysisPanel";
 
 export const Route = createFileRoute("/admin/_authed/inquiries")({
@@ -23,14 +24,29 @@ function Inquiries() {
   const [open, setOpen] = useState<Row | null>(null);
   const qc = useQueryClient();
 
+  const navigate = useNavigate();
   const listFn = useServerFn(listInquiries);
   const setStatusFn = useServerFn(setInquiryStatus);
   const delFn = useServerFn(deleteInquiry);
+  const listVolsFn = useServerFn(listActiveVolunteers);
 
   const { data } = useQuery({
     queryKey: ["inquiries", tab],
     queryFn: () => listFn({ data: { token: getAdminToken()!, kind: tab } }),
   });
+
+  const { data: volsData } = useQuery({
+    queryKey: ["active-volunteers"],
+    queryFn: () => listVolsFn({ data: { token: getAdminToken()! } }),
+    enabled: tab === "volunteer",
+  });
+  const linkedSet = useMemo(() => {
+    const s = new Set<string>();
+    for (const v of (volsData?.rows || []) as Array<{ source_inquiry_id?: string | null }>) {
+      if (v.source_inquiry_id) s.add(v.source_inquiry_id);
+    }
+    return s;
+  }, [volsData]);
 
   const rows = (data?.rows || []) as Row[];
   const filtered = useMemo(() => {
@@ -150,6 +166,22 @@ function Inquiries() {
                     <button title="פתח" onClick={() => setOpen(r)} className="p-1 hover:text-[#BA9B78]"><Eye className="w-4 h-4" /></button>
                     {r.status === "new" && (
                       <button title="סמן כטופל" onClick={() => toggle(r)} className="p-1 hover:text-green-700"><Check className="w-4 h-4" /></button>
+                    )}
+                    {tab === "volunteer" && !linkedSet.has(r.id!) && (
+                      <button
+                        title="הוסף כמתנדב פעיל"
+                        onClick={() => navigate({
+                          to: "/admin/volunteers",
+                          search: {
+                            prefillId: r.id!,
+                            name: r.name || "",
+                            phone: r.phone || "",
+                            email: r.email || "",
+                            role: r.interest || r.profession || "",
+                          },
+                        })}
+                        className="p-1 hover:text-[#2D1B3D]"
+                      ><UserPlus className="w-4 h-4" /></button>
                     )}
                     <button title="מחיקה" onClick={() => remove(r)} className="p-1 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
                   </td>
