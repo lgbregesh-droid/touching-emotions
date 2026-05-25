@@ -167,6 +167,22 @@ function Inquiries() {
                     {r.status === "new" && (
                       <button title="סמן כטופל" onClick={() => toggle(r)} className="p-1 hover:text-green-700"><Check className="w-4 h-4" /></button>
                     )}
+                    {tab === "volunteer" && !linkedSet.has(r.id!) && (
+                      <button
+                        title="הוסף כמתנדב פעיל"
+                        onClick={() => navigate({
+                          to: "/admin/volunteers",
+                          search: {
+                            prefillId: r.id!,
+                            name: r.name || "",
+                            phone: r.phone || "",
+                            email: r.email || "",
+                            role: r.interest || r.profession || "",
+                          },
+                        })}
+                        className="p-1 hover:text-[#2D1B3D]"
+                      ><UserPlus className="w-4 h-4" /></button>
+                    )}
                     <button title="מחיקה" onClick={() => remove(r)} className="p-1 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>
