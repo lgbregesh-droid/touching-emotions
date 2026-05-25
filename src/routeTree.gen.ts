@@ -35,6 +35,7 @@ import { Route as AdminAuthedTeamRouteImport } from './routes/admin._authed.team
 import { Route as AdminAuthedSupportRouteImport } from './routes/admin._authed.support'
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
 import { Route as AdminAuthedSettingsRouteImport } from './routes/admin._authed.settings'
+import { Route as AdminAuthedLinkedinRouteImport } from './routes/admin._authed.linkedin'
 import { Route as AdminAuthedLecturesRouteImport } from './routes/admin._authed.lectures'
 import { Route as AdminAuthedKnowledgeBaseRouteImport } from './routes/admin._authed.knowledge-base'
 import { Route as AdminAuthedIntegrationLogsRouteImport } from './routes/admin._authed.integration-logs'
@@ -174,6 +175,11 @@ const AdminAuthedSettingsRoute = AdminAuthedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedLinkedinRoute = AdminAuthedLinkedinRouteImport.update({
+  id: '/linkedin',
+  path: '/linkedin',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedLecturesRoute = AdminAuthedLecturesRouteImport.update({
   id: '/lectures',
   path: '/lectures',
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/admin/integration-logs': typeof AdminAuthedIntegrationLogsRoute
   '/admin/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
   '/admin/support': typeof AdminAuthedSupportRoute
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/admin/integration-logs': typeof AdminAuthedIntegrationLogsRoute
   '/admin/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
   '/admin/support': typeof AdminAuthedSupportRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/admin/_authed/integration-logs': typeof AdminAuthedIntegrationLogsRoute
   '/admin/_authed/knowledge-base': typeof AdminAuthedKnowledgeBaseRoute
   '/admin/_authed/lectures': typeof AdminAuthedLecturesRoute
+  '/admin/_authed/linkedin': typeof AdminAuthedLinkedinRoute
   '/admin/_authed/settings': typeof AdminAuthedSettingsRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
   '/admin/_authed/support': typeof AdminAuthedSupportRoute
@@ -360,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin/integration-logs'
     | '/admin/knowledge-base'
     | '/admin/lectures'
+    | '/admin/linkedin'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/admin/integration-logs'
     | '/admin/knowledge-base'
     | '/admin/lectures'
+    | '/admin/linkedin'
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/admin/_authed/integration-logs'
     | '/admin/_authed/knowledge-base'
     | '/admin/_authed/lectures'
+    | '/admin/_authed/linkedin'
     | '/admin/_authed/settings'
     | '/admin/_authed/shop'
     | '/admin/_authed/support'
@@ -645,6 +657,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedSettingsRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/linkedin': {
+      id: '/admin/_authed/linkedin'
+      path: '/linkedin'
+      fullPath: '/admin/linkedin'
+      preLoaderRoute: typeof AdminAuthedLinkedinRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/lectures': {
       id: '/admin/_authed/lectures'
       path: '/lectures'
@@ -721,6 +740,7 @@ interface AdminAuthedRouteChildren {
   AdminAuthedIntegrationLogsRoute: typeof AdminAuthedIntegrationLogsRoute
   AdminAuthedKnowledgeBaseRoute: typeof AdminAuthedKnowledgeBaseRoute
   AdminAuthedLecturesRoute: typeof AdminAuthedLecturesRoute
+  AdminAuthedLinkedinRoute: typeof AdminAuthedLinkedinRoute
   AdminAuthedSettingsRoute: typeof AdminAuthedSettingsRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
   AdminAuthedSupportRoute: typeof AdminAuthedSupportRoute
@@ -741,6 +761,7 @@ const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedIntegrationLogsRoute: AdminAuthedIntegrationLogsRoute,
   AdminAuthedKnowledgeBaseRoute: AdminAuthedKnowledgeBaseRoute,
   AdminAuthedLecturesRoute: AdminAuthedLecturesRoute,
+  AdminAuthedLinkedinRoute: AdminAuthedLinkedinRoute,
   AdminAuthedSettingsRoute: AdminAuthedSettingsRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
   AdminAuthedSupportRoute: AdminAuthedSupportRoute,
