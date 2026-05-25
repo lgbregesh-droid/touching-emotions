@@ -35,6 +35,7 @@ type Vol = {
   start_date: string | null; notes: string | null;
   status: "active" | "paused" | "ended";
   created_at: string;
+  source_inquiry_id?: string | null;
 };
 
 const STATUS_LABEL: Record<Vol["status"], string> = { active: "פעיל", paused: "בהפסקה", ended: "סיים" };
