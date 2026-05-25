@@ -59,9 +59,9 @@ function About() {
         ctaTo="/contact"
         imageSlot={
           <div className="grid grid-cols-2 gap-3">
-            <img src={workshopChildren} alt="" className="rounded-2xl aspect-[3/4] object-cover col-span-1 row-span-2" />
-            <img src={facilitator} alt="" className="rounded-2xl aspect-square object-cover" />
-            <img src={community} alt="" className="rounded-2xl aspect-square object-cover" />
+            <img src={img1} alt="" className="rounded-2xl aspect-[3/4] object-cover col-span-1 row-span-2" />
+            <img src={img2} alt="" className="rounded-2xl aspect-square object-cover" />
+            <img src={img3} alt="" className="rounded-2xl aspect-square object-cover" />
           </div>
         }
       />
