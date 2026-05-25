@@ -29,7 +29,8 @@ function Volunteers() {
   const { data: cms } = useSiteContent();
   const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   const submit = useServerFn(submitVolunteer);
-  const [form, setForm] = useState({ name: "", phone: "", profession: "", interest: "" });
+  const [form, setForm] = useState({ name: "", phone: "", profession: "", professionOther: "", interest: "" });
+
   const [agreed, setAgreed] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
