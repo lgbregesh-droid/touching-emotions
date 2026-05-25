@@ -27,6 +27,9 @@ function About() {
   const isEn = lang === "en";
   const aboutMain = cms?.["about.main"];
   const aboutMainText = aboutMain ? (isEn ? aboutMain.en : aboutMain.he) : "";
+  const img1 = cms?.["about.hero.image1"]?.he || workshopChildren;
+  const img2 = cms?.["about.hero.image2"]?.he || facilitator;
+  const img3 = cms?.["about.hero.image3"]?.he || community;
 
 
   const approach = [
