@@ -178,7 +178,7 @@ export const generateLinkedInPosts = createServerFn({ method: "POST" })
         status: "success",
         metadata: { post_type: data.post_type, count: options.length },
       });
-      return { options, context: ctxFull };
+      return { options, context: JSON.parse(JSON.stringify(ctxFull)) as Record<string, string | number | boolean | null | unknown[] | Record<string, unknown>> };
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       await logIntegration({
