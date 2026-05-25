@@ -205,13 +205,17 @@ function Workshops() {
                 </div>
               )}
               <div className="flex flex-wrap gap-3">
-                <Link to="/contact" className="px-5 py-2.5 rounded-full bg-[#461C5B] text-white text-sm hover:opacity-90 transition">
+                <a
+                  href={buildContactUrl({ type: "workshop", itemTitle: openWs.title, source: "workshops" })}
+                  className="px-5 py-2.5 rounded-full bg-[#461C5B] text-white text-sm hover:opacity-90 transition"
+                >
                   {isEn ? "Request a tailored workshop" : "להזמנת סדנה מותאמת"}
-                </Link>
+                </a>
                 <button onClick={() => setOpenWs(null)} className="px-5 py-2.5 rounded-full border border-[#E0D8CC] text-[#461C5B] text-sm hover:bg-[#F5F0E8]">
                   {isEn ? "Close" : "סגירה"}
                 </button>
               </div>
+
             </div>
           </div>
         </div>
