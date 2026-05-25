@@ -188,6 +188,9 @@ export type Database = {
           message: string
           name: string
           phone: string | null
+          related_item_id: string | null
+          related_item_title: string | null
+          related_item_type: string | null
           source_page: string | null
           status: string
           subject: string | null
@@ -203,6 +206,9 @@ export type Database = {
           message: string
           name: string
           phone?: string | null
+          related_item_id?: string | null
+          related_item_title?: string | null
+          related_item_type?: string | null
           source_page?: string | null
           status?: string
           subject?: string | null
@@ -218,6 +224,9 @@ export type Database = {
           message?: string
           name?: string
           phone?: string | null
+          related_item_id?: string | null
+          related_item_title?: string | null
+          related_item_type?: string | null
           source_page?: string | null
           status?: string
           subject?: string | null
