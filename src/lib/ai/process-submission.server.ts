@@ -288,9 +288,20 @@ function buildEmailHtml(args: {
     `<tr><td><b>סוג פנייה:</b></td><td>${fmt(row.inquiry_type ?? TABLE_LABEL[table])}</td></tr>`,
     `<tr><td><b>תאריך:</b></td><td>${fmt(row.created_at)}</td></tr>`,
   ];
+  if (row.source_page || row.related_item_type || row.related_item_title) {
+    bodyRows.push(
+      `<tr><td colspan="2" style="padding-top:8px"><b>פרטי מקור:</b><br/>` +
+        `מקור הפנייה: ${fmt(row.source_page)}<br/>` +
+        `סוג פריט קשור: ${fmt(row.related_item_type)}<br/>` +
+        `פריט קשור: ${fmt(row.related_item_title ?? "לא צוין פריט קשור")}` +
+        (row.related_item_id ? `<br/>מזהה: ${fmt(row.related_item_id)}` : "") +
+        `</td></tr>`,
+    );
+  }
   if (row.message) {
     bodyRows.push(`<tr><td colspan="2"><b>הודעה:</b><br/><pre style="white-space:pre-wrap;font-family:inherit;background:#f5f0e8;padding:12px;border-radius:8px;">${escapeHtml(String(row.message))}</pre></td></tr>`);
   }
+
 
   let aiSection = "";
   if (analysis) {
