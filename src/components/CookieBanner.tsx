@@ -12,7 +12,7 @@ const STORAGE_KEY = "lgr_cookie_consent_v1";
 function readConsent(): Consent | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as Consent;
   } catch {
@@ -22,7 +22,7 @@ function readConsent(): Consent | null {
 
 function writeConsent(c: Consent) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(c));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(c));
     window.dispatchEvent(new CustomEvent("lgr-consent", { detail: c }));
   } catch {
     /* ignore */
