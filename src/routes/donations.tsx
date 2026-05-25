@@ -208,13 +208,10 @@ function Donations() {
         </div>
       </section>
 
-      {/* Quote / impact */}
+      {/* Quote */}
       <section className="px-6 py-16 md:py-20" style={{ background: "#F7E8EA" }}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-3xl mx-auto text-center">
           <Reveal>
-            <img src={community} alt="" className="rounded-2xl w-full aspect-[4/3] object-cover" />
-          </Reveal>
-          <Reveal delay={0.1}>
             <span className="block text-5xl font-serif text-[#D4A373] leading-none mb-2">"</span>
             <p className="text-xl md:text-2xl font-light text-[#461C5B] leading-relaxed mb-4">
               {pick("donations.quote", isEn
@@ -225,6 +222,7 @@ function Donations() {
           </Reveal>
         </div>
       </section>
+
 
       <CTABand
         title={pick("donations.cta.title", isEn ? "Prefer to talk to us?" : "מעדיפים לדבר איתנו?")}
