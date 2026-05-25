@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteContent } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
