@@ -3,13 +3,10 @@ import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
-import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
 import { buildContactUrl } from "@/lib/contact-link";
-import { Heart, Sparkles, Users, BookOpen, ArrowRight, Copy, Check, Repeat, Phone } from "lucide-react";
+import { Heart, ArrowRight, Copy, Check, Repeat, Phone } from "lucide-react";
 import { useSiteContent } from "@/hooks/use-cms";
-
-import community from "@/assets/home/community.jpg";
 
 export const Route = createFileRoute("/donations")({
   head: () => ({
@@ -21,7 +18,6 @@ export const Route = createFileRoute("/donations")({
   component: Donations,
 });
 
-const ICONS = [Heart, Users, Sparkles, BookOpen];
 
 function Donations() {
   const { t, lang } = useLanguage();
