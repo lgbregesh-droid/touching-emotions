@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_volunteers: {
+        Row: {
+          area: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          role: string | null
+          source_inquiry_id: string | null
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          area?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          role?: string | null
+          source_inquiry_id?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          area?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          role?: string | null
+          source_inquiry_id?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_policies: {
         Row: {
           created_at: string
@@ -785,6 +830,54 @@ export type Database = {
           order_index?: number
           price?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          bio_en: string | null
+          bio_he: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          name_en: string
+          name_he: string
+          photo_url: string | null
+          role_en: string
+          role_he: string
+          storage_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio_en?: string | null
+          bio_he?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name_en?: string
+          name_he: string
+          photo_url?: string | null
+          role_en?: string
+          role_he: string
+          storage_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio_en?: string | null
+          bio_he?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name_en?: string
+          name_he?: string
+          photo_url?: string | null
+          role_en?: string
+          role_he?: string
+          storage_path?: string | null
           updated_at?: string
         }
         Relationships: []
