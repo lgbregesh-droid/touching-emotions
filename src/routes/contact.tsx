@@ -149,7 +149,19 @@ function Contact() {
               <h1 className="text-3xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h1>
             </div>
           </Reveal>
+          {ctx && !done && (
+            <Reveal>
+              <div className="mb-5 flex items-start gap-3 rounded-2xl border border-[#E5A3AD]/40 bg-[#FBF4EE] p-4 text-[#461C5B]" style={{ borderRight: "3px solid rgba(229,163,173,0.6)" }}>
+                <Sparkles className="w-5 h-5 mt-0.5 shrink-0 text-[#BA9B78]" />
+                <div className="text-sm leading-relaxed">
+                  <div className="font-medium">{contextNoticeText(ctx)}</div>
+                  <div className="text-[#A0907A] text-xs mt-1">הטופס מולא מראש לפי הבקשה שלך. אפשר לערוך את ההודעה לפני השליחה.</div>
+                </div>
+              </div>
+            </Reveal>
+          )}
           <Reveal>
+
             {done ? (
               <div className="bg-white rounded-2xl border border-[#E0D8CC] p-10 text-center" style={{ borderRight: "3px solid rgba(78,140,133,0.30)" }}>
                 <p className="text-[#461C5B] text-lg font-light">{t.contact_page.success}</p>
