@@ -206,7 +206,9 @@ function Donations() {
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"
+        context={{ type: "donation", source: "donations" }}
       />
+
     </>
   );
 }
