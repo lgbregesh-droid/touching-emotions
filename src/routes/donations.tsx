@@ -7,6 +7,7 @@ import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
 import { buildContactUrl } from "@/lib/contact-link";
 import { Heart, Sparkles, Users, BookOpen, ArrowRight, Copy, Check, Repeat, Phone } from "lucide-react";
+import { useSiteContent } from "@/hooks/use-cms";
 
 import community from "@/assets/home/community.jpg";
 
@@ -25,6 +26,8 @@ const ICONS = [Heart, Users, Sparkles, BookOpen];
 function Donations() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
+  const { data: cms } = useSiteContent();
+  const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   const d = t.donations_page;
 
   const [recurring, setRecurring] = useState(false);
@@ -48,9 +51,9 @@ function Donations() {
   return (
     <>
       <PageHero
-        label={isEn ? "Donate" : "תרומות"}
-        title={isEn ? "Every donation reaches a child" : "כל תרומה מגיעה לילד אחד"}
-        intro={d.intro}
+        label={pick("donations.label", isEn ? "Donate" : "תרומות")}
+        title={pick("donations.title", isEn ? "Every donation reaches a child" : "כל תרומה מגיעה לילד אחד")}
+        intro={pick("donations.intro", d.intro)}
         background="cream"
       />
 
@@ -191,9 +194,9 @@ function Donations() {
           <Reveal delay={0.1}>
             <span className="block text-5xl font-serif text-[#D4A373] leading-none mb-2">"</span>
             <p className="text-xl md:text-2xl font-light text-[#461C5B] leading-relaxed mb-4">
-              {isEn
+              {pick("donations.quote", isEn
                 ? "Every donation, no matter the size, opens a door for another child to feel heard."
-                : "כל תרומה, בכל גודל, פותחת דלת לעוד ילד שירגיש שמקשיבים לו."}
+                : "כל תרומה, בכל גודל, פותחת דלת לעוד ילד שירגיש שמקשיבים לו.")}
             </p>
             <span className="text-xs tracking-[0.25em] uppercase text-[#BA9B78]">— {isEn ? "Touching Emotion" : "לגעת ברגש"}</span>
           </Reveal>
@@ -201,8 +204,8 @@ function Donations() {
       </section>
 
       <CTABand
-        title={isEn ? "Prefer to talk to us?" : "מעדיפים לדבר איתנו?"}
-        sub={isEn ? "We'd love to hear from you — by phone, email or message." : "נשמח לשמוע — בטלפון, במייל או בהודעה."}
+        title={pick("donations.cta.title", isEn ? "Prefer to talk to us?" : "מעדיפים לדבר איתנו?")}
+        sub={pick("donations.cta.sub", isEn ? "We'd love to hear from you — by phone, email or message." : "נשמח לשמוע — בטלפון, במייל או בהודעה.")}
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"

@@ -1,11 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteSettings } from "@/lib/site-settings";
+import { useSiteContent } from "@/hooks/use-cms";
 import logo from "@/assets/logo.png";
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { data: s } = useSiteSettings();
+  const { data: cms } = useSiteContent();
+  const isEn = lang === "en";
+  const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   const navLinks = [
     { to: "/", label: t.nav.home },
     { to: "/about", label: t.nav.about },
@@ -30,7 +34,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
           <div className="col-span-2 md:col-span-2 space-y-2">
             <img src={logo} alt="לגעת ברגש" className="h-10 w-auto brightness-0 invert" />
-            <p className="text-xs text-[#F5F0E8]/50 tracking-wide max-w-xs">{t.footer.tagline}</p>
+            <p className="text-xs text-[#F5F0E8]/50 tracking-wide max-w-xs">{pick("footer.tagline", t.footer.tagline)}</p>
           </div>
           <div className="flex flex-col gap-1.5">
             <p className="text-[10px] text-[#F5F0E8]/40 uppercase tracking-wider mb-0.5">ניווט</p>
@@ -68,7 +72,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-6 pt-4 border-t border-[#BA9B78]/20 text-center text-[10px] text-[#F5F0E8]/35 tracking-wide">
-          {s?.footer_text || t.footer.rights}
+          {s?.footer_text || pick("footer.rights", t.footer.rights)}
           {s?.association_number ? ` · ע״ר ${s.association_number}` : ""}
         </div>
       </div>

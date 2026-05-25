@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { CTABand } from "@/components/CTABand";
 import { listUpcomingEvents, listPastEvents } from "@/lib/events.functions";
 import { EventCard, type EventRow } from "@/components/events/EventCard";
+import { useSiteContent } from "@/hooks/use-cms";
 import { RegistrationModal } from "@/components/events/RegistrationModal";
 
 export const Route = createFileRoute("/events")({
@@ -24,7 +25,14 @@ export const Route = createFileRoute("/events")({
 type Filter = "all" | "lecture" | "workshop" | "meetup" | "evening";
 
 function EventsPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { data: cms } = useSiteContent();
+  const isEn = lang === "en";
+  const pick = (key: string, fallback: string) => {
+    const v = cms?.[key];
+    if (!v) return fallback;
+    return (isEn ? v.en : v.he) || fallback;
+  };
   const upFn = useServerFn(listUpcomingEvents);
   const pastFn = useServerFn(listPastEvents);
   const [filter, setFilter] = useState<Filter>("all");
@@ -49,9 +57,9 @@ function EventsPage() {
   return (
     <div style={{ background: "#FDFBF7" }} className="min-h-screen">
       <PageHero
-        label={t.events_page.label}
-        title={t.events_page.heading}
-        intro={t.events_page.sub}
+        label={pick("events.label", t.events_page.label)}
+        title={pick("events.title", t.events_page.heading)}
+        intro={pick("events.subtitle", t.events_page.sub)}
         background="cream"
       />
 
@@ -66,7 +74,7 @@ function EventsPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center text-[#A0907A] py-16">{upcoming.length === 0 ? t.events_home.no_events : t.events_page.empty}</div>
+          <div className="text-center text-[#A0907A] py-16">{upcoming.length === 0 ? pick("events.empty", t.events_home.no_events) : t.events_page.empty}</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
             {filtered.map((e) => <EventCard key={e.id} event={e} onRegister={setSelected} />)}
@@ -87,8 +95,8 @@ function EventsPage() {
       </section>
 
       <CTABand
-        title={t.final_cta.heading}
-        sub={t.final_cta.sub}
+        title={pick("events.cta.title", t.final_cta.heading)}
+        sub={pick("events.cta.sub", t.final_cta.sub)}
         primaryLabel={t.final_cta.cta}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"

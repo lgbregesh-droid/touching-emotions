@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useSiteContent } from "@/hooks/use-cms";
 import { PageHero } from "@/components/PageHero";
 import { CTABand } from "@/components/CTABand";
 import { Gallery } from "@/components/Gallery";
@@ -12,14 +13,16 @@ export const Route = createFileRoute("/gallery")({
 function GalleryPage() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
+  const { data: cms } = useSiteContent();
+  const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   return (
     <>
       <PageHero
-        label={isEn ? "Gallery" : "גלריה"}
-        title={isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד"}
-        intro={isEn
+        label={pick("gallery.label", isEn ? "Gallery" : "גלריה")}
+        title={pick("gallery.title", isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד")}
+        intro={pick("gallery.intro", isEn
           ? "Photos from our workshops, lectures, community gatherings and youth activities — a small window into the work we love."
-          : "תמונות מהסדנאות, ההרצאות, המפגשים הקהילתיים והפעילויות עם הנוער — חלון קטן לעשייה שאנחנו אוהבים."}
+          : "תמונות מהסדנאות, ההרצאות, המפגשים הקהילתיים והפעילויות עם הנוער — חלון קטן לעשייה שאנחנו אוהבים.")}
         background="cream"
       />
 
@@ -31,8 +34,8 @@ function GalleryPage() {
       </section>
 
       <CTABand
-        title={isEn ? "Want to host a similar activity?" : "רוצים להזמין פעילות דומה?"}
-        sub={isEn ? "Tell us about your group and we'll tailor it." : "ספרו לנו על הקבוצה ונבנה משהו שמתאים."}
+        title={pick("gallery.cta.title", isEn ? "Want to host a similar activity?" : "רוצים להזמין פעילות דומה?")}
+        sub={pick("gallery.cta.sub", isEn ? "Tell us about your group and we'll tailor it." : "ספרו לנו על הקבוצה ונבנה משהו שמתאים.")}
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="blush"
