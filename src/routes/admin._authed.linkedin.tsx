@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 import {
   Sparkles, Megaphone, CalendarDays, Star, Lightbulb, Sprout, HandHeart,
-  Copy, Archive, Eye, Pencil, Loader2, Send, Save, RefreshCw, AlertTriangle, ChevronRight,
+  Copy, Archive, Eye, Loader2, Send, Save, RefreshCw, AlertTriangle, ChevronRight,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/_authed/linkedin")({
