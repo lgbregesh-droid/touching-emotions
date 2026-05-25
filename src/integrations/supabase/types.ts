@@ -842,10 +842,10 @@ export type Database = {
           display_order: number
           id: string
           is_active: boolean
-          name_en: string
+          name_en: string | null
           name_he: string
           photo_url: string | null
-          role_en: string
+          role_en: string | null
           role_he: string
           storage_path: string | null
           updated_at: string
@@ -857,10 +857,10 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
-          name_en?: string
+          name_en?: string | null
           name_he: string
           photo_url?: string | null
-          role_en?: string
+          role_en?: string | null
           role_he: string
           storage_path?: string | null
           updated_at?: string
@@ -872,10 +872,10 @@ export type Database = {
           display_order?: number
           id?: string
           is_active?: boolean
-          name_en?: string
+          name_en?: string | null
           name_he?: string
           photo_url?: string | null
-          role_en?: string
+          role_en?: string | null
           role_he?: string
           storage_path?: string | null
           updated_at?: string
