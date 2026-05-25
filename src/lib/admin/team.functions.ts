@@ -74,7 +74,7 @@ export const reorderTeam = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { data: all } = await db.from("team_members").select("id,display_order").order("display_order");
     if (!all) return { ok: true };
-    const idx = all.findIndex((r) => r.id === data.id);
+    const idx = all.findIndex((r: { id: string }) => r.id === data.id);
     const swapIdx = data.direction === "up" ? idx - 1 : idx + 1;
     if (idx < 0 || swapIdx < 0 || swapIdx >= all.length) return { ok: true };
     const a = all[idx], b = all[swapIdx];
