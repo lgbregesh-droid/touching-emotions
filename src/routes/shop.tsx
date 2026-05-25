@@ -6,6 +6,7 @@ import { PageHero } from "@/components/PageHero";
 import { CTABand } from "@/components/CTABand";
 import { InfoCard } from "@/components/InfoCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteContent } from "@/hooks/use-cms";
 import { Sparkles, Heart, Share2, Users, BookOpen, Package } from "lucide-react";
 import community from "@/assets/home/community.jpg";
 
@@ -33,6 +34,8 @@ type Product = {
 function Shop() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
+  const { data: cms } = useSiteContent();
+  const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["products-public"],
@@ -56,11 +59,11 @@ function Shop() {
   return (
     <>
       <PageHero
-        label={isEn ? "Support Our Work" : "תמיכה בעשייה"}
-        title={isEn ? "Small items, real support" : "פריטים קטנים, תמיכה אמיתית"}
-        intro={isEn
+        label={pick("shop.label", isEn ? "Support Our Work" : "תמיכה בעשייה")}
+        title={pick("shop.title", isEn ? "Small items, real support" : "פריטים קטנים, תמיכה אמיתית")}
+        intro={pick("shop.intro", isEn
           ? "Our companion items aren't a shop. They're symbolic objects that carry our emotional language — and every purchase helps us reach more children, teens and communities."
-          : "הפריטים שלנו הם לא חנות. הם חפצים סמליים שנושאים את השפה הרגשית שלנו — וכל רכישה עוזרת לנו להגיע לעוד ילדים, נוער וקהילות."}
+          : "הפריטים שלנו הם לא חנות. הם חפצים סמליים שנושאים את השפה הרגשית שלנו — וכל רכישה עוזרת לנו להגיע לעוד ילדים, נוער וקהילות.")}
         ctaLabel={isEn ? "Get in touch" : "צרו קשר"}
         ctaTo="/contact"
         background="cream"
@@ -71,11 +74,11 @@ function Shop() {
         <div className="max-w-4xl mx-auto text-center">
           <Reveal>
             <Sparkles className="w-8 h-8 text-[#BA9B78] mx-auto mb-4" />
-            <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mb-4">{isEn ? "Why support matters" : "למה התמיכה משנה"}</h2>
+            <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mb-4">{pick("shop.why.heading", isEn ? "Why support matters" : "למה התמיכה משנה")}</h2>
             <p className="text-[#4A3D30] font-light leading-relaxed max-w-2xl mx-auto">
-              {isEn
+              {pick("shop.why.text", isEn
                 ? "Every workshop, every staff training, every parent evening — costs real resources. Your support, whether through a symbolic item or a donation, lets us keep showing up in schools and communities that need it most."
-                : "כל סדנה, כל הכשרת צוות, כל ערב הורים — דורשים משאבים אמיתיים. התמיכה שלכם, בין שדרך פריט סמלי ובין שדרך תרומה, מאפשרת לנו להמשיך להגיע לבתי ספר וקהילות שהכי זקוקים."}
+                : "כל סדנה, כל הכשרת צוות, כל ערב הורים — דורשים משאבים אמיתיים. התמיכה שלכם, בין שדרך פריט סמלי ובין שדרך תרומה, מאפשרת לנו להמשיך להגיע לבתי ספר וקהילות שהכי זקוקים.")}
             </p>
           </Reveal>
         </div>
@@ -164,8 +167,8 @@ function Shop() {
       </section>
 
       <CTABand
-        title={isEn ? "Want to support in a way that fits you?" : "רוצים לתמוך בדרך שמתאימה לכם?"}
-        sub={isEn ? "Tell us a little — we'll find the right way together." : "ספרו לנו טיפה — נמצא יחד את הדרך שמתאימה."}
+        title={pick("shop.cta.title", isEn ? "Want to support in a way that fits you?" : "רוצים לתמוך בדרך שמתאימה לכם?")}
+        sub={pick("shop.cta.sub", isEn ? "Tell us a little — we'll find the right way together." : "ספרו לנו טיפה — נמצא יחד את הדרך שמתאימה.")}
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"

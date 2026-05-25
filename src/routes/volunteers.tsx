@@ -10,6 +10,7 @@ import { CTABand } from "@/components/CTABand";
 import { submitVolunteer } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { Megaphone, HeartHandshake, Camera, Truck, Share2, Compass, Users, Sparkles } from "lucide-react";
+import { useSiteContent } from "@/hooks/use-cms";
 import facilitator from "@/assets/home/facilitator.jpg";
 
 export const Route = createFileRoute("/volunteers")({
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/volunteers")({
 function Volunteers() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
+  const { data: cms } = useSiteContent();
+  const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   const submit = useServerFn(submitVolunteer);
   const [form, setForm] = useState({ name: "", phone: "", profession: "", interest: "" });
   const [agreed, setAgreed] = useState(false);
@@ -69,12 +72,12 @@ function Volunteers() {
   return (
     <>
       <PageHero
-        label={isEn ? "Volunteer" : "התנדבות"}
-        title={isEn ? "Join a team that touches the heart" : "הצטרפו לצוות שנוגע בלב"}
-        intro={isEn
+        label={pick("volunteers.label", isEn ? "Volunteer" : "התנדבות")}
+        title={pick("volunteers.title", isEn ? "Join a team that touches the heart" : "הצטרפו לצוות שנוגע בלב")}
+        intro={pick("volunteers.intro", isEn
           ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
-          : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם."}
-        ctaLabel={isEn ? "Fill the form" : "מילוי טופס"}
+          : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם.")}
+        ctaLabel={pick("volunteers.cta_label", isEn ? "Fill the form" : "מילוי טופס")}
         ctaTo="/volunteers"
         imageSlot={<img src={facilitator} alt="" className="rounded-2xl w-full aspect-[4/5] object-cover" />}
       />
@@ -152,8 +155,8 @@ function Volunteers() {
       </section>
 
       <CTABand
-        title={isEn ? "Prefer a quick message?" : "מעדיפים הודעה מהירה?"}
-        sub={isEn ? "Reach us on WhatsApp and we'll get back fast." : "אפשר לפנות אלינו בוואטסאפ וניצור קשר מהר."}
+        title={pick("volunteers.cta.title", isEn ? "Prefer a quick message?" : "מעדיפים הודעה מהירה?")}
+        sub={pick("volunteers.cta.sub", isEn ? "Reach us on WhatsApp and we'll get back fast." : "אפשר לפנות אלינו בוואטסאפ וניצור קשר מהר.")}
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"
