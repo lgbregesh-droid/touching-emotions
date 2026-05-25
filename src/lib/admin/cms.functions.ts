@@ -8,7 +8,7 @@ const db: any = supabaseAdmin;
 const tokenField = { token: z.string().min(1) };
 
 // Tables allowed through the generic CMS endpoints
-const TABLE = z.enum(["lectures", "testimonials", "support_items", "faq", "site_settings", "media"]);
+const TABLE = z.enum(["lectures", "testimonials", "support_items", "faq", "site_settings", "media", "workshops", "products"]);
 type CmsTable = z.infer<typeof TABLE>;
 
 const BUCKET_BY_TABLE: Record<CmsTable, string> = {
@@ -18,6 +18,8 @@ const BUCKET_BY_TABLE: Record<CmsTable, string> = {
   faq: "media",
   site_settings: "media",
   media: "media",
+  workshops: "workshops",
+  products: "products",
 };
 
 // ---------- Generic CRUD ----------
