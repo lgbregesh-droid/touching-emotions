@@ -7,6 +7,7 @@ import { listWorkshops, upsertWorkshop, deleteWorkshop, duplicateWorkshop } from
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Pencil, Copy, Trash2, Plus } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/_authed/workshops")({
   head: () => ({ meta: [{ title: "סדנאות | ניהול" }] }),
