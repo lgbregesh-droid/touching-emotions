@@ -24,14 +24,29 @@ function Inquiries() {
   const [open, setOpen] = useState<Row | null>(null);
   const qc = useQueryClient();
 
+  const navigate = useNavigate();
   const listFn = useServerFn(listInquiries);
   const setStatusFn = useServerFn(setInquiryStatus);
   const delFn = useServerFn(deleteInquiry);
+  const listVolsFn = useServerFn(listActiveVolunteers);
 
   const { data } = useQuery({
     queryKey: ["inquiries", tab],
     queryFn: () => listFn({ data: { token: getAdminToken()!, kind: tab } }),
   });
+
+  const { data: volsData } = useQuery({
+    queryKey: ["active-volunteers"],
+    queryFn: () => listVolsFn({ data: { token: getAdminToken()! } }),
+    enabled: tab === "volunteer",
+  });
+  const linkedSet = useMemo(() => {
+    const s = new Set<string>();
+    for (const v of (volsData?.rows || []) as Array<{ source_inquiry_id?: string | null }>) {
+      if (v.source_inquiry_id) s.add(v.source_inquiry_id);
+    }
+    return s;
+  }, [volsData]);
 
   const rows = (data?.rows || []) as Row[];
   const filtered = useMemo(() => {
