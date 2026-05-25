@@ -11,7 +11,7 @@ import { submitVolunteer } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { Megaphone, HeartHandshake, Camera, Truck, Share2, Compass, Users, Sparkles } from "lucide-react";
 import { useSiteContent } from "@/hooks/use-cms";
-import facilitator from "@/assets/home/facilitator.jpg";
+
 
 export const Route = createFileRoute("/volunteers")({
   head: () => ({
@@ -29,23 +29,34 @@ function Volunteers() {
   const { data: cms } = useSiteContent();
   const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   const submit = useServerFn(submitVolunteer);
-  const [form, setForm] = useState({ name: "", phone: "", profession: "", interest: "" });
+  const [form, setForm] = useState({ name: "", phone: "", profession: "", professionOther: "", interest: "" });
+
   const [agreed, setAgreed] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
+  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+
+  const otherKey = isEn ? "Other" : "אחר";
+  const professionOptions: string[] = isEn
+    ? ["Education & Teaching","Psychology & Therapy","Social Work","Management & Organization","Marketing & Communications","Technology & Computers","Art & Creativity","Health & Medicine","Law & Accounting","Student","Other"]
+    : ["חינוך והוראה","פסיכולוגיה וטיפול","עבודה סוציאלית","ניהול וארגון","שיווק ותקשורת","טכנולוגיה ומחשבים","אמנות ויצירה","בריאות ורפואה","משפט וחשבונאות","סטודנט/ית","אחר"];
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
     if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
+    const professionValue = form.profession === otherKey ? form.professionOther.trim() : form.profession;
+    if (form.profession === otherKey && !professionValue) {
+      toast.error(isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק");
+      return;
+    }
     setLoading(true);
     try {
-      await submit({ data: form });
+      await submit({ data: { name: form.name, phone: form.phone, profession: professionValue, interest: form.interest } });
       setDone(true);
-      setForm({ name: "", phone: "", profession: "", interest: "" });
+      setForm({ name: "", phone: "", profession: "", professionOther: "", interest: "" });
       toast.success(t.volunteers_page.success);
     } catch (err) {
       toast.error(String(err));
@@ -78,9 +89,9 @@ function Volunteers() {
           ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
           : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם.")}
         ctaLabel={pick("volunteers.cta_label", isEn ? "Fill the form" : "מילוי טופס")}
-        ctaTo="/volunteers"
-        imageSlot={<img src={facilitator} alt="" className="rounded-2xl w-full aspect-[4/5] object-cover" />}
+        ctaTo="#volunteer-form"
       />
+
 
       {/* Who can volunteer */}
       <section className="px-6 py-16 md:py-20" style={{ background: "#EAE3DA" }}>
@@ -121,7 +132,7 @@ function Volunteers() {
       </section>
 
       {/* Form */}
-      <section className="px-6 py-16 md:py-20" style={{ background: "#F7E8EA" }}>
+      <section id="volunteer-form" className="px-6 py-16 md:py-20 scroll-mt-24" style={{ background: "#F7E8EA" }}>
         <div className="max-w-2xl mx-auto">
           <Reveal>
             <div className="text-center mb-8">
@@ -139,7 +150,35 @@ function Volunteers() {
               <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
                 <Field label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} />
                 <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
-                <Field label={t.volunteers_page.field_role} value={form.profession} onChange={upd("profession")} />
+                <label className="block">
+                  <span className="block text-sm text-[#4A3D30] mb-1.5">{t.volunteers_page.field_role}</span>
+                  <select
+                    value={form.profession}
+                    onChange={upd("profession")}
+                    className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
+                    dir={isEn ? "ltr" : "rtl"}
+                    style={{ textAlign: isEn ? "left" : "right" }}
+                  >
+                    <option value="" disabled>{isEn ? "Select field" : "בחר תחום"}</option>
+                    {professionOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </label>
+                {form.profession === otherKey && (
+                  <label className="block">
+                    <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Please describe" : "פירוט"}<span className="text-[#BA9B78]"> *</span></span>
+                    <input
+                      type="text"
+                      required
+                      value={form.professionOther}
+                      onChange={upd("professionOther")}
+                      placeholder={isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק"}
+                      className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
+                    />
+                  </label>
+                )}
+
                 <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
                 <div className="space-y-2 pt-1">
                   <PrivacyConsent checked={agreed} onChange={setAgreed} />
