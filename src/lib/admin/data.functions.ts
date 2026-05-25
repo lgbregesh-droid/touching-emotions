@@ -10,33 +10,105 @@ export const getDashboard = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object(tokenField).parse(i))
   .handler(async () => {
+    const today = new Date().toISOString().slice(0, 10);
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
-    const [inq, vol, don, ws, recentInq, recentVol, recentOrd, recentDon] = await Promise.all([
-      supabaseAdmin.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "new"),
-      supabaseAdmin.from("volunteers").select("id", { count: "exact", head: true }).gte("created_at", weekAgo),
-      supabaseAdmin.from("donations").select("amount").gte("created_at", monthStart).eq("status", "success"),
-      supabaseAdmin.from("workshops").select("name_he,date").gte("date", new Date().toISOString().slice(0, 10)).order("date").limit(1),
-      supabaseAdmin.from("contact_messages").select("id,name,created_at,status").order("created_at", { ascending: false }).limit(5),
-      supabaseAdmin.from("volunteers").select("id,name,created_at,status").order("created_at", { ascending: false }).limit(5),
-      supabaseAdmin.from("orders").select("id,buyer_name,created_at,shipping_status").order("created_at", { ascending: false }).limit(5),
-      supabaseAdmin.from("donations").select("id,donor_name,created_at,status").order("created_at", { ascending: false }).limit(5),
+    const safe = async <T,>(p: Promise<T>): Promise<T | null> => {
+      try { return await p; } catch { return null; }
+    };
+
+    const [
+      pendingContacts,
+      newVolunteers,
+      pendingOrders,
+      upcomingEventsCount,
+      nextEvent,
+      recentContacts,
+      recentVolunteers,
+      recentRegs,
+      recentOrders,
+      recentActiveVol,
+      recentLinkedin,
+      lastLinkedin,
+      analyses,
+      urgentContactsRaw,
+    ] = await Promise.all([
+      safe(supabaseAdmin.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "new").then((r) => r.count || 0)),
+      safe(supabaseAdmin.from("volunteers").select("id", { count: "exact", head: true }).gte("created_at", weekAgo).then((r) => r.count || 0)),
+      safe(supabaseAdmin.from("orders").select("id", { count: "exact", head: true }).eq("shipping_status", "pending").then((r) => r.count || 0)),
+      safe(supabaseAdmin.from("events").select("id", { count: "exact", head: true }).gte("date", today).eq("status", "active").then((r) => r.count || 0)),
+      safe(supabaseAdmin.from("events").select("id,title_he,title_en,date,time,location_he,max_spots,spots_remaining").gte("date", today).eq("status", "active").order("date", { ascending: true }).limit(1).then((r) => r.data?.[0] || null)),
+      safe(supabaseAdmin.from("contact_messages").select("id,name,full_name,subject,inquiry_type,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("volunteers").select("id,name,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("event_registrations").select("id,name,event_id,created_at,ai_status,email_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("orders").select("id,buyer_name,quantity,created_at,ai_status,email_status,shipping_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("active_volunteers").select("id,name,created_at").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language").eq("linkedin_status", "published").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language,topic").order("created_at", { ascending: false }).limit(1).then((r) => r.data?.[0] || null)),
+      safe(supabaseAdmin.from("ai_submission_analysis").select("submission_id,submission_table,urgency_level,short_summary,ai_status").eq("ai_status", "completed").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
+      safe(supabaseAdmin.from("contact_messages").select("id,name,full_name,inquiry_type,subject,created_at").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
     ]);
-    const donationTotal = (don.data || []).reduce((s, r) => s + Number(r.amount || 0), 0);
-    const activity = [
-      ...(recentInq.data || []).map((r) => ({ kind: "inquiry", id: r.id, name: r.name, date: r.created_at, status: r.status })),
-      ...(recentVol.data || []).map((r) => ({ kind: "volunteer", id: r.id, name: r.name, date: r.created_at, status: r.status })),
-      ...(recentOrd.data || []).map((r) => ({ kind: "order", id: r.id, name: r.buyer_name, date: r.created_at, status: r.shipping_status })),
-      ...(recentDon.data || []).map((r) => ({ kind: "donation", id: r.id, name: r.donor_name || "תורם/ת", date: r.created_at, status: r.status })),
-    ].sort((a, b) => +new Date(b.date) - +new Date(a.date)).slice(0, 10);
+
+    const analysisByKey = new Map<string, { urgency_level?: string | null; short_summary?: string | null }>();
+    for (const a of analyses || []) {
+      analysisByKey.set(`${a.submission_table}:${a.submission_id}`, { urgency_level: a.urgency_level, short_summary: a.short_summary });
+    }
+
+    const urgentLevels = ["דורשת מענה מהיר", "חשובה"];
+    const urgent = ((urgentContactsRaw || []) as Array<{ id: string; name?: string | null; full_name?: string | null; inquiry_type?: string | null; subject?: string | null; created_at: string }>)
+      .map((c) => {
+        const a = analysisByKey.get(`contact_messages:${c.id}`);
+        if (!a || !a.urgency_level || !urgentLevels.includes(a.urgency_level)) return null;
+        return {
+          id: c.id,
+          name: c.full_name || c.name || "—",
+          inquiry_type: c.inquiry_type || c.subject || "פנייה",
+          urgency_level: a.urgency_level,
+          short_summary: a.short_summary || "",
+          created_at: c.created_at,
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 8);
+
+    type Activity = { kind: string; id: string; title: string; date: string; ai_status?: string | null; email_status?: string | null; urgency?: string | null };
+    const activity: Activity[] = [];
+    for (const r of (recentContacts || []) as Array<{ id: string; name?: string | null; full_name?: string | null; subject?: string | null; created_at: string; ai_status?: string | null; email_status?: string | null }>) {
+      const a = analysisByKey.get(`contact_messages:${r.id}`);
+      activity.push({ kind: "contact", id: r.id, title: `פנייה חדשה — ${r.full_name || r.name || "—"}${r.subject ? ` — ${r.subject}` : ""}`, date: r.created_at, ai_status: r.ai_status, email_status: r.email_status, urgency: a?.urgency_level });
+    }
+    for (const r of (recentVolunteers || []) as Array<{ id: string; name: string; created_at: string; ai_status?: string | null; email_status?: string | null }>) {
+      const a = analysisByKey.get(`volunteers:${r.id}`);
+      activity.push({ kind: "volunteer", id: r.id, title: `בקשת התנדבות — ${r.name}`, date: r.created_at, ai_status: r.ai_status, email_status: r.email_status, urgency: a?.urgency_level });
+    }
+    for (const r of (recentRegs || []) as Array<{ id: string; name: string; created_at: string; ai_status?: string | null; email_status?: string | null }>) {
+      activity.push({ kind: "registration", id: r.id, title: `הרשמה לאירוע — ${r.name}`, date: r.created_at, ai_status: r.ai_status, email_status: r.email_status });
+    }
+    for (const r of (recentOrders || []) as Array<{ id: string; buyer_name: string; quantity: number; created_at: string; ai_status?: string | null; email_status?: string | null }>) {
+      activity.push({ kind: "order", id: r.id, title: `הזמנה חדשה — קלפים × ${r.quantity}`, date: r.created_at, ai_status: r.ai_status, email_status: r.email_status });
+    }
+    for (const r of (recentActiveVol || []) as Array<{ id: string; name: string; created_at: string }>) {
+      activity.push({ kind: "active_volunteer", id: r.id, title: `מתנדב חדש הצטרף — ${r.name}`, date: r.created_at });
+    }
+    for (const r of (recentLinkedin || []) as Array<{ id: string; final_text_he?: string | null; final_text_en?: string | null; created_at: string; published_at?: string | null }>) {
+      const txt = (r.final_text_he || r.final_text_en || "").slice(0, 50);
+      activity.push({ kind: "linkedin", id: r.id, title: `פוסט לינקדאין פורסם — ${txt}`, date: r.published_at || r.created_at });
+    }
+    activity.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
     return {
-      newInquiries: inq.count || 0,
-      newVolunteers: vol.count || 0,
-      donationTotal,
-      nextWorkshop: ws.data?.[0] || null,
-      activity,
+      stats: {
+        pendingContacts: pendingContacts ?? 0,
+        newVolunteers: newVolunteers ?? 0,
+        pendingOrders: pendingOrders ?? 0,
+        upcomingEvents: upcomingEventsCount ?? 0,
+      },
+      urgent,
+      nextEvent,
+      activity: activity.slice(0, 8),
+      lastLinkedin,
     };
   });
+
 
 // ---------- Inquiries ----------
 export const listInquiries = createServerFn({ method: "POST" })
