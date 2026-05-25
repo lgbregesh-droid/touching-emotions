@@ -1,0 +1,1 @@
+ALTER TABLE public.team_members ALTER COLUMN name_en DROP NOT NULL; ALTER TABLE public.team_members ALTER COLUMN role_en DROP NOT NULL;
