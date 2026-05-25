@@ -103,7 +103,8 @@ function Donations() {
 
 
       {/* Donation options */}
-      <section className="px-6 py-14 md:py-20" style={{ background: "#FDFBF7" }}>
+      <section id="donation-form" className="px-6 py-14 md:py-20 scroll-mt-24" style={{ background: "#FDFBF7" }}>
+
         <div className="max-w-4xl mx-auto">
           <Reveal>
             <div className="text-center mb-8">
