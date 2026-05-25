@@ -132,7 +132,7 @@ function Volunteers() {
       </section>
 
       {/* Form */}
-      <section className="px-6 py-16 md:py-20" style={{ background: "#F7E8EA" }}>
+      <section id="volunteer-form" className="px-6 py-16 md:py-20 scroll-mt-24" style={{ background: "#F7E8EA" }}>
         <div className="max-w-2xl mx-auto">
           <Reveal>
             <div className="text-center mb-8">
@@ -150,7 +150,35 @@ function Volunteers() {
               <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
                 <Field label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} />
                 <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
-                <Field label={t.volunteers_page.field_role} value={form.profession} onChange={upd("profession")} />
+                <label className="block">
+                  <span className="block text-sm text-[#4A3D30] mb-1.5">{t.volunteers_page.field_role}</span>
+                  <select
+                    value={form.profession}
+                    onChange={upd("profession")}
+                    className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
+                    dir={isEn ? "ltr" : "rtl"}
+                    style={{ textAlign: isEn ? "left" : "right" }}
+                  >
+                    <option value="" disabled>{isEn ? "Select field" : "בחר תחום"}</option>
+                    {professionOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </label>
+                {form.profession === otherKey && (
+                  <label className="block">
+                    <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Please describe" : "פירוט"}<span className="text-[#BA9B78]"> *</span></span>
+                    <input
+                      type="text"
+                      required
+                      value={form.professionOther}
+                      onChange={upd("professionOther")}
+                      placeholder={isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק"}
+                      className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
+                    />
+                  </label>
+                )}
+
                 <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
                 <div className="space-y-2 pt-1">
                   <PrivacyConsent checked={agreed} onChange={setAgreed} />
