@@ -1,6 +1,7 @@
 import { Reveal } from "@/components/Reveal";
 import { MessageCircle } from "lucide-react";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
+import { buildContactUrl, buildContactMessage, type CtaContext } from "@/lib/contact-link";
 
 type Props = {
   title: string;
@@ -9,6 +10,8 @@ type Props = {
   primaryTo?: string;
   whatsappLabel?: string;
   variant?: "purple" | "blush" | "beige";
+  /** Optional CTA context — pre-fills both the contact form and WhatsApp message */
+  context?: CtaContext;
 };
 
 const VARIANTS = {
@@ -17,10 +20,12 @@ const VARIANTS = {
   beige: { bg: "#EAE3DA", fg: "#461C5B", btnBg: "#461C5B", btnFg: "#FDFBF7" },
 };
 
-export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo = "/contact", whatsappLabel = "וואטסאפ", variant = "blush" }: Props) {
+export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo, whatsappLabel = "וואטסאפ", variant = "blush", context }: Props) {
   const v = VARIANTS[variant];
   const { data: s } = useSiteSettings();
-  const wa = buildWhatsAppLink(s?.whatsapp_number);
+  const waMsg = context ? buildContactMessage(context) : undefined;
+  const wa = buildWhatsAppLink(s?.whatsapp_number, waMsg);
+  const href = primaryTo || (context ? buildContactUrl(context) : "/contact");
   return (
     <section className="px-6 py-14 md:py-20" style={{ background: v.bg, color: v.fg }}>
       <Reveal>
@@ -28,7 +33,7 @@ export function CTABand({ title, sub, primaryLabel = "צרו קשר", primaryTo 
           <h2 className="text-2xl md:text-3xl font-light mb-3">{title}</h2>
           {sub && <p className="text-sm md:text-base font-light opacity-90 mb-7 leading-relaxed">{sub}</p>}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <a href={primaryTo} className="px-7 py-3 rounded-full text-sm tracking-wide transition-transform hover:scale-[1.02]" style={{ background: v.btnBg, color: v.btnFg }}>
+            <a href={href} className="px-7 py-3 rounded-full text-sm tracking-wide transition-transform hover:scale-[1.02]" style={{ background: v.btnBg, color: v.btnFg }}>
               {primaryLabel}
             </a>
             {wa && (
