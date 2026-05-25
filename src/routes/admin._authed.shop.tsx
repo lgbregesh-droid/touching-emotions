@@ -174,7 +174,9 @@ function ShopAdmin() {
               <Field label="תיאור"><textarea rows={3} className={inp} value={editing.values.desc_he || ""} onChange={(e) => setEditing({ ...editing, values: { ...editing.values, desc_he: e.target.value } })} /></Field>
               <Field label="Description" ltr><textarea dir="ltr" rows={3} className={inp} value={editing.values.desc_en || ""} onChange={(e) => setEditing({ ...editing, values: { ...editing.values, desc_en: e.target.value } })} /></Field>
               <Field label="מחיר ₪"><input type="number" min={0} className={inp} value={editing.values.price} onChange={(e) => setEditing({ ...editing, values: { ...editing.values, price: Number(e.target.value) } })} /></Field>
-              <Field label="קישור לתמונה"><input className={inp} value={editing.values.image_url || ""} onChange={(e) => setEditing({ ...editing, values: { ...editing.values, image_url: e.target.value } })} /></Field>
+              <div className="md:col-span-2">
+                <ImageUpload table="products" label="תמונת מוצר" value={editing.values.image_url} onChange={(url) => setEditing({ ...editing, values: { ...editing.values, image_url: url } })} />
+              </div>
               <Field label="מלאי">
                 <button onClick={() => setEditing({ ...editing, values: { ...editing.values, in_stock: !editing.values.in_stock } })} className={`px-4 py-2 rounded-full text-xs ${editing.values.in_stock ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"}`}>
                   {editing.values.in_stock ? "זמין" : "אזל המלאי"}
