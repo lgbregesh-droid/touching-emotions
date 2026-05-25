@@ -15,6 +15,7 @@ import {
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Trash2, Plus, Pencil, X } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/admin/_authed/shop")({
   head: () => ({ meta: [{ title: "מוצרים נלווים | ניהול" }] }),
