@@ -90,7 +90,10 @@ function VolunteersAdmin() {
     return true;
   }), [rows, filter, search]);
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ["active-volunteers"] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["active-volunteers"] });
+    qc.invalidateQueries({ queryKey: ["inquiries", "volunteer"] });
+  };
 
   const startNew = () => setEditing({ status: "active" });
 
