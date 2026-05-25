@@ -122,9 +122,13 @@ function Workshops() {
   return (
     <>
       <PageHero
-        compact
         label={isEn ? "Workshops & Activities" : "סדנאות ופעילויות"}
         title={pick("workshops.title", isEn ? "Workshops tailored to age, group and need" : "סדנאות שמותאמות לגיל, לקבוצה ולצורך")}
+        intro={pick("workshops.subtitle", isEn
+          ? "Every workshop is built together with you. Choose by audience, see how it works, and book a tailored session for your school, group or community."
+          : "כל סדנה נבנית יחד איתכם. בחרו לפי קהל יעד, ראו איך התהליך עובד והזמינו מפגש מותאם לבית הספר, לקבוצה או לקהילה שלכם.")}
+        ctaLabel={isEn ? "Book a workshop" : "להזמנת סדנה"}
+        ctaTo="/contact"
         background="cream"
       />
 

@@ -57,9 +57,9 @@ function EventsPage() {
   return (
     <div style={{ background: "#FDFBF7" }} className="min-h-screen">
       <PageHero
-        compact
         label={pick("events.label", t.events_page.label)}
         title={pick("events.title", t.events_page.heading)}
+        intro={pick("events.subtitle", t.events_page.sub)}
         background="cream"
       />
 

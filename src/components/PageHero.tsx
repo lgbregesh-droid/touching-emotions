@@ -9,7 +9,6 @@ type PageHeroProps = {
   ctaTo?: string;
   imageSlot?: ReactNode;
   background?: "cream" | "beige" | "blush";
-  compact?: boolean;
 };
 
 const BG: Record<NonNullable<PageHeroProps["background"]>, string> = {
@@ -18,25 +17,7 @@ const BG: Record<NonNullable<PageHeroProps["background"]>, string> = {
   blush: "#F7E8EA",
 };
 
-export function PageHero({ label, title, intro, ctaLabel, ctaTo, imageSlot, background = "cream", compact = false }: PageHeroProps) {
-  if (compact) {
-    return (
-      <section className="relative px-6 pt-10 md:pt-14 pb-6 md:pb-8" style={{ background: BG[background] }}>
-        <div className="absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(78,140,133,0.35), rgba(186,155,120,0.3), transparent)" }} />
-        <div className="max-w-6xl mx-auto text-center">
-          <Reveal>
-            {label && (
-              <span className="inline-block text-[11px] tracking-[0.22em] uppercase text-[#BA9B78] mb-2 px-3 py-1 rounded-full bg-white/70 border border-[#E0D8CC]">
-                {label}
-              </span>
-            )}
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-light text-[#461C5B] leading-tight">{title}</h1>
-            {intro && <p className="text-[#4A3D30] font-light text-sm md:text-base leading-relaxed max-w-2xl mx-auto mt-2">{intro}</p>}
-          </Reveal>
-        </div>
-      </section>
-    );
-  }
+export function PageHero({ label, title, intro, ctaLabel, ctaTo, imageSlot, background = "cream" }: PageHeroProps) {
   return (
     <section className="relative px-6 pt-12 md:pt-20 pb-10 md:pb-16" style={{ background: BG[background] }}>
       <div className="absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(78,140,133,0.35), rgba(186,155,120,0.3), transparent)" }} />

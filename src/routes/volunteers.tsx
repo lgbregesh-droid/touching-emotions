@@ -11,7 +11,7 @@ import { submitVolunteer } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { Megaphone, HeartHandshake, Camera, Truck, Share2, Compass, Users, Sparkles } from "lucide-react";
 import { useSiteContent } from "@/hooks/use-cms";
-
+import facilitator from "@/assets/home/facilitator.jpg";
 
 export const Route = createFileRoute("/volunteers")({
   head: () => ({
@@ -72,10 +72,14 @@ function Volunteers() {
   return (
     <>
       <PageHero
-        compact
         label={pick("volunteers.label", isEn ? "Volunteer" : "התנדבות")}
         title={pick("volunteers.title", isEn ? "Join a team that touches the heart" : "הצטרפו לצוות שנוגע בלב")}
-        background="cream"
+        intro={pick("volunteers.intro", isEn
+          ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
+          : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם.")}
+        ctaLabel={pick("volunteers.cta_label", isEn ? "Fill the form" : "מילוי טופס")}
+        ctaTo="/volunteers"
+        imageSlot={<img src={facilitator} alt="" className="rounded-2xl w-full aspect-[4/5] object-cover" />}
       />
 
       {/* Who can volunteer */}
