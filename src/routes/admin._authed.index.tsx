@@ -81,7 +81,7 @@ function Dashboard() {
       <div className="max-w-[900px] mx-auto">
         {/* Urgent */}
         {urgent.length > 0 && (
-          <section className="bg-white rounded-xl p-4 mb-4" style={{ borderRight: "3px solid #C4622D", border: "0.5px solid #E0D8CC", borderRight: "3px solid #C4622D" }}>
+          <section className="bg-white rounded-xl p-4 mb-4" style={{ border: "0.5px solid #E0D8CC", borderRight: "3px solid #C4622D" }}>
             <div className="flex items-center gap-2 mb-3">
               <span className="font-medium text-[#2D1B3D]">🔴 דורשות טיפול עכשיו</span>
               <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#fef3e2", color: "#b45309" }}>{urgent.length}</span>
