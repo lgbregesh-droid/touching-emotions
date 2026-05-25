@@ -11,7 +11,7 @@ import { submitVolunteer } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { Megaphone, HeartHandshake, Camera, Truck, Share2, Compass, Users, Sparkles } from "lucide-react";
 import { useSiteContent } from "@/hooks/use-cms";
-import facilitator from "@/assets/home/facilitator.jpg";
+
 
 export const Route = createFileRoute("/volunteers")({
   head: () => ({
