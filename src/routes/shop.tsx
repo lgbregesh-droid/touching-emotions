@@ -159,12 +159,6 @@ function Shop() {
         </div>
       </section>
 
-      {/* Image strip */}
-      <section className="px-6" style={{ background: "#FDFBF7" }}>
-        <div className="max-w-5xl mx-auto py-10">
-          <img src={community} alt="" className="rounded-2xl w-full aspect-[16/6] object-cover" />
-        </div>
-      </section>
 
       <CTABand
         title={pick("shop.cta.title", isEn ? "Want to support in a way that fits you?" : "רוצים לתמוך בדרך שמתאימה לכם?")}
