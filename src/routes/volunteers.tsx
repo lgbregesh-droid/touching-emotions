@@ -157,7 +157,9 @@ function Volunteers() {
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"
+        context={{ type: "volunteer", source: "volunteers" }}
       />
+
     </>
   );
 }

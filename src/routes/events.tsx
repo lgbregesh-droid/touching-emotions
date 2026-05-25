@@ -92,7 +92,9 @@ function EventsPage() {
         primaryLabel={t.final_cta.cta}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"
+        context={{ type: "event", source: "events" }}
       />
+
 
       {selected && <RegistrationModal event={selected} onClose={() => setSelected(null)} />}
     </div>
