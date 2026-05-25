@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -11,9 +11,22 @@ import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
 import { EmergencyBox } from "@/routes/disclaimer";
 import { useSiteSettings, buildWhatsAppLink } from "@/lib/site-settings";
 import { useFaq } from "@/hooks/use-cms";
-import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2, MapPin } from "lucide-react";
+import {
+  buildContactMessage,
+  contextNoticeText,
+  INQUIRY_TYPE_HE,
+  isCtaType,
+  type CtaContext,
+} from "@/lib/contact-link";
+import { Mail, MessageCircle, Facebook, FileText, Inbox, Search, PhoneCall, CheckCircle2, MapPin, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    type: typeof search.type === "string" ? search.type : undefined,
+    itemId: typeof search.itemId === "string" ? search.itemId : undefined,
+    itemTitle: typeof search.itemTitle === "string" ? search.itemTitle : undefined,
+    source: typeof search.source === "string" ? search.source : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "צור קשר | לגעת ברגש" },
@@ -23,19 +36,43 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
 });
 
-const SUBJECTS_HE = ["הזמנת סדנה", "הרצאה / מפגש", "התנדבות", "תרומה", "תמיכה בעשייה", "שאלה כללית"];
-const SUBJECTS_EN = ["Workshop booking", "Lecture / meetup", "Volunteer", "Donation", "Support our work", "General question"];
+const SUBJECTS_HE = ["הזמנת סדנה", "הרצאה / מפגש", "התנדבות", "תרומה", "תמיכה בעשייה", "הרשמה לאירוע", "שאלה כללית"];
+const SUBJECTS_EN = ["Workshop booking", "Lecture / meetup", "Volunteer", "Donation", "Support our work", "Event registration", "General question"];
 
 function Contact() {
   const { t, lang } = useLanguage();
   const isEn = lang === "en";
   const submit = useServerFn(submitContact);
   const { data: s } = useSiteSettings();
-  const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
+  const search = Route.useSearch();
+  const ctx: CtaContext | null = isCtaType(search.type)
+    ? { type: search.type, itemId: search.itemId, itemTitle: search.itemTitle, source: search.source }
+    : null;
+
+  const initialSubject = ctx ? INQUIRY_TYPE_HE[ctx.type] : "";
+  const initialMessage = ctx ? buildContactMessage(ctx) : "";
+
+  const [form, setForm] = useState({ name: "", phone: "", email: "", subject: initialSubject, message: initialMessage });
   const [agreed, setAgreed] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+
+  // Re-apply prefill if URL params change (e.g. user clicks another CTA without remounting)
+  useEffect(() => {
+    if (!ctx) return;
+    setForm((f) => ({
+      ...f,
+      subject: INQUIRY_TYPE_HE[ctx.type],
+      message: buildContactMessage(ctx),
+    }));
+    // scroll to form
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("contact-form");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.type, search.itemId, search.itemTitle]);
 
   const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
 
@@ -45,7 +82,16 @@ function Contact() {
     if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
     setLoading(true);
     try {
-      await submit({ data: form });
+      await submit({
+        data: {
+          ...form,
+          inquiry_type: form.subject || (ctx ? INQUIRY_TYPE_HE[ctx.type] : "שאלה כללית"),
+          source_page: ctx?.source || "contact",
+          related_item_type: ctx?.type && ctx.type !== "general" ? ctx.type : "",
+          related_item_id: ctx?.itemId || "",
+          related_item_title: ctx?.itemTitle || "",
+        },
+      });
       setDone(true);
       setForm({ name: "", phone: "", email: "", subject: "", message: "" });
       toast.success(t.contact_page.success);
@@ -55,6 +101,7 @@ function Contact() {
       setLoading(false);
     }
   };
+
 
   const subjects = isEn ? SUBJECTS_EN : SUBJECTS_HE;
 
