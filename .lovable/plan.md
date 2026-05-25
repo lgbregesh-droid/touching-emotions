@@ -1,51 +1,60 @@
-# Plan: Admin as Single Source of Truth
+# LinkedIn Agent — Build Plan
 
-This is a large, multi-area upgrade. I'll work in phases and stop after each major phase to let you verify before moving on. Nothing existing will be removed — only extended and re-wired.
+Add a LinkedIn post generator + publisher to the existing admin dashboard. Nothing existing is removed.
 
-## Phase 1 — Foundations (settings + WhatsApp helper)
+## 1. Database (migration)
 
-1. Seed `site_settings` with all required keys (idempotent insert): `site_name`, `site_subtitle`, `phone`, `whatsapp_number`, `email`, `facebook_url`, `instagram_url`, `donation_link`, `association_number`, `footer_text`, `owner_email`, `ai_enabled`, `ai_provider`, `gemini_model`, plus existing keys. Each with Hebrew `label` and `type`.
-2. Extend the existing `הגדרות אתר` admin page so each field shows: Hebrew label, current value, input, helper text ("איפה זה מופיע באתר"), per-section save.
-3. Create `src/lib/site-settings.ts` with:
-   - `useSiteSettings()` hook (React Query, public read)
-   - `buildWhatsAppLink(number, message?)` helper
-   - `getSetting(key, fallback)` helper
-4. Replace hardcoded WhatsApp / phone / email / social / donation / footer / association number across:
-   - `FloatingWidgets`, `Navbar`, `Footer`, `contact.tsx`, `SupportTeaser`, support page CTA, workshop/lecture CTAs, donations page
-   - All WhatsApp links go through `buildWhatsAppLink`.
-5. Fallback behavior: hide/disable links when value is empty; safe placeholders.
+New table `linkedin_posts` with columns from the spec (post_type, topic, context_data jsonb, draft_he/en, final_text_he/en, published_language, linkedin_post_id, linkedin_status, published_at, generated_options jsonb, selected_option, generation_model, created_at, updated_at).
 
-## Phase 2 — Page texts (`site_content`)
+- RLS enabled. Policy: `linkedin_posts_admin_all` for `authenticated` (same pattern as other admin tables).
+- Trigger `touch_updated_at` for `updated_at`.
+- Add `linkedin_token_updated_at` row in `site_settings`.
 
-1. `site_content` table already exists. Seed rows for each editable page text (hero titles, CTA labels, about copy, etc.) with `page`, `section`, `key`, `label`, `type`, `value_he`, `value_en`.
-2. Add admin page `ניהול טקסטים` grouped by page (`דף הבית`, `אודות`, ...). Reuse existing admin shell + CMS manager pattern.
-3. Public components read via `useSiteContent(page)` hook with safe fallbacks to current hardcoded copy.
+## 2. Server functions (TanStack `createServerFn`, not Edge Functions)
 
-## Phase 3 — CMS sections (workshops, lectures, testimonials, gallery, support, FAQ, events)
+Per project stack rules, server logic = `createServerFn` under `src/lib/admin/linkedin.functions.ts`, all guarded by `requireAdmin` middleware.
 
-Each section already has admin pages and tables. I'll:
-- Verify fields match the requested list; add missing columns via migration if needed (e.g., workshops `short_description`, `goals`, `format` already exist; lectures fields exist).
-- Ensure each admin card shows: active toggle, featured toggle, last-updated date, image preview, reorder, delete confirm, validation, success/error toasts.
-- Public pages read active rows; homepage reads active+featured ordered by `order_index`.
-- Verify hidden items don't leak publicly.
-- Events: ensure calendar (`CalendarActions`) builds Google/ICS links from row data (already does — verify).
+- `generateLinkedInPosts({ post_type, context })` — pulls RAG context + relevant workshop/event/CMS data, calls Gemini via existing `chatCompletion` helper in `src/lib/ai/gateway.server.ts` with the prompt from the spec, returns `{ options: [{id, he, en, hashtags_he, hashtags_en, hook_he, hook_en}, ...] }`. Logs to `integration_logs`.
+- `saveLinkedInDraft({ id?, post_type, context_data, generated_options, selected_option, final_text_he, final_text_en, published_language })` — upserts a `draft` row.
+- `publishLinkedInPost({ post_id, text_he, text_en, language })` — reads `LINKEDIN_ACCESS_TOKEN` + `LINKEDIN_PERSON_ID` from `process.env`, POSTs to `https://api.linkedin.com/v2/ugcPosts` for each requested language, updates row to `published`/`failed`, logs to `integration_logs`, returns `{ success, post_urls? , error? }`.
+- `listLinkedInPosts({ status?, post_type?, from?, to? })` — list/filter for history tab.
+- `archiveLinkedInPost({ id })` — sets `linkedin_status = 'archived'`.
 
-## Phase 4 — Security & RLS audit
+Both LinkedIn secrets already exist (`LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_PERSON_ID`).
 
-- Verify each public table has `SELECT` policy scoped to `is_active = true` where applicable (faq, lectures, testimonials, support_items already correct; workshops, gallery currently allow all rows — tighten to active where appropriate, keeping admin full access via service role).
-- Verify form submission tables (`contact_messages`, `volunteers`, `event_registrations`, `workshop_registrants`, `donations`, `orders`) and `integration_logs` are not publicly readable (already correct — admin reads via service role through server fns).
+## 3. Admin UI
 
-## Phase 5 — Refresh behavior
+- Sidebar: add **💼 לינקדאין** to `AdminShell` items, below Gallery, route `/admin/linkedin`.
+- New route file `src/routes/admin._authed.linkedin.tsx`. Two tabs: **Create** and **History**.
 
-- After every admin save, invalidate relevant React Query keys (`["site-settings"]`, `["site-content", page]`, `["workshops"]`, etc.).
-- Toasts: `השינוי נשמר בהצלחה` / error message.
-- Public pages re-fetch on next mount; no redeploy.
+### Create tab (4 steps)
 
-## Out of scope / preserved as-is
+1. Post type cards (6) — workshop_promo, event_promo, success_story, educational, nonprofit_update, volunteer_call.
+2. Dynamic context form per type. Workshop/event selectors load from existing tables via existing admin data functions.
+3. After generation: show 3 options, each as a card with radio + editable HE/EN textareas + char counter (green <2800, yellow 2800–3000, red >3000) + hashtags pill row. "Regenerate" button keeps current selected card text untouched until user picks new options.
+4. Publish step: language selector (he / en / both), "Publish to LinkedIn", "Save as draft". Success toast with post URL(s); failure toast with fallback-to-draft.
 
-- Existing pages, design tokens, RTL, WhatsApp/Accessibility/Chatbot floating buttons, calendar feature, AI analysis pipeline, admin auth/login, Supabase client files.
-- No new admin from scratch — only extending current routes under `src/routes/admin._authed.*`.
+### History tab
 
-## Suggested checkpoint cadence
+Table with date / type / preview (80 chars) / language / status badge / actions (view, edit&publish, copy, archive). Filters by type, status, date range.
 
-I'll stop after **Phase 1** so you can confirm the WhatsApp/phone/email update flow works end-to-end before I tackle the larger page-texts and CMS sweeps. Reply "המשך" / "continue" to proceed phase by phase, or tell me to do everything in one go.
+Token-expiry banner at top of the page from `site_settings.linkedin_token_updated_at`.
+
+## 4. Translations
+
+Add the `admin.linkedin.*` keys into `src/i18n/translations.ts` (Hebrew only — admin is Hebrew).
+
+## 5. Acceptance
+
+- Generate → edit → publish flow works in HE / EN / both.
+- Drafts and failures persist; history shows everything.
+- No credentials in frontend (only in server functions reading `process.env`).
+- Existing features untouched.
+
+## Technical notes
+
+- We use `createServerFn` rather than Supabase Edge Functions because this stack is TanStack Start (per project rules).
+- Reuses existing `chatCompletion` (Lovable AI gateway, model `google/gemini-2.5-flash`) — no new API key required.
+- LinkedIn API call is a plain `fetch` from the server function.
+- Auth: `requireAdmin` middleware already used by all other admin functions.
+- I added `LINKEDIN_ACCESS_TOKEN`, `LINKEDIN_PERSON_ID with the credentials to linkedin`
