@@ -47,6 +47,8 @@ const STATUS_CLR: Record<Vol["status"], string> = {
 
 function VolunteersAdmin() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const searchParams = Route.useSearch();
   const listFn = useServerFn(listActiveVolunteers);
   const saveFn = useServerFn(upsertActiveVolunteer);
   const delFn = useServerFn(deleteActiveVolunteer);
@@ -57,6 +59,21 @@ function VolunteersAdmin() {
   const [filter, setFilter] = useState<"active" | "paused" | "ended" | "all">("active");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<Vol> | null>(null);
+
+  useEffect(() => {
+    if (searchParams.prefillId) {
+      setEditing({
+        status: "active",
+        name: searchParams.name || "",
+        phone: searchParams.phone || "",
+        email: searchParams.email || "",
+        role: searchParams.role || "",
+        source_inquiry_id: searchParams.prefillId,
+      });
+      navigate({ to: "/admin/volunteers", search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.prefillId]);
 
   const counts = useMemo(() => ({
     active: rows.filter((r) => r.status === "active").length,
