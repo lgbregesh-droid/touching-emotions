@@ -347,20 +347,18 @@ async function sendOwnerEmail(args: {
   errorMessage: string | null;
   model: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
-  const lovableKey = process.env.LOVABLE_API_KEY;
   const resendKey = process.env.RESEND_API_KEY;
-  if (!lovableKey || !resendKey) {
-    return { ok: false, error: "לא מוגדר Resend connector. יש לחבר Resend ב-Lovable Cloud כדי לקבל התראות אימייל." };
+  if (!resendKey) {
+    return { ok: false, error: "RESEND_API_KEY לא מוגדר." };
   }
   try {
     const subject = SUBJECT_BY_TABLE[args.table];
     const html = buildEmailHtml(args);
-    const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${lovableKey}`,
-        "X-Connection-Api-Key": resendKey,
+        Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
         from: "לגעת ברגש <onboarding@resend.dev>",
