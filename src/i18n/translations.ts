@@ -1,7 +1,7 @@
 export const translations = {
   he: {
-    nav: { home: "דף הבית", about: "אודות", workshops: "סדנאות ופעילויות", events: "הרצאות ומפגשים", shop: "תמיכה בעשייה", donations: "תרומות", volunteers: "מתנדבים", gallery: "גלריה", contact: "צור קשר", cta: "צרו קשר" },
-    hero: { badge: "מרכז לחוסן והעצמה רגשית", title: "לגעת ברגש. לבנות חוסן מבפנים.", sub: "סדנאות, הרצאות ומפגשים חווייתיים לחיזוק רגשות, ביטחון עצמי, תקשורת ושייכות — לילדים, נוער, מוסדות וקהילות.", cta_primary: "לתיאום סדנה או הרצאה", cta_secondary: "לצפייה בפעילויות", badge1: "לילדים ונוער", badge2: "למוסדות חינוך וקהילות", badge3: "סדנאות והרצאות מותאמות" },
+    nav: { home: "בית", about: "אודות", workshops: "סדנאות", events: "אירועים", shop: "מוצרים", donations: "תרומות", volunteers: "התנדבות", gallery: "גלריה", contact: "צור קשר", cta: "צרו קשר" },
+    hero: { badge: "מרכז לחוסן והעצמה רגשית", title: "לגעת ברגש. לבנות חוסן מבפנים.", sub: "סדנאות, הרצאות ומפגשים חווייתיים לחיזוק רגשות, ביטחון עצמי, תקשורת ושייכות — לילדים, נוער, מוסדות וקהילות.", cta_primary: "לתיאום סדנה או הרצאה", cta_secondary: "לצפייה בסדנאות", badge1: "", badge2: "", badge3: "" },
     about_teaser: { heading: "מי אנחנו", tagline: "נוגעים בלב, בונים חוסן, יוצרים שינוי", text: "עמותת לגעת ברגש פועלת מתוך אמונה עמוקה שכל אדם זכאי למרחב רגשי בטוח, מזמין ומאפשר. אנו מתמחים בהעצמה רגשית ובניית חוסן באמצעות סדנאות, מפגשים קבוצתיים ותוכניות מותאמות לילדים, נוער, מוסדות חינוך, ארגונים וקהילות.", quote: "התחלה של דרך חדשה היא קשה, אבל לא כמו להישאר במצב שלא מתאים לך.", pill1: "חוסן רגשי", pill2: "העצמה אישית", pill3: "שפה רגשית משותפת" },
     audiences: {
       label: "למי זה מיועד",
@@ -178,8 +178,8 @@ export const translations = {
     footer: { tagline: "העצמה ובניית חוסן רגשי", rights: "עמותה רשומה מס׳ 580795755 © 2025 לגעת ברגש", contact: "צור קשר" },
   },
   en: {
-    nav: { home: "Home", about: "About", workshops: "Workshops & Activities", events: "Lectures & Meetups", shop: "Support Our Work", donations: "Donate", volunteers: "Volunteer", gallery: "Gallery", contact: "Contact", cta: "Get in Touch" },
-    hero: { badge: "Center for Emotional Resilience & Empowerment", title: "Touching Emotion. Building Resilience From Within.", sub: "Experiential workshops, lectures and meetups that strengthen emotions, self-confidence, communication and belonging — for children, teens, schools and communities.", cta_primary: "Book a Workshop or Lecture", cta_secondary: "Explore Our Activities", badge1: "For Children & Teens", badge2: "For Schools & Communities", badge3: "Tailored Workshops & Lectures" },
+    nav: { home: "Home", about: "About", workshops: "Workshops", events: "Events", shop: "Shop", donations: "Donate", volunteers: "Volunteer", gallery: "Gallery", contact: "Contact", cta: "Get in Touch" },
+    hero: { badge: "Center for Emotional Resilience & Empowerment", title: "Touching Emotion. Building Resilience From Within.", sub: "Experiential workshops, lectures and meetups that strengthen emotions, self-confidence, communication and belonging — for children, teens, schools and communities.", cta_primary: "Book a Workshop or Lecture", cta_secondary: "View Workshops", badge1: "", badge2: "", badge3: "" },
     about_teaser: { heading: "Who We Are", tagline: "Touching hearts, building resilience, creating change", text: "Touching Emotion works from a deep belief that every person deserves a safe, welcoming emotional space. We specialize in emotional empowerment and resilience-building through workshops, group sessions, and tailored programs for children, teens, schools, organizations, and communities.", quote: "Starting a new path is hard, but not as hard as staying in a place that doesn't fit you.", pill1: "Emotional Resilience", pill2: "Personal Empowerment", pill3: "Shared Emotional Language" },
     audiences: {
       label: "Who It's For",
