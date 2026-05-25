@@ -8,7 +8,7 @@ import { InfoCard } from "@/components/InfoCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent } from "@/hooks/use-cms";
 import { Sparkles, Heart, Share2, Users, BookOpen, Package } from "lucide-react";
-import community from "@/assets/home/community.jpg";
+
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
