@@ -109,6 +109,7 @@ function VolunteersAdmin() {
           start_date: editing.start_date || null,
           notes: editing.notes || null,
           status: editing.status || "active",
+          source_inquiry_id: editing.source_inquiry_id || null,
         },
       } });
       toast.success("נשמר");
