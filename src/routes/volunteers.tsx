@@ -36,17 +36,27 @@ function Volunteers() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
+  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+
+  const otherKey = isEn ? "Other" : "אחר";
+  const professionOptions: string[] = isEn
+    ? ["Education & Teaching","Psychology & Therapy","Social Work","Management & Organization","Marketing & Communications","Technology & Computers","Art & Creativity","Health & Medicine","Law & Accounting","Student","Other"]
+    : ["חינוך והוראה","פסיכולוגיה וטיפול","עבודה סוציאלית","ניהול וארגון","שיווק ותקשורת","טכנולוגיה ומחשבים","אמנות ויצירה","בריאות ורפואה","משפט וחשבונאות","סטודנט/ית","אחר"];
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
     if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
+    const professionValue = form.profession === otherKey ? form.professionOther.trim() : form.profession;
+    if (form.profession === otherKey && !professionValue) {
+      toast.error(isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק");
+      return;
+    }
     setLoading(true);
     try {
-      await submit({ data: form });
+      await submit({ data: { name: form.name, phone: form.phone, profession: professionValue, interest: form.interest } });
       setDone(true);
-      setForm({ name: "", phone: "", profession: "", interest: "" });
+      setForm({ name: "", phone: "", profession: "", professionOther: "", interest: "" });
       toast.success(t.volunteers_page.success);
     } catch (err) {
       toast.error(String(err));
@@ -79,9 +89,9 @@ function Volunteers() {
           ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
           : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם.")}
         ctaLabel={pick("volunteers.cta_label", isEn ? "Fill the form" : "מילוי טופס")}
-        ctaTo="/volunteers"
-        imageSlot={<img src={facilitator} alt="" className="rounded-2xl w-full aspect-[4/5] object-cover" />}
+        ctaTo="#volunteer-form"
       />
+
 
       {/* Who can volunteer */}
       <section className="px-6 py-16 md:py-20" style={{ background: "#EAE3DA" }}>
