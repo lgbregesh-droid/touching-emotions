@@ -8,8 +8,8 @@ import { CTABand } from "@/components/CTABand";
 import { Ear, MessageCircleHeart, Shield, Users, Sparkles, GraduationCap, HeartHandshake, Home as HomeIcon, Building2 } from "lucide-react";
 import community from "@/assets/home/community.jpg";
 import facilitator from "@/assets/home/facilitator.jpg";
-import school from "@/assets/home/school.jpg";
 import workshopChildren from "@/assets/home/workshop-children.jpg";
+import { TeamSection } from "@/components/about/TeamSection";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
