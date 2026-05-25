@@ -26,7 +26,7 @@ export const listTeam = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object(tokenField).parse(i))
   .handler(async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await db
       .from("team_members")
       .select("*")
       .order("display_order", { ascending: true })
