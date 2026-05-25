@@ -88,7 +88,7 @@ function Donations() {
             <div className="grid md:grid-cols-3 gap-4 mb-10">
               <OptionCard icon={Heart} title={isEn ? "One-time" : "חד-פעמית"} desc={isEn ? "A single contribution at the amount that fits you." : "תרומה אחת בסכום שמתאים לכם."} onClick={() => { setRecurring(false); setStep("choose"); }} active={!recurring} />
               <OptionCard icon={Repeat} title={isEn ? "Monthly" : "חודשית"} desc={isEn ? "Ongoing monthly support that lets us plan ahead." : "תמיכה חודשית שמאפשרת לתכנן קדימה."} onClick={() => { setRecurring(true); setStep("choose"); }} active={recurring} />
-              <OptionCard icon={Phone} title={isEn ? "Contact us" : "יצירת קשר"} desc={isEn ? "Have a question or want to donate differently?" : "יש שאלה או רוצים לתרום אחרת? נשמח לשמוע."} onClick={() => (window.location.href = "/contact")} />
+              <OptionCard icon={Phone} title={isEn ? "Contact us" : "יצירת קשר"} desc={isEn ? "Have a question or want to donate differently?" : "יש שאלה או רוצים לתרום אחרת? נשמח לשמוע."} onClick={() => (window.location.href = buildContactUrl({ type: "donation", source: "donations" }))} />
             </div>
           </Reveal>
 
