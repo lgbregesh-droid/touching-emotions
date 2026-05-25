@@ -12,8 +12,8 @@ export const getDashboard = createServerFn({ method: "POST" })
   .handler(async () => {
     const today = new Date().toISOString().slice(0, 10);
     const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-    const safe = async <T,>(p: Promise<T>): Promise<T | null> => {
-      try { return await p; } catch { return null; }
+    const safe = async <T,>(fn: () => PromiseLike<T>): Promise<T | null> => {
+      try { return await fn(); } catch { return null; }
     };
 
     const [
@@ -32,20 +32,20 @@ export const getDashboard = createServerFn({ method: "POST" })
       analyses,
       urgentContactsRaw,
     ] = await Promise.all([
-      safe(supabaseAdmin.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "new").then((r) => r.count || 0)),
-      safe(supabaseAdmin.from("volunteers").select("id", { count: "exact", head: true }).gte("created_at", weekAgo).then((r) => r.count || 0)),
-      safe(supabaseAdmin.from("orders").select("id", { count: "exact", head: true }).eq("shipping_status", "pending").then((r) => r.count || 0)),
-      safe(supabaseAdmin.from("events").select("id", { count: "exact", head: true }).gte("date", today).eq("status", "active").then((r) => r.count || 0)),
-      safe(supabaseAdmin.from("events").select("id,title_he,title_en,date,time,location_he,max_spots,spots_remaining").gte("date", today).eq("status", "active").order("date", { ascending: true }).limit(1).then((r) => r.data?.[0] || null)),
-      safe(supabaseAdmin.from("contact_messages").select("id,name,full_name,subject,inquiry_type,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("volunteers").select("id,name,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("event_registrations").select("id,name,event_id,created_at,ai_status,email_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("orders").select("id,buyer_name,quantity,created_at,ai_status,email_status,shipping_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("active_volunteers").select("id,name,created_at").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language").eq("linkedin_status", "published").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language,topic").order("created_at", { ascending: false }).limit(1).then((r) => r.data?.[0] || null)),
-      safe(supabaseAdmin.from("ai_submission_analysis").select("submission_id,submission_table,urgency_level,short_summary,ai_status").eq("ai_status", "completed").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
-      safe(supabaseAdmin.from("contact_messages").select("id,name,full_name,inquiry_type,subject,created_at").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "new").then((r) => r.count || 0)),
+      safe(() => supabaseAdmin.from("volunteers").select("id", { count: "exact", head: true }).gte("created_at", weekAgo).then((r) => r.count || 0)),
+      safe(() => supabaseAdmin.from("orders").select("id", { count: "exact", head: true }).eq("shipping_status", "pending").then((r) => r.count || 0)),
+      safe(() => supabaseAdmin.from("events").select("id", { count: "exact", head: true }).gte("date", today).eq("status", "active").then((r) => r.count || 0)),
+      safe(() => supabaseAdmin.from("events").select("id,title_he,title_en,date,time,location_he,max_spots,spots_remaining").gte("date", today).eq("status", "active").order("date", { ascending: true }).limit(1).then((r) => r.data?.[0] || null)),
+      safe(() => supabaseAdmin.from("contact_messages").select("id,name,full_name,subject,inquiry_type,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("volunteers").select("id,name,created_at,ai_status,email_status,status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("event_registrations").select("id,name,event_id,created_at,ai_status,email_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("orders").select("id,buyer_name,quantity,created_at,ai_status,email_status,shipping_status").order("created_at", { ascending: false }).limit(8).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("active_volunteers").select("id,name,created_at").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language").eq("linkedin_status", "published").order("created_at", { ascending: false }).limit(5).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("linkedin_posts").select("id,final_text_he,final_text_en,linkedin_status,created_at,published_at,published_language,topic").order("created_at", { ascending: false }).limit(1).then((r) => r.data?.[0] || null)),
+      safe(() => supabaseAdmin.from("ai_submission_analysis").select("submission_id,submission_table,urgency_level,short_summary,ai_status").eq("ai_status", "completed").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
+      safe(() => supabaseAdmin.from("contact_messages").select("id,name,full_name,inquiry_type,subject,created_at").order("created_at", { ascending: false }).limit(50).then((r) => r.data || [])),
     ]);
 
     const analysisByKey = new Map<string, { urgency_level?: string | null; short_summary?: string | null }>();
