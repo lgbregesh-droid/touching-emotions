@@ -18,11 +18,9 @@ function GalleryPage() {
   return (
     <>
       <PageHero
+        compact
         label={pick("gallery.label", isEn ? "Gallery" : "גלריה")}
         title={pick("gallery.title", isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד")}
-        intro={pick("gallery.intro", isEn
-          ? "Photos from our workshops, lectures, community gatherings and youth activities — a small window into the work we love."
-          : "תמונות מהסדנאות, ההרצאות, המפגשים הקהילתיים והפעילויות עם הנוער — חלון קטן לעשייה שאנחנו אוהבים.")}
         background="cream"
       />
 
