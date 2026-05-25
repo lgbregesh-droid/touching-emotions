@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { AdminShell, AdminCard, SecondaryButton } from "@/components/admin/AdminShell";
 import { listInquiries, setInquiryStatus, deleteInquiry } from "@/lib/admin/data.functions";
+import { listActiveVolunteers } from "@/lib/admin/team.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
-import { Eye, Trash2, Check } from "lucide-react";
+import { Eye, Trash2, Check, UserPlus } from "lucide-react";
 import { AnalysisPanel } from "@/components/admin/AnalysisPanel";
 
 export const Route = createFileRoute("/admin/_authed/inquiries")({
