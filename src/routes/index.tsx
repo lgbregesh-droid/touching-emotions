@@ -139,13 +139,6 @@ function Home() {
               {t.hero.cta_secondary}
             </Link>
           </div>
-          <div className="flex flex-wrap justify-center gap-2.5">
-            {[t.hero.badge1, t.hero.badge2, t.hero.badge3].map((b, i) => (
-              <span key={i} className="px-3.5 py-1.5 text-[11px] tracking-wider rounded-full bg-white/8 backdrop-blur-md border border-[#BA9B78]/35 text-[#F5F0E8]/85">
-                {b}
-              </span>
-            ))}
-          </div>
         </div>
       </section>
 

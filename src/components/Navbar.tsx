@@ -48,7 +48,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-9 mx-auto">
             {items.map((it) => {
               const active = loc.pathname === it.to;
               return (
@@ -139,8 +139,8 @@ export function Navbar() {
         <aside
           className={`absolute top-0 bottom-0 w-[75vw] max-w-[300px] bg-[#F5F0E8] shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
             lang === "he"
-              ? `right-0 border-l-[3px] border-l-[rgba(78,140,133,0.25)] ${open ? "translate-x-0" : "translate-x-full"}`
-              : `left-0 border-r-[3px] border-r-[rgba(78,140,133,0.25)] ${open ? "translate-x-0" : "-translate-x-full"}`
+              ? `left-0 border-r-[3px] border-r-[rgba(78,140,133,0.25)] ${open ? "translate-x-0" : "-translate-x-full"}`
+              : `right-0 border-l-[3px] border-l-[rgba(78,140,133,0.25)] ${open ? "translate-x-0" : "translate-x-full"}`
           }`}
         >
           <div className="flex items-center justify-between p-4 border-b border-[#E0D8CC]">
@@ -156,7 +156,7 @@ export function Navbar() {
                   to={it.to}
                   className={`px-6 py-4 text-base border-b border-[#E0D8CC] ${
                     active
-                      ? `text-[#BA9B78] ${lang === "he" ? "border-r-[3px] border-r-[#BA9B78]" : "border-l-[3px] border-l-[#BA9B78]"}`
+                      ? `text-[#BA9B78] ${lang === "he" ? "border-l-[3px] border-l-[#BA9B78]" : "border-r-[3px] border-r-[#BA9B78]"}`
                       : "text-[#2D1B3D]"
                   }`}
                 >
