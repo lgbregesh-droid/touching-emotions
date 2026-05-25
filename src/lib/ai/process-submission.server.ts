@@ -3,6 +3,7 @@
 // sends email notification to the site owner. AI / email failures never block.
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { cfWaitUntil } from "@/lib/cf-context";
 import { chatCompletion, embed } from "./gateway.server";
 import { logIntegration } from "./log.server";
 
@@ -569,7 +570,8 @@ export async function processSubmission(submissionId: string, table: SubmissionT
 
 // Fire-and-forget wrapper for use after form inserts. Never throws.
 export function fireProcessSubmission(submissionId: string, table: SubmissionTable) {
-  void processSubmission(submissionId, table).catch((err) => {
+  const promise = processSubmission(submissionId, table).catch((err) => {
     console.error("processSubmission failed:", err);
   });
+  cfWaitUntil(promise);
 }
