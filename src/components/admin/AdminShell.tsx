@@ -1,21 +1,23 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Settings, BookOpen, Activity } from "lucide-react";
+import { LayoutDashboard, Mail, Calendar, ShoppingBag, Heart, FileText, Image, LogOut, Menu, X, Mic, MessageSquare, HelpCircle, Settings, BookOpen, Activity, Users, HandHeart } from "lucide-react";
 import { clearAdminToken } from "@/lib/admin/session";
 
 const items = [
   { to: "/admin", label: "לוח בקרה", icon: LayoutDashboard, exact: true },
-  { to: "/admin/content", label: "ניהול עמודים", icon: FileText },
-  { to: "/admin/knowledge-base", label: "בסיס ידע", icon: BookOpen },
+  { to: "/admin/inquiries", label: "פניות וטפסים", icon: Mail },
+  { to: "/admin/volunteers", label: "מתנדבים פעילים", icon: HandHeart },
   { to: "/admin/workshops", label: "סדנאות ופעילויות", icon: Calendar },
   { to: "/admin/events", label: "הרצאות, מפגשים ואירועים", icon: Mic },
   { to: "/admin/testimonials", label: "המלצות", icon: MessageSquare },
+  { to: "/admin/shop", label: "מוצרים", icon: ShoppingBag },
+  { to: "/admin/donations", label: "תרומות", icon: Heart },
+  { to: "/admin/content", label: "ניהול עמודים", icon: FileText },
+  { to: "/admin/team", label: "צוות", icon: Users },
+  { to: "/admin/knowledge-base", label: "בסיס ידע", icon: BookOpen },
   { to: "/admin/gallery", label: "גלריה", icon: Image },
   { to: "/admin/support", label: "תמיכה בעשייה", icon: ShoppingBag },
   { to: "/admin/faq", label: "שאלות נפוצות", icon: HelpCircle },
-  { to: "/admin/inquiries", label: "פניות וטפסים", icon: Mail },
-  { to: "/admin/shop", label: "מוצרים", icon: ShoppingBag },
-  { to: "/admin/donations", label: "תרומות", icon: Heart },
   { to: "/admin/integration-logs", label: "יומני אינטגרציות", icon: Activity },
   { to: "/admin/settings", label: "הגדרות אתר", icon: Settings },
 ];

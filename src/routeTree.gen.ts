@@ -31,6 +31,7 @@ import { Route as AdminAuthedIndexRouteImport } from './routes/admin._authed.ind
 import { Route as AdminAuthedWorkshopsRouteImport } from './routes/admin._authed.workshops'
 import { Route as AdminAuthedVolunteersRouteImport } from './routes/admin._authed.volunteers'
 import { Route as AdminAuthedTestimonialsRouteImport } from './routes/admin._authed.testimonials'
+import { Route as AdminAuthedTeamRouteImport } from './routes/admin._authed.team'
 import { Route as AdminAuthedSupportRouteImport } from './routes/admin._authed.support'
 import { Route as AdminAuthedShopRouteImport } from './routes/admin._authed.shop'
 import { Route as AdminAuthedSettingsRouteImport } from './routes/admin._authed.settings'
@@ -153,6 +154,11 @@ const AdminAuthedTestimonialsRoute = AdminAuthedTestimonialsRouteImport.update({
   path: '/testimonials',
   getParentRoute: () => AdminAuthedRoute,
 } as any)
+const AdminAuthedTeamRoute = AdminAuthedTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminAuthedRoute,
+} as any)
 const AdminAuthedSupportRoute = AdminAuthedSupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
   '/admin/support': typeof AdminAuthedSupportRoute
+  '/admin/team': typeof AdminAuthedTeamRoute
   '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/workshops': typeof AdminAuthedWorkshopsRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminAuthedSettingsRoute
   '/admin/shop': typeof AdminAuthedShopRoute
   '/admin/support': typeof AdminAuthedSupportRoute
+  '/admin/team': typeof AdminAuthedTeamRoute
   '/admin/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/workshops': typeof AdminAuthedWorkshopsRoute
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/admin/_authed/settings': typeof AdminAuthedSettingsRoute
   '/admin/_authed/shop': typeof AdminAuthedShopRoute
   '/admin/_authed/support': typeof AdminAuthedSupportRoute
+  '/admin/_authed/team': typeof AdminAuthedTeamRoute
   '/admin/_authed/testimonials': typeof AdminAuthedTestimonialsRoute
   '/admin/_authed/volunteers': typeof AdminAuthedVolunteersRoute
   '/admin/_authed/workshops': typeof AdminAuthedWorkshopsRoute
@@ -354,6 +363,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
+    | '/admin/team'
     | '/admin/testimonials'
     | '/admin/volunteers'
     | '/admin/workshops'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shop'
     | '/admin/support'
+    | '/admin/team'
     | '/admin/testimonials'
     | '/admin/volunteers'
     | '/admin/workshops'
@@ -424,6 +435,7 @@ export interface FileRouteTypes {
     | '/admin/_authed/settings'
     | '/admin/_authed/shop'
     | '/admin/_authed/support'
+    | '/admin/_authed/team'
     | '/admin/_authed/testimonials'
     | '/admin/_authed/volunteers'
     | '/admin/_authed/workshops'
@@ -605,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedTestimonialsRouteImport
       parentRoute: typeof AdminAuthedRoute
     }
+    '/admin/_authed/team': {
+      id: '/admin/_authed/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminAuthedTeamRouteImport
+      parentRoute: typeof AdminAuthedRoute
+    }
     '/admin/_authed/support': {
       id: '/admin/_authed/support'
       path: '/support'
@@ -705,6 +724,7 @@ interface AdminAuthedRouteChildren {
   AdminAuthedSettingsRoute: typeof AdminAuthedSettingsRoute
   AdminAuthedShopRoute: typeof AdminAuthedShopRoute
   AdminAuthedSupportRoute: typeof AdminAuthedSupportRoute
+  AdminAuthedTeamRoute: typeof AdminAuthedTeamRoute
   AdminAuthedTestimonialsRoute: typeof AdminAuthedTestimonialsRoute
   AdminAuthedVolunteersRoute: typeof AdminAuthedVolunteersRoute
   AdminAuthedWorkshopsRoute: typeof AdminAuthedWorkshopsRoute
@@ -724,6 +744,7 @@ const AdminAuthedRouteChildren: AdminAuthedRouteChildren = {
   AdminAuthedSettingsRoute: AdminAuthedSettingsRoute,
   AdminAuthedShopRoute: AdminAuthedShopRoute,
   AdminAuthedSupportRoute: AdminAuthedSupportRoute,
+  AdminAuthedTeamRoute: AdminAuthedTeamRoute,
   AdminAuthedTestimonialsRoute: AdminAuthedTestimonialsRoute,
   AdminAuthedVolunteersRoute: AdminAuthedVolunteersRoute,
   AdminAuthedWorkshopsRoute: AdminAuthedWorkshopsRoute,

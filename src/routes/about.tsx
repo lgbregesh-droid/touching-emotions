@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteContent } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
@@ -8,8 +8,8 @@ import { CTABand } from "@/components/CTABand";
 import { Ear, MessageCircleHeart, Shield, Users, Sparkles, GraduationCap, HeartHandshake, Home as HomeIcon, Building2 } from "lucide-react";
 import community from "@/assets/home/community.jpg";
 import facilitator from "@/assets/home/facilitator.jpg";
-import school from "@/assets/home/school.jpg";
 import workshopChildren from "@/assets/home/workshop-children.jpg";
+import { TeamSection } from "@/components/about/TeamSection";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -146,17 +146,8 @@ function About() {
         </Reveal>
       </section>
 
-      {/* Image strip */}
-      <section className="px-6 py-12 md:py-16" style={{ background: "#FDFBF7" }}>
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
-          <img src={workshopChildren} alt="" className="rounded-2xl aspect-[4/3] object-cover" />
-          <img src={school} alt="" className="rounded-2xl aspect-[4/3] object-cover" />
-          <img src={community} alt="" className="rounded-2xl aspect-[4/3] object-cover col-span-2 md:col-span-1" />
-        </div>
-        <div className="text-center mt-6">
-          <Link to="/gallery" className="text-sm text-[#BA9B78] hover:underline">{isEn ? "Visit our gallery →" : "לכל הגלריה ←"}</Link>
-        </div>
-      </section>
+      {/* Team section (replaces gallery strip) */}
+      <TeamSection />
 
       <CTABand
         title={isEn ? "Want to understand which activity fits you?" : "רוצים להבין איזו פעילות מתאימה לכם?"}
