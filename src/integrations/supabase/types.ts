@@ -535,6 +535,72 @@ export type Database = {
         }
         Relationships: []
       }
+      linkedin_posts: {
+        Row: {
+          context_data: Json | null
+          created_at: string
+          draft_en: string | null
+          draft_he: string | null
+          error_message: string | null
+          final_text_en: string | null
+          final_text_he: string | null
+          generated_options: Json | null
+          generation_model: string | null
+          id: string
+          linkedin_post_id: string | null
+          linkedin_post_url: string | null
+          linkedin_status: string
+          post_type: string
+          published_at: string | null
+          published_language: string | null
+          selected_option: number | null
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          context_data?: Json | null
+          created_at?: string
+          draft_en?: string | null
+          draft_he?: string | null
+          error_message?: string | null
+          final_text_en?: string | null
+          final_text_he?: string | null
+          generated_options?: Json | null
+          generation_model?: string | null
+          id?: string
+          linkedin_post_id?: string | null
+          linkedin_post_url?: string | null
+          linkedin_status?: string
+          post_type: string
+          published_at?: string | null
+          published_language?: string | null
+          selected_option?: number | null
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          context_data?: Json | null
+          created_at?: string
+          draft_en?: string | null
+          draft_he?: string | null
+          error_message?: string | null
+          final_text_en?: string | null
+          final_text_he?: string | null
+          generated_options?: Json | null
+          generation_model?: string | null
+          id?: string
+          linkedin_post_id?: string | null
+          linkedin_post_url?: string | null
+          linkedin_status?: string
+          post_type?: string
+          published_at?: string | null
+          published_language?: string | null
+          selected_option?: number | null
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media: {
         Row: {
           alt_text: string | null
