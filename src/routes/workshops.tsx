@@ -5,6 +5,8 @@ import { useSiteContent, useWorkshops } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { CTABand } from "@/components/CTABand";
+import { buildContactUrl } from "@/lib/contact-link";
+
 import { Phone, Search, Wand2, Sparkles, Heart, MessagesSquare, Users, Compass, ShieldCheck, ArrowRight, X } from "lucide-react";
 import workshopChildren from "@/assets/home/workshop-children.jpg";
 import workshopTeens from "@/assets/home/workshop-teens.jpg";
