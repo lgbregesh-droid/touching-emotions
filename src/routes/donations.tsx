@@ -57,28 +57,50 @@ function Donations() {
         background="cream"
       />
 
-      {/* What your donation supports */}
-      <section className="px-6 py-14 md:py-20" style={{ background: "#EAE3DA" }}>
-        <div className="max-w-6xl mx-auto">
-          <Reveal>
-            <div className="text-center mb-10">
-              <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Your Impact" : "ההשפעה שלכם"}</span>
-              <h2 className="text-2xl md:text-4xl font-light text-[#461C5B] mt-3">{d.why_heading}</h2>
-              <p className="text-sm text-[#4A3D30] font-light mt-3 max-w-2xl mx-auto">{d.why_intro}</p>
-            </div>
-          </Reveal>
-          <div className="grid sm:grid-cols-2 gap-5">
-            {d.impact.map((item, i) => {
-              const Icon = ICONS[i % ICONS.length];
-              return (
-                <Reveal key={i} delay={i * 0.05}>
-                  <InfoCard icon={Icon} title={item.title} desc={item.text} accent={(["blush", "teal", "purple", "gold"] as const)[i % 4]} />
-                </Reveal>
-              );
-            })}
+      {/* Jump to donate */}
+      <div className="px-6 pt-4 pb-2 text-center" style={{ background: "#FDFBF7" }}>
+        <a
+          href="#donation-form"
+          className="inline-flex items-center gap-2 bg-[#BA9B78] hover:bg-[#a8875f] text-white transition-colors"
+          style={{ borderRadius: 30, padding: "12px 28px", fontSize: 14 }}
+        >
+          {isEn ? "Donate Now ↓" : "לתרומה מהירה — לחצו כאן ↓"}
+        </a>
+      </div>
+
+      {/* Why this nonprofit — values */}
+      <section className="relative px-6 py-14 md:py-20" style={{ background: "#EDE6DC" }}>
+        <div
+          className="absolute inset-x-0 top-0"
+          style={{ height: "1.5px", background: "linear-gradient(90deg, transparent, rgba(78,140,133,0.35), rgba(186,155,120,0.25), transparent)" }}
+        />
+        <Reveal>
+          <div className="text-center mx-auto" style={{ maxWidth: 620 }}>
+            {isEn ? (
+              <>
+                <p style={{ fontSize: 20, color: "#2D1B3D", fontWeight: 400, marginBottom: 16 }}>Every Donation — A Chance to Change a Life</p>
+                <div style={{ fontSize: 15, color: "#4A3D30", lineHeight: 2, fontWeight: 300 }}>
+                  <p>Touching Emotion does something rare and invaluable:<br />it gives children the <span style={{ color: "#BA9B78" }}>emotional tools that no textbook ever teaches</span>.</p>
+                  <p className="mt-4">We believe every child deserves to grow up able to recognize their emotions,<br />express them in healthy ways, and build resilience that lasts a lifetime.</p>
+                  <p className="mt-4">With your donation — we can reach more classrooms, more families,<br />more children who are waiting for someone to truly see them.</p>
+                  <p className="mt-4">This isn't just a donation to a nonprofit — it's an <span style={{ color: "#BA9B78" }}>investment in the next generation</span>.</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 20, color: "#2D1B3D", fontWeight: 400, marginBottom: 16 }}>כל תרומה — הזדמנות לשנות חיים</p>
+                <div style={{ fontSize: 15, color: "#4A3D30", lineHeight: 2, fontWeight: 300 }}>
+                  <p>עמותת לגעת ברגש עושה משהו נדיר ויקר ערך:<br />היא נותנת לילדים את ה<span style={{ color: "#BA9B78" }}>כלים הרגשיים שאף ספר לימוד לא מלמד</span>.</p>
+                  <p className="mt-4">אנחנו מאמינים שכל ילד ראוי לגדול עם יכולת לזהות את רגשותיו,<br />לבטא אותם בבריאות, ולבנות חוסן שיישמר לכל החיים.</p>
+                  <p className="mt-4">בזכות תרומתך — נוכל להגיע לעוד כיתות, לעוד משפחות,<br />לעוד ילדים שמחכים למישהו שיראה אותם.</p>
+                  <p className="mt-4">זו לא רק תרומה לעמותה — זו <span style={{ color: "#BA9B78" }}>השקעה בדור הבא</span>.</p>
+                </div>
+              </>
+            )}
           </div>
-        </div>
+        </Reveal>
       </section>
+
 
       {/* Donation options */}
       <section className="px-6 py-14 md:py-20" style={{ background: "#FDFBF7" }}>
