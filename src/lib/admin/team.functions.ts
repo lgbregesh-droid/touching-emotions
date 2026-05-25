@@ -139,7 +139,7 @@ export const listActiveVolunteers = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: unknown) => z.object(tokenField).parse(i))
   .handler(async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await db
       .from("active_volunteers")
       .select("*")
       .order("created_at", { ascending: false });
