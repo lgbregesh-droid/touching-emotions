@@ -275,7 +275,9 @@ function Workshops() {
         primaryLabel={isEn ? "Contact us" : "צרו קשר"}
         whatsappLabel={t.final_cta.whatsapp}
         variant="purple"
+        context={{ type: "workshop", source: "workshops" }}
       />
+
     </>
   );
 }
