@@ -1,15 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminShell, AdminCard, PrimaryButton, SecondaryButton } from "@/components/admin/AdminShell";
 import { listActiveVolunteers, upsertActiveVolunteer, deleteActiveVolunteer } from "@/lib/admin/team.functions";
 import { getAdminToken } from "@/lib/admin/session";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, X, Mail } from "lucide-react";
 
+type VolunteersSearch = {
+  prefillId?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  role?: string;
+};
+
 export const Route = createFileRoute("/admin/_authed/volunteers")({
   head: () => ({ meta: [{ title: "מתנדבים פעילים | ניהול" }] }),
+  validateSearch: (s: Record<string, unknown>): VolunteersSearch => ({
+    prefillId: typeof s.prefillId === "string" ? s.prefillId : undefined,
+    name: typeof s.name === "string" ? s.name : undefined,
+    phone: typeof s.phone === "string" ? s.phone : undefined,
+    email: typeof s.email === "string" ? s.email : undefined,
+    role: typeof s.role === "string" ? s.role : undefined,
+  }),
   component: VolunteersAdmin,
 });
 
