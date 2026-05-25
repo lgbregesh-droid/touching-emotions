@@ -5,7 +5,9 @@ import { Reveal } from "@/components/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
+import { buildContactUrl } from "@/lib/contact-link";
 import { Heart, Sparkles, Users, BookOpen, ArrowRight, Copy, Check, Repeat, Phone } from "lucide-react";
+
 import community from "@/assets/home/community.jpg";
 
 export const Route = createFileRoute("/donations")({
