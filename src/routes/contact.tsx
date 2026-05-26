@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { validators, scrollToFirstError, type ValidationKey } from "@/utils/validation";
 import { ValidatedInput, ValidatedTextarea } from "@/components/forms/ValidatedField";
-import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { CompactPageHeader } from "@/components/CompactPageHeader";
@@ -79,7 +78,7 @@ function Contact() {
 
   const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [k]: e.target.value });
-    if (errors[k]) setErrors((er) => ({ ...er, [k]: null }));
+    if (k !== "subject" && errors[k as "name" | "email" | "phone" | "message"]) setErrors((er) => ({ ...er, [k]: null }));
   };
 
   type Errs = Partial<Record<"name" | "email" | "phone" | "message" | "agreed", ValidationKey | null>>;
