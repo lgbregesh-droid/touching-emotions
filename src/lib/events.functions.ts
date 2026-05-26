@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { fireProcessSubmission } from "@/lib/ai/process-submission.server";
+import { processSubmission } from "@/lib/ai/process-submission.server";
 
 export const listUpcomingEvents = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ limit: z.number().int().min(1).max(50).optional() }).parse(i))
@@ -64,6 +64,6 @@ export const registerForEvent = createServerFn({ method: "POST" })
       }
       throw new Error(error.message);
     }
-    if (ins?.id) fireProcessSubmission(ins.id as string, "event_registrations");
+    if (ins?.id) await processSubmission(ins.id as string, "event_registrations").catch((e) => console.error("processSubmission failed:", e));
     return { ok: true };
   });
