@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { FAQ } from "@/components/FAQ";
 import { submitContact } from "@/lib/forms.functions";
 import { PrivacyConsent, MarketingConsent } from "@/components/PrivacyConsent";
@@ -140,13 +140,17 @@ function Contact() {
 
   return (
     <>
+      <CompactPageHeader
+        label={isEn ? "We'd Love to Hear" : "נשמח לשמוע"}
+        title={isEn ? "Contact Us" : "צור קשר"}
+      />
       {/* Form — primary */}
       <section id="contact-form" className="px-6 pt-8 pb-14 md:pt-12 md:pb-20" style={{ background: "#FDFBF7" }}>
         <div className="max-w-3xl mx-auto">
           <Reveal>
             <div className="text-center mb-6">
               <span className="text-[11px] tracking-[0.22em] uppercase text-[#BA9B78]">{isEn ? "Contact" : "צרו קשר"}</span>
-              <h1 className="text-3xl md:text-4xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h1>
+              <h2 className="text-2xl md:text-3xl font-light text-[#461C5B] mt-3">{isEn ? "Send a message" : "שלחו הודעה"}</h2>
             </div>
           </Reveal>
           {ctx && !done && (

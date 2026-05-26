@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteContent, useWorkshops } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { buildContactUrl } from "@/lib/contact-link";
 
@@ -121,15 +121,10 @@ function Workshops() {
 
   return (
     <>
-      <PageHero
-        label={isEn ? "Workshops & Activities" : "סדנאות ופעילויות"}
-        title={pick("workshops.title", isEn ? "Workshops tailored to age, group and need" : "סדנאות שמותאמות לגיל, לקבוצה ולצורך")}
-        intro={pick("workshops.subtitle", isEn
-          ? "Every workshop is built together with you. Choose by audience, see how it works, and book a tailored session for your school, group or community."
-          : "כל סדנה נבנית יחד איתכם. בחרו לפי קהל יעד, ראו איך התהליך עובד והזמינו מפגש מותאם לבית הספר, לקבוצה או לקהילה שלכם.")}
-        ctaLabel={isEn ? "Book a workshop" : "להזמנת סדנה"}
-        ctaTo="/contact"
-        background="cream"
+      <CompactPageHeader
+        label={isEn ? "What We Offer" : "מה אנחנו מציעים"}
+        title={isEn ? "Workshops & Lectures" : "סדנאות והרצאות"}
+        subtitle={isEn ? "Every program is built together with you" : "כל תוכנית נבנית יחד איתכם, מותאמת לגיל, לקהל ולמטרה"}
       />
 
       {/* Category filter */}

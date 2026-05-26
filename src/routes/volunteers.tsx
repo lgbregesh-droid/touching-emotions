@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
 import { submitVolunteer } from "@/lib/forms.functions";
@@ -82,14 +82,10 @@ function Volunteers() {
 
   return (
     <>
-      <PageHero
-        label={pick("volunteers.label", isEn ? "Volunteer" : "התנדבות")}
-        title={pick("volunteers.title", isEn ? "Join a team that touches the heart" : "הצטרפו לצוות שנוגע בלב")}
-        intro={pick("volunteers.intro", isEn
-          ? "Volunteering with Touching Emotion means being part of real activity — workshops, lectures and community meetings — that changes the way children and teens feel about themselves."
-          : "להתנדב בלגעת ברגש זה להיות חלק מפעילות אמיתית — סדנאות, הרצאות ומפגשים — שמשנה את הדרך שבה ילדים ונוער מרגישים עם עצמם.")}
-        ctaLabel={pick("volunteers.cta_label", isEn ? "Fill the form" : "מילוי טופס")}
-        ctaTo="#volunteer-form"
+      <CompactPageHeader
+        label={isEn ? "Join Us" : "הצטרפו אלינו"}
+        title={isEn ? "Volunteer" : "התנדבות"}
+        subtitle={isEn ? "Any help supports our growth" : "כל סיוע יתמוך בהגדלת הפעילות ובצמיחה"}
       />
 
 

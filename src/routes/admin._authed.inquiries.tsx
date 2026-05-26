@@ -140,7 +140,11 @@ function Inquiries() {
                 <tr><td colSpan={8} className="py-6 text-center text-[#A0907A]">אין רשומות.</td></tr>
               )}
               {filtered.map((r) => (
-                <tr key={r.id!} className="border-b border-[#E0D8CC]/60">
+                <tr
+                  key={r.id!}
+                  onClick={() => setOpen(r)}
+                  className="border-b border-[#E0D8CC]/60 cursor-pointer hover:bg-[#F5F0E8] transition-colors"
+                >
                   <td className="py-2 px-2 whitespace-nowrap text-[#A0907A]">{new Date(r.created_at!).toLocaleDateString("he-IL")}</td>
                   <td className="py-2 px-2">{r.name}</td>
                   <td className="py-2 px-2">{r.phone || "—"}</td>
@@ -156,13 +160,13 @@ function Inquiries() {
                       <td className="py-2 px-2 max-w-xs truncate">{r.interest || "—"}</td>
                     </>
                   )}
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2" onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => toggle(r)}
                       className={`px-2 py-1 rounded-full text-xs ${r.status === "new" ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}`}>
                       {r.status === "new" ? "חדש" : "טופל"}
                     </button>
                   </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
+                  <td className="py-2 px-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                     <button title="פתח" onClick={() => setOpen(r)} className="p-1 hover:text-[#BA9B78]"><Eye className="w-4 h-4" /></button>
                     {r.status === "new" && (
                       <button title="סמן כטופל" onClick={() => toggle(r)} className="p-1 hover:text-green-700"><Check className="w-4 h-4" /></button>

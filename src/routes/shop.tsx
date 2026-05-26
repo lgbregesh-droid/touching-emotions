@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { InfoCard } from "@/components/InfoCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,15 +58,9 @@ function Shop() {
 
   return (
     <>
-      <PageHero
-        label={pick("shop.label", isEn ? "Support Our Work" : "תמיכה בעשייה")}
-        title={pick("shop.title", isEn ? "Small items, real support" : "פריטים קטנים, תמיכה אמיתית")}
-        intro={pick("shop.intro", isEn
-          ? "Our companion items aren't a shop. They're symbolic objects that carry our emotional language — and every purchase helps us reach more children, teens and communities."
-          : "הפריטים שלנו הם לא חנות. הם חפצים סמליים שנושאים את השפה הרגשית שלנו — וכל רכישה עוזרת לנו להגיע לעוד ילדים, נוער וקהילות.")}
-        ctaLabel={isEn ? "Get in touch" : "צרו קשר"}
-        ctaTo="/contact"
-        background="cream"
+      <CompactPageHeader
+        label={isEn ? "Our Shop" : "החנות שלנו"}
+        title={isEn ? "Products" : "מוצרים"}
       />
 
       {/* Why support */}
