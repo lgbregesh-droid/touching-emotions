@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X, CheckCircle2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -9,6 +9,8 @@ import { formatDateParts, toCalendarEvent } from "./EventCard";
 import { PrivacyConsent } from "@/components/PrivacyConsent";
 import { CalendarActions } from "./CalendarActions";
 import { trackCalendar } from "@/lib/calendar";
+import { validators, scrollToFirstError, type ValidationKey } from "@/utils/validation";
+import { ValidatedInput } from "@/components/forms/ValidatedField";
 
 export function RegistrationModal({ event, onClose }: { event: EventRow; onClose: () => void }) {
   const { lang, t } = useLanguage();
@@ -23,9 +25,30 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errMsg, setErrMsg] = useState("");
 
+  type Errs = Partial<Record<"name" | "phone" | "email" | "agreed", ValidationKey | null>>;
+  const [errors, setErrors] = useState<Errs>({});
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const upd = (k: keyof typeof form) => (v: string) => {
+    setForm((f) => ({ ...f, [k]: v }));
+    setErrors((er) => ({ ...er, [k]: null }));
+  };
+
+  const validate = (): Errs => ({
+    name: validators.name(form.name),
+    phone: validators.phone(form.phone, true),
+    email: validators.email(form.email, true),
+    agreed: agreed ? null : "checkbox_required",
+  });
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreed) { setErrMsg("יש לאשר את מדיניות הפרטיות"); setStatus("error"); return; }
+    const errs = validate();
+    setErrors(errs);
+    if (Object.values(errs).some(Boolean)) {
+      setTimeout(() => scrollToFirstError(formRef.current), 50);
+      return;
+    }
     setStatus("sending");
     setErrMsg("");
     try {
@@ -72,35 +95,26 @@ export function RegistrationModal({ event, onClose }: { event: EventRow; onClose
               <div className="text-[#2D1B3D]">{title}</div>
               <div className="text-xs">{day} {month} {year}{time ? ` · ${time}` : ""}</div>
             </div>
-            <form onSubmit={submit} className="space-y-3 text-sm">
-              <Input label={t.registration_modal.field_name} value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
-              <Input label={t.registration_modal.field_phone} value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-              <Input label={t.registration_modal.field_email} type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
+            <form ref={formRef} onSubmit={submit} noValidate className="space-y-3 text-sm">
+              <ValidatedInput label={t.registration_modal.field_name} required value={form.name} onChange={(e) => upd("name")(e.target.value)} onBlur={() => setErrors((er) => ({ ...er, name: validators.name(form.name) }))} error={errors.name} rounded="md" />
+              <ValidatedInput label={t.registration_modal.field_phone} required value={form.phone} onChange={(e) => upd("phone")(e.target.value)} onBlur={() => setErrors((er) => ({ ...er, phone: validators.phone(form.phone, true) }))} error={errors.phone} rounded="md" type="tel" />
+              <ValidatedInput label={t.registration_modal.field_email} required type="email" value={form.email} onChange={(e) => upd("email")(e.target.value)} onBlur={() => setErrors((er) => ({ ...er, email: validators.email(form.email, true) }))} error={errors.email} rounded="md" />
               <label className="block">
                 <span className="text-xs text-[#A0907A] block mb-1">{t.registration_modal.field_notes}</span>
                 <textarea rows={2} className="w-full px-3 py-2 border border-[#E0D8CC] rounded-md bg-white"
                   value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
               </label>
-              <PrivacyConsent checked={agreed} onChange={setAgreed} />
+              <PrivacyConsent checked={agreed} onChange={(v) => { setAgreed(v); if (v) setErrors((er) => ({ ...er, agreed: null })); }} />
+              {errors.agreed && <div role="alert" className="text-[12px]" style={{ color: "#C4622D" }}>{t.validation.checkbox_required}</div>}
               {errMsg && <div className="text-sm text-red-600">{errMsg}</div>}
               <button type="submit" disabled={status === "sending"}
                 className="w-full py-3 rounded-full bg-[#BA9B78] text-white text-sm hover:bg-[#a78865] disabled:opacity-50 transition">
-                {status === "sending" ? t.registration_modal.sending : t.registration_modal.submit}
+                {status === "sending" ? t.validation.submitting : t.registration_modal.submit}
               </button>
             </form>
           </>
         )}
       </div>
     </div>
-  );
-}
-
-function Input({ label, value, onChange, type = "text", required }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean }) {
-  return (
-    <label className="block">
-      <span className="text-xs text-[#A0907A] block mb-1">{label}{required && " *"}</span>
-      <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-[#E0D8CC] rounded-md bg-white" />
-    </label>
   );
 }
