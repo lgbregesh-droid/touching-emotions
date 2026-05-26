@@ -75,6 +75,30 @@ export function Footer() {
           {s?.footer_text || pick("footer.rights", t.footer.rights)}
           {s?.association_number ? ` · ע״ר ${s.association_number}` : ""}
         </div>
+        <div
+          className="text-center"
+          style={{
+            borderTop: "0.5px solid rgba(245,240,232,0.1)",
+            marginTop: "12px",
+            paddingTop: "10px",
+            fontSize: "12px",
+            color: "rgba(245,240,232,0.5)",
+            display: "block",
+          }}
+        >
+          <span style={{ fontWeight: 300 }}>Built by </span>
+          <span style={{ fontWeight: 500, color: "rgba(245,240,232,0.7)" }}>Naama Kenigsbuch</span>
+          <span style={{ color: "rgba(186,155,120,0.5)" }}> · </span>
+          <a
+            href="mailto:naama.kenigsbuch@gmail.com"
+            className="dev-credit-link"
+            style={{ color: "rgba(186,155,120,0.6)", textDecoration: "none" }}
+          >
+            naama.kenigsbuch@gmail.com
+          </a>
+        </div>
+        <style>{`.dev-credit-link:hover{color:#BA9B78 !important;text-decoration:underline;}`}</style>
+
       </div>
     </footer>
   );
