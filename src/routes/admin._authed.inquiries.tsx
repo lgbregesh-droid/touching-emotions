@@ -140,7 +140,11 @@ function Inquiries() {
                 <tr><td colSpan={8} className="py-6 text-center text-[#A0907A]">אין רשומות.</td></tr>
               )}
               {filtered.map((r) => (
-                <tr key={r.id!} className="border-b border-[#E0D8CC]/60">
+                <tr
+                  key={r.id!}
+                  onClick={() => setOpen(r)}
+                  className="border-b border-[#E0D8CC]/60 cursor-pointer hover:bg-[#F5F0E8] transition-colors"
+                >
                   <td className="py-2 px-2 whitespace-nowrap text-[#A0907A]">{new Date(r.created_at!).toLocaleDateString("he-IL")}</td>
                   <td className="py-2 px-2">{r.name}</td>
                   <td className="py-2 px-2">{r.phone || "—"}</td>
