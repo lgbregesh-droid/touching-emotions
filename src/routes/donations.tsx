@@ -46,11 +46,10 @@ function Donations() {
 
   return (
     <>
-      <PageHero
-        label={pick("donations.label", isEn ? "Donate" : "תרומות")}
-        title={pick("donations.title", isEn ? "Every donation reaches a child" : "כל תרומה מגיעה לילד אחד")}
-        intro={pick("donations.intro", d.intro)}
-        background="cream"
+      <CompactPageHeader
+        label={isEn ? "Support Us" : "תמכו בנו"}
+        title={isEn ? "Donate" : "תרומות"}
+        subtitle={isEn ? "Every donation expands our impact" : "כל תרומה מרחיבה את העשייה"}
       />
 
       {/* Jump to donate */}
