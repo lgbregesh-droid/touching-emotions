@@ -38,7 +38,12 @@ function Volunteers() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [k]: e.target.value });
+    setErrors((er) => ({ ...er, [k]: null }));
+  };
+  const blurName = () => setErrors((er) => ({ ...er, name: validators.name(form.name) }));
+  const blurPhone = () => setErrors((er) => ({ ...er, phone: validators.phone(form.phone, true) }));
 
   const otherKey = isEn ? "Other" : "אחר";
   const professionOptions: string[] = isEn
@@ -172,15 +177,16 @@ function Volunteers() {
                 <p className="text-[#461C5B] text-lg font-light">{t.volunteers_page.success}</p>
               </div>
             ) : (
-              <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
-                <Field label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} />
-                <Field label={t.volunteers_page.field_phone} value={form.phone} onChange={upd("phone")} />
+              <form ref={formRef} onSubmit={onSubmit} noValidate className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+                <ValidatedInput label={t.volunteers_page.field_name} required value={form.name} onChange={upd("name")} onBlur={blurName} error={errors.name} />
+                <ValidatedInput label={t.volunteers_page.field_phone} required value={form.phone} onChange={upd("phone")} onBlur={blurPhone} error={errors.phone} type="tel" />
                 <label className="block">
-                  <span className="block text-sm text-[#4A3D30] mb-1.5">{t.volunteers_page.field_role}</span>
+                  <span className="block text-sm text-[#4A3D30] mb-1.5">{t.volunteers_page.field_role}<span className="text-[#BA9B78]"> *</span></span>
                   <select
                     value={form.profession}
                     onChange={upd("profession")}
-                    className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
+                    aria-invalid={errors.profession ? "true" : "false"}
+                    className={`w-full px-4 py-3 rounded-lg border ${errors.profession ? "border-[#C4622D]" : "border-[#E0D8CC] focus:border-[#BA9B78]"} bg-white text-[#4A3D30] outline-none transition`}
                     dir={isEn ? "ltr" : "rtl"}
                     style={{ textAlign: isEn ? "left" : "right" }}
                   >
@@ -189,28 +195,28 @@ function Volunteers() {
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
                   </select>
+                  {errors.profession && <div role="alert" className="mt-1 text-[12px]" style={{ color: "#C4622D" }}>{t.validation.select_required}</div>}
                 </label>
                 {form.profession === otherKey && (
-                  <label className="block">
-                    <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Please describe" : "פירוט"}<span className="text-[#BA9B78]"> *</span></span>
-                    <input
-                      type="text"
-                      required
-                      value={form.professionOther}
-                      onChange={upd("professionOther")}
-                      placeholder={isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק"}
-                      className="w-full px-4 py-3 rounded-lg border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition"
-                    />
-                  </label>
+                  <ValidatedInput
+                    label={isEn ? "Please describe" : "פירוט"}
+                    required
+                    value={form.professionOther}
+                    onChange={upd("professionOther")}
+                    error={errors.professionOther}
+                    placeholder={isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק"}
+                    rounded="lg"
+                  />
                 )}
 
-                <Field label={t.volunteers_page.field_interest} as="textarea" value={form.interest} onChange={upd("interest")} />
+                <ValidatedTextarea label={t.volunteers_page.field_interest} value={form.interest} onChange={upd("interest")} rows={4} showCounter={false} />
                 <div className="space-y-2 pt-1">
-                  <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                  <PrivacyConsent checked={agreed} onChange={(v) => { setAgreed(v); if (v) setErrors((er) => ({ ...er, agreed: null })); }} />
+                  {errors.agreed && <div role="alert" className="text-[12px]" style={{ color: "#C4622D" }}>{t.validation.checkbox_required}</div>}
                   <MarketingConsent checked={marketing} onChange={setMarketing} />
                 </div>
                 <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
-                  {loading ? t.volunteers_page.sending : t.volunteers_page.btn}
+                  {loading ? t.validation.submitting : t.volunteers_page.btn}
                 </button>
               </form>
             )}
