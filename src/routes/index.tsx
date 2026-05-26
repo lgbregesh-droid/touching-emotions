@@ -320,6 +320,9 @@ function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* FAQ */}
+      <HomeFAQ />
     </>
   );
 }
