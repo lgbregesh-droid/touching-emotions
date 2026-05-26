@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useSiteContent, useWorkshops } from "@/hooks/use-cms";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { buildContactUrl } from "@/lib/contact-link";
 
