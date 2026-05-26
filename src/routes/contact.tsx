@@ -299,17 +299,3 @@ function Contact() {
     </>
   );
 }
-
-function Field({ label, as, type = "text", required, value, onChange }: { label: string; as?: "textarea"; type?: string; required?: boolean; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void }) {
-  const cn = "w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition";
-  return (
-    <label className="block">
-      <span className="block text-sm text-[#4A3D30] mb-1.5">{label}{required && <span className="text-[#BA9B78]"> *</span>}</span>
-      {as === "textarea" ? (
-        <textarea rows={5} required={required} value={value} onChange={onChange} className={cn} />
-      ) : (
-        <input type={type} required={required} value={value} onChange={onChange} className={cn} />
-      )}
-    </label>
-  );
-}
