@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { fireProcessSubmission } from "@/lib/ai/process-submission.server";
+import { processSubmission } from "@/lib/ai/process-submission.server";
 
 const ContactSchema = z.object({
   name: z.string().trim().min(1).max(120),
