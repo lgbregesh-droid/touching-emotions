@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { listUpcomingEvents, listPastEvents } from "@/lib/events.functions";
 import { EventCard, type EventRow } from "@/components/events/EventCard";
