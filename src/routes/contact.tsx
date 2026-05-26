@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { validators, scrollToFirstError, type ValidationKey } from "@/utils/validation";
+import { ValidatedInput, ValidatedTextarea } from "@/components/forms/ValidatedField";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { CompactPageHeader } from "@/components/CompactPageHeader";
@@ -74,12 +76,38 @@ function Contact() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search.type, search.itemId, search.itemTitle]);
 
-  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+  const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [k]: e.target.value });
+    if (k !== "subject" && errors[k as "name" | "email" | "phone" | "message"]) setErrors((er) => ({ ...er, [k]: null }));
+  };
+
+  type Errs = Partial<Record<"name" | "email" | "phone" | "message" | "agreed", ValidationKey | null>>;
+  const [errors, setErrors] = useState<Errs>({});
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const validate = (): Errs => ({
+    name: validators.name(form.name),
+    email: validators.email(form.email, true),
+    phone: validators.phone(form.phone, false),
+    message: validators.message(form.message, true),
+    agreed: agreed ? null : "checkbox_required",
+  });
+
+  const blur = (k: "name" | "email" | "phone" | "message") => () => {
+    const fn = validators[k];
+    const res = k === "phone" ? validators.phone(form.phone, false) : k === "email" ? validators.email(form.email, true) : (fn as (v: string) => ValidationKey | null)(form[k]);
+    setErrors((er) => ({ ...er, [k]: res }));
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.message.trim()) return;
-    if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
+    const errs = validate();
+    setErrors(errs);
+    if (Object.values(errs).some(Boolean)) {
+      if (!agreed && errs.agreed) toast.error(t.validation.checkbox_required.replace("✗ ", ""));
+      setTimeout(() => scrollToFirstError(formRef.current), 50);
+      return;
+    }
     setLoading(true);
     try {
       await submit({
@@ -94,6 +122,7 @@ function Contact() {
       });
       setDone(true);
       setForm({ name: "", phone: "", email: "", subject: "", message: "" });
+      setErrors({});
       toast.success(t.contact_page.success);
     } catch (err) {
       toast.error(String(err));
@@ -171,13 +200,13 @@ function Contact() {
                 <p className="text-[#461C5B] text-lg font-light">{t.contact_page.success}</p>
               </div>
             ) : (
-              <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5 shadow-sm" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
+              <form ref={formRef} onSubmit={onSubmit} noValidate className="bg-white rounded-2xl border border-[#E0D8CC] p-8 md:p-10 space-y-5 shadow-sm" style={{ borderRight: "3px solid rgba(229,163,173,0.5)" }}>
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <Field label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} />
-                  <Field label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} />
+                  <ValidatedInput label={t.contact_page.field_name} required value={form.name} onChange={upd("name")} onBlur={blur("name")} error={errors.name} />
+                  <ValidatedInput label={t.contact_page.field_phone} value={form.phone} onChange={upd("phone")} onBlur={blur("phone")} error={errors.phone} type="tel" />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-5">
-                  <Field label={t.contact_page.field_email} type="email" value={form.email} onChange={upd("email")} />
+                  <ValidatedInput label={t.contact_page.field_email} type="email" required value={form.email} onChange={upd("email")} onBlur={blur("email")} error={errors.email} />
                   <label className="block">
                     <span className="block text-sm text-[#4A3D30] mb-1.5">{isEn ? "Inquiry type" : "סוג פנייה"}</span>
                     <select value={form.subject} onChange={upd("subject")} className="w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition">
@@ -186,13 +215,14 @@ function Contact() {
                     </select>
                   </label>
                 </div>
-                <Field label={t.contact_page.field_message} required as="textarea" value={form.message} onChange={upd("message")} />
+                <ValidatedTextarea label={t.contact_page.field_message} required value={form.message} onChange={upd("message")} onBlur={blur("message")} error={errors.message} />
                 <div className="space-y-2 pt-1">
-                  <PrivacyConsent checked={agreed} onChange={setAgreed} />
+                  <PrivacyConsent checked={agreed} onChange={(v) => { setAgreed(v); if (v) setErrors((er) => ({ ...er, agreed: null })); }} />
+                  {errors.agreed && <div role="alert" className="text-[12px]" style={{ color: "#C4622D" }}>{t.validation.checkbox_required}</div>}
                   <MarketingConsent checked={marketing} onChange={setMarketing} />
                 </div>
                 <button disabled={loading} className="w-full py-3.5 bg-[#461C5B] hover:bg-[#5a2674] disabled:opacity-60 text-white rounded-full text-sm tracking-wide transition-colors">
-                  {loading ? t.contact_page.sending : t.contact_page.btn}
+                  {loading ? t.validation.submitting : t.contact_page.btn}
                 </button>
               </form>
             )}
@@ -267,19 +297,5 @@ function Contact() {
         </div>
       </section>
     </>
-  );
-}
-
-function Field({ label, as, type = "text", required, value, onChange }: { label: string; as?: "textarea"; type?: string; required?: boolean; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void }) {
-  const cn = "w-full px-4 py-3 rounded-xl border border-[#E0D8CC] bg-white text-[#4A3D30] outline-none focus:border-[#BA9B78] transition";
-  return (
-    <label className="block">
-      <span className="block text-sm text-[#4A3D30] mb-1.5">{label}{required && <span className="text-[#BA9B78]"> *</span>}</span>
-      {as === "textarea" ? (
-        <textarea rows={5} required={required} value={value} onChange={onChange} className={cn} />
-      ) : (
-        <input type={type} required={required} value={value} onChange={onChange} className={cn} />
-      )}
-    </label>
   );
 }
