@@ -36,7 +36,7 @@ export const submitContact = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !ins) throw new Error(error?.message ?? "שמירה נכשלה");
-    fireProcessSubmission(ins.id as string, "contact_messages");
+    await processSubmission(ins.id as string, "contact_messages");
     return { ok: true };
   });
 
@@ -62,6 +62,6 @@ export const submitVolunteer = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !ins) throw new Error(error?.message ?? "שמירה נכשלה");
-    fireProcessSubmission(ins.id as string, "volunteers");
+    await processSubmission(ins.id as string, "volunteers");
     return { ok: true };
   });
