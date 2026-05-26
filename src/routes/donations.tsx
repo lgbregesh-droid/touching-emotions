@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { buildContactUrl } from "@/lib/contact-link";
 import { Heart, ArrowRight, Copy, Check, Repeat, Phone } from "lucide-react";
