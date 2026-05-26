@@ -160,13 +160,13 @@ function Inquiries() {
                       <td className="py-2 px-2 max-w-xs truncate">{r.interest || "—"}</td>
                     </>
                   )}
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2" onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => toggle(r)}
                       className={`px-2 py-1 rounded-full text-xs ${r.status === "new" ? "bg-orange-100 text-orange-800" : "bg-green-100 text-green-800"}`}>
                       {r.status === "new" ? "חדש" : "טופל"}
                     </button>
                   </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
+                  <td className="py-2 px-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                     <button title="פתח" onClick={() => setOpen(r)} className="p-1 hover:text-[#BA9B78]"><Eye className="w-4 h-4" /></button>
                     {r.status === "new" && (
                       <button title="סמן כטופל" onClick={() => toggle(r)} className="p-1 hover:text-green-700"><Check className="w-4 h-4" /></button>
