@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { validators, scrollToFirstError, type ValidationKey } from "@/utils/validation";
+import { ValidatedInput, ValidatedTextarea } from "@/components/forms/ValidatedField";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
 import { CompactPageHeader } from "@/components/CompactPageHeader";
@@ -43,20 +45,37 @@ function Volunteers() {
     ? ["Education & Teaching","Psychology & Therapy","Social Work","Management & Organization","Marketing & Communications","Technology & Computers","Art & Creativity","Health & Medicine","Law & Accounting","Student","Other"]
     : ["חינוך והוראה","פסיכולוגיה וטיפול","עבודה סוציאלית","ניהול וארגון","שיווק ותקשורת","טכנולוגיה ומחשבים","אמנות ויצירה","בריאות ורפואה","משפט וחשבונאות","סטודנט/ית","אחר"];
 
+  type Errs = Partial<Record<"name" | "phone" | "profession" | "professionOther" | "agreed", ValidationKey | null>>;
+  const [errors, setErrors] = useState<Errs>({});
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const validate = (): Errs => {
+    const sel = validators.select(form.profession);
+    return {
+      name: validators.name(form.name),
+      phone: validators.phone(form.phone, true),
+      profession: sel,
+      professionOther: form.profession === otherKey ? (form.professionOther.trim().length < 2 ? "other_field_required" : null) : null,
+      agreed: agreed ? null : "checkbox_required",
+    };
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
-    if (!agreed) { toast.error("יש לאשר את מדיניות הפרטיות"); return; }
-    const professionValue = form.profession === otherKey ? form.professionOther.trim() : form.profession;
-    if (form.profession === otherKey && !professionValue) {
-      toast.error(isEn ? "Please describe your field" : "נא לפרט את תחום העיסוק");
+    const errs = validate();
+    setErrors(errs);
+    if (Object.values(errs).some(Boolean)) {
+      if (!agreed && errs.agreed) toast.error(t.validation.checkbox_required.replace("✗ ", ""));
+      setTimeout(() => scrollToFirstError(formRef.current), 50);
       return;
     }
+    const professionValue = form.profession === otherKey ? form.professionOther.trim() : form.profession;
     setLoading(true);
     try {
       await submit({ data: { name: form.name, phone: form.phone, profession: professionValue, interest: form.interest } });
       setDone(true);
       setForm({ name: "", phone: "", profession: "", professionOther: "", interest: "" });
+      setErrors({});
       toast.success(t.volunteers_page.success);
     } catch (err) {
       toast.error(String(err));
