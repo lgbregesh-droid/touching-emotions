@@ -18,8 +18,7 @@ const ROUNDED = { xl: "rounded-xl", lg: "rounded-lg", md: "rounded-md" };
 function ErrorMsg({ id, error }: { id: string; error: ValidationKey | null | undefined }) {
   const { t } = useLanguage();
   if (!error) return null;
-  // @ts-expect-error dynamic translation lookup
-  const txt: string = t.validation?.[error] || "";
+  const txt: string = t.validation[error] || "";
   return (
     <div
       id={id}
