@@ -56,11 +56,10 @@ function EventsPage() {
 
   return (
     <div style={{ background: "#FDFBF7" }} className="min-h-screen">
-      <PageHero
-        label={pick("events.label", t.events_page.label)}
-        title={pick("events.title", t.events_page.heading)}
-        intro={pick("events.subtitle", t.events_page.sub)}
-        background="cream"
+      <CompactPageHeader
+        label={isEn ? "Events Calendar" : "לוח אירועים"}
+        title={isEn ? "Upcoming Events" : "אירועים קרובים"}
+        subtitle={isEn ? "Open lectures, workshops and meetups" : "הרצאות, סדנאות ומפגשים פתוחים לקהל הרחב"}
       />
 
       <section className="py-10 md:py-14 px-6 max-w-6xl mx-auto">
