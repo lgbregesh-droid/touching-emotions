@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { CTABand } from "@/components/CTABand";
 import { InfoCard } from "@/components/InfoCard";
 import { supabase } from "@/integrations/supabase/client";
