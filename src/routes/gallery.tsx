@@ -17,13 +17,10 @@ function GalleryPage() {
   const pick = (key: string, fb: string) => { const v = cms?.[key]; return v ? ((isEn ? v.en : v.he) || fb) : fb; };
   return (
     <>
-      <PageHero
-        label={pick("gallery.label", isEn ? "Gallery" : "גלריה")}
-        title={pick("gallery.title", isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד")}
-        intro={pick("gallery.intro", isEn
-          ? "Photos from our workshops, lectures, community gatherings and youth activities — a small window into the work we love."
-          : "תמונות מהסדנאות, ההרצאות, המפגשים הקהילתיים והפעילויות עם הנוער — חלון קטן לעשייה שאנחנו אוהבים.")}
-        background="cream"
+      <CompactPageHeader
+        label={isEn ? "From the Heart" : "מהלב אל המציאות"}
+        title={isEn ? "Gallery" : "גלריה"}
+        subtitle={isEn ? "Moments we create together" : "הרגעים שאנחנו יוצרים יחד"}
       />
 
       <section className="px-6 pb-16 md:pb-20" style={{ background: "#2D1B3D" }}>
