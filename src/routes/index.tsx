@@ -293,6 +293,9 @@ function Home() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <HomeFAQ />
+
       {/* FINAL CTA */}
       <section className="relative bg-[#2D1B3D] py-14 md:py-20 px-6 overflow-hidden">
         <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(circle at 30% 50%, rgba(186,155,120,0.35), transparent 60%)" }} />
@@ -320,9 +323,6 @@ function Home() {
           </Reveal>
         </div>
       </section>
-
-      {/* FAQ */}
-      <HomeFAQ />
     </>
   );
 }

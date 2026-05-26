@@ -88,6 +88,16 @@ function Volunteers() {
         subtitle={isEn ? "Any help supports our growth" : "כל סיוע יתמוך בהגדלת הפעילות ובצמיחה"}
       />
 
+      {/* Jump to volunteer form */}
+      <div className="px-6 pt-4 pb-2 text-center" style={{ background: "#FDFBF7" }}>
+        <a
+          href="#volunteer-form"
+          className="inline-flex items-center gap-2 bg-[#BA9B78] hover:bg-[#a8875f] text-white transition-colors"
+          style={{ borderRadius: 30, padding: "12px 28px", fontSize: 14 }}
+        >
+          {isEn ? "Volunteer Now ↓" : "להתנדבות מהירה — לחצו כאן ↓"}
+        </a>
+      </div>
 
       {/* Who can volunteer */}
       <section className="px-6 py-16 md:py-20" style={{ background: "#EAE3DA" }}>
