@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Reveal } from "@/components/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { CompactPageHeader } from "@/components/CompactPageHeader";
 import { InfoCard } from "@/components/InfoCard";
 import { CTABand } from "@/components/CTABand";
 import { submitVolunteer } from "@/lib/forms.functions";
