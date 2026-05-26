@@ -59,7 +59,7 @@ function Donations() {
           className="inline-flex items-center gap-2 bg-[#BA9B78] hover:bg-[#a8875f] text-white transition-colors"
           style={{ borderRadius: 30, padding: "12px 28px", fontSize: 14 }}
         >
-          {isEn ? "Donate Now ↓" : "לתרומה מהירה — לחצו כאן ↓"}
+          {isEn ? "Donate Now ↓" : "לתרומה — לחצו כאן ↓"}
         </a>
       </div>
 
