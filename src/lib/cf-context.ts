@@ -1,12 +1,6 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-
-type CfExecutionContext = { waitUntil: (promise: Promise<unknown>) => void };
-
-export const cfContextStorage = new AsyncLocalStorage<CfExecutionContext>();
-
+// Vercel adapter — cfWaitUntil runs the promise directly (no Cloudflare execution context needed)
 export function cfWaitUntil(promise: Promise<unknown>) {
-  const ctx = cfContextStorage.getStore();
-  if (ctx) {
-    ctx.waitUntil(promise);
-  }
+  promise.catch((err) => {
+    console.error("cfWaitUntil error:", err);
+  });
 }
