@@ -1,0 +1,10 @@
+
+{
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/server/server.js"
+    }
+  ]
+}
