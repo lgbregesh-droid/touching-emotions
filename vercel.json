@@ -1,17 +1,5 @@
 {
-  "functions": {
-    "dist/server/server.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/dist/client/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/server/server.js"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/dist/server/server.js" }
   ]
 }
